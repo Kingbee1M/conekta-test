@@ -1,17 +1,22 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import StoreProvider from "@/lib/storeProvider";
 import CookieBanner from "./components/ui/cookieBanner";
 import DevStorageTool from "./components/ui/DevStorageTool";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastProvider } from "./components/ui/ToastProvider";
-import { Montserrat, Cormorant_Garamond } from "next/font/google";
-import Navbar from "./components/ui/navbar";
+import { Montserrat, Cormorant_Garamond, Poppins } from "next/font/google";
+import NavbarWrapper from "./components/ui/clientNav";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
   subsets: ["latin"],
+});
+
+const poppins = Poppins({
+   variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
 const garamond = Cormorant_Garamond({
@@ -32,13 +37,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} ${garamond.variable} font-sans bg-background`}>
+      <body className={`${montserrat.variable} ${garamond.variable} ${poppins.variable} font-sans bg-background overflow-x-hidden`}>
         <StoreProvider>
           <ToastProvider>
           <div id="cookie-portal" />
-          <Navbar />
+          <NavbarWrapper />
 
-          <main className="">
+          <main className="w-screen mt-16 px-5">
             {children}
           </main>
           </ToastProvider>

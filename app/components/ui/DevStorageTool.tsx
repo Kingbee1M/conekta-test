@@ -18,6 +18,7 @@ export default function DevStorageTool() {
   const [isOpen, setIsOpen] = useState(false);
   const dispatch = useAppDispatch();
 
+  const { user, isAuthenticated } = useAppSelector((state: RootState) => state.auth);
   const auth = useAppSelector((state: RootState) => state.auth);
   const cookieConsent = useAppSelector((state: RootState) => state.cookieConsent);
   
@@ -107,6 +108,13 @@ export default function DevStorageTool() {
       )}
     </div>
   </section>
+
+  <div className="flex items-center gap-2 mb-2">
+  <span className="text-[10px] text-slate-500 font-bold uppercase">Auth Flag:</span>
+  <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${isAuthenticated ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}`}>
+    {isAuthenticated ? 'TRUE' : 'FALSE'}
+  </span>
+</div>
 
   {/* --- RAW STATE (Minimized) --- */}
   <section>

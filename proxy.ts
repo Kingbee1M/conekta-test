@@ -6,11 +6,11 @@ export function proxy(request: NextRequest) {
   const token = request.cookies.get('access_token')?.value;
   const { pathname } = request.nextUrl;
 
-  const isPublicPath = pathname === '/login' || pathname === '/signup' || pathname === '/';
+  const isPublicPath = pathname === '/log-in' || pathname === '/sign-up' || pathname === '/';
 
 
   if (!isPublicPath && !token) {
-    return NextResponse.redirect(new URL('/login', request.url));
+    return NextResponse.redirect(new URL('/log-in', request.url));
   }
 
 

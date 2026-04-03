@@ -8,12 +8,14 @@
   /* -------fonts------- */
   --font-montserrat: var(--font-montserrat);
   --font-garamond: var(--font-garamond);
+  --font-poppins: var(--font-poppins);
 
 
   /* --------COLORS-------- */
   --color-primary-green: #257448;
   --color-primary-green-hover: #2574498b;
   --color-secondary-green: #DBFCE7;
+  --color-text-primary: #262626;
 }
 
 @theme inline {
@@ -140,11 +142,15 @@
     @apply font-sans;
   }
   h1, h2, h3, h4, h5 {
-    font-family:  var(--font-garamond);
+    font-family:  var(--font-poppins);
     color: #101828;
+  }
+  h1 {
+    font-weight: 800;
   }
 
   p, input, button, span, a, textArea {
     font-family: var(--font-montserrat);
+    color: #262626;
   }
 }

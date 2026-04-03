@@ -1,6 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction, Action } from '@reduxjs/toolkit';
+import { REHYDRATE } from 'redux-persist';
 
-// Pro-tip: Capitalize Interface names for clarity
 interface Store {
   id: string;
   createdAt: string;
@@ -29,12 +29,23 @@ interface AuthState {
   isAuthenticated: boolean;
 }
 
+interface PersistPayload {
+  auth?: AuthState;
+}
+
+interface RehydrateAction extends Action {
+  type: typeof REHYDRATE;
+  payload?: PersistPayload;
+}
+
+// 3. INITIAL STATE
 const initialState: AuthState = {
   user: null,
   status: 'idle',
   isAuthenticated: false,
 };
 
+// 4. THE SLICE
 export const authSlice = createSlice({
   name: 'auth',
   initialState, 
@@ -49,6 +60,19 @@ export const authSlice = createSlice({
       state.status = 'idle';
       state.isAuthenticated = false;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(REHYDRATE, (state, action) => {
+      // Cast the action to our custom RehydrateAction
+      const rehydrateAction = action as RehydrateAction;
+      const persistedAuth = rehydrateAction.payload?.auth;
+      
+      if (persistedAuth?.user) {
+        state.user = persistedAuth.user;
+        state.isAuthenticated = true;
+        state.status = 'succeeded';
+      }
+    });
   },
 });
 

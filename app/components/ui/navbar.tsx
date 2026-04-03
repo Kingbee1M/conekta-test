@@ -1,6 +1,6 @@
 'use client'
 import Image from "next/image"
-import logo from '../../../public/png/logo-plane.png'
+import logo from '../../../public/jpg/logo-sharp.jpg'
 import Link from "next/link"
 import { IoMdMenu, IoMdClose} from "react-icons/io";
 import { useState } from "react";
@@ -23,7 +23,7 @@ export default function Navbar() {
         w-screen fixed top-0 left-0 z-40
         flex flex-col lg:flex-row lg:items-center lg:justify-between
         transition-all duration-300 ease-in-out
-        pr-5 bg-white border-y border-[#272626] border-solid
+        pr-5 bg-white border-y border-[#272626] border-solid lg:py-8
         ${isOpen ? 'h-64' : 'h-12'} 
         overflow-hidden
         `}>
@@ -52,13 +52,13 @@ export default function Navbar() {
             </ul>
             
             <div className="flex items-center px-7 lg:px-0 gap-3 mt-4 lg:mt-0">
-                <Link href={'/notification'} className="relative w-fit">
-                <div className="bg-red h-2 w-2 rounded-full absolute top-0 left-0 bg-red-500"/>
-                    <IoIosNotificationsOutline className="text-2xl cursor-pointer" />
+                <Link href={'/notification'} className="relative w-fit p-2 hover:bg-gray-200 cursor-pointer rounded-md">
+                <div className="bg-red h-2 w-2 rounded-full absolute top-1 right-1 bg-red-500 "/>
+                    <IoIosNotificationsOutline className="text-2xl" />
                 </Link>
                 
-                <Link href={'/profile'} className="relative w-fit">
-                <div className="bg-red h-2 w-2 rounded-full absolute top-0 left-0 bg-red-500"/>
+                <Link href={'/profile'} className="relative w-fit p-2 hover:bg-gray-200 cursor-pointer rounded-md">
+                <div className="bg-red h-2 w-2 rounded-full absolute top-1 right-1 bg-red-500"/>
                     <MdPersonOutline className="text-2xl cursor-pointer" />
                 </Link>
                 

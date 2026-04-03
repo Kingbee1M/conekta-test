@@ -1,9 +1,8 @@
-import Image from "next/image";
-
+import LandingHero from "./components/landinghero";
 export default function Home() {
   return (
     <>
-    
+      <LandingHero/>
     </>
   );
 }
