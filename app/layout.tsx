@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastProvider } from "./components/ui/ToastProvider";
 import { Montserrat, Cormorant_Garamond, Poppins } from "next/font/google";
 import NavbarWrapper from "./components/ui/clientNav";
+import Footer from "./components/ui/footer";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -37,15 +38,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} ${garamond.variable} ${poppins.variable} font-sans bg-background overflow-x-hidden`}>
+      <body className={`${montserrat.variable} ${garamond.variable} ${poppins.variable} font-sans bg-background w-screen overflow-x-hidden`}>
         <StoreProvider>
           <ToastProvider>
           <div id="cookie-portal" />
           <NavbarWrapper />
 
-          <main className="w-screen mt-16 px-5">
+          <main className="w-full mt-16 overflow-x-hidden">
             {children}
           </main>
+
+          <Footer />
           </ToastProvider>
 
           <CookieBanner />

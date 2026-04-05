@@ -1,6 +1,6 @@
 'use client'
 import Image from "next/image"
-import logo from '../../../public/jpg/logo-sharp.jpg'
+import logo from '../../../public/svg/logo-enhanced.svg'
 import Link from "next/link"
 import { IoMdMenu, IoMdClose} from "react-icons/io";
 import { useState } from "react";
@@ -29,7 +29,7 @@ export default function Navbar() {
         `}>
             <div className='w-full lg:w-1/3 flex justify-between items-center'>
                 <Link href='/'>
-                    <Image src={logo} alt='logo' width={20} height={20} className='w-20 lg:w-40' priority />
+                    <Image src={logo} alt='logo' width={20} height={20} className='w-20 lg:w-20' priority />
                 </Link>
                 <button onClick={()=>setIsOpen(!isOpen)} className={`inline lg:hidden text-2xl  transition-transform duration-500 ease-in-out
                  ${isOpen ? 'rotate-180' : 'rotate-0'}`}>{isOpen? (<IoMdClose/>) : (<IoMdMenu/>)}</button>

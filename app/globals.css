@@ -13,9 +13,10 @@
 
   /* --------COLORS-------- */
   --color-primary-green: #257448;
-  --color-primary-green-hover: #2574498b;
+  --color-primary-green-hover: #3fa56d;
   --color-secondary-green: #DBFCE7;
   --color-text-primary: #262626;
+  --color-tertiary-green: #009966;
 }
 
 @theme inline {
@@ -143,14 +144,18 @@
   }
   h1, h2, h3, h4, h5 {
     font-family:  var(--font-poppins);
-    color: #101828;
+    color: #101828 ;
   }
   h1 {
     font-weight: 800;
   }
 
+  h2,h3,h4,h5 {
+     font-weight: 700;
+  }
+
   p, input, button, span, a, textArea {
     font-family: var(--font-montserrat);
-    color: #262626;
+    color: #4a5565;
   }
 }

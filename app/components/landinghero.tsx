@@ -1,9 +1,9 @@
 'use client'
 import img from '../../public/png/house.png'
 import Image from "next/image"
-import hero from '../../public/jpg/hero.webp'
-import hero1 from '../../public/jpg/bulding2.webp'
-import hero2 from '../../public/jpg/bulding3.webp'
+import hero from '../../public/webp/hero.webp'
+import hero1 from '../../public/webp/bulding2.webp'
+import hero2 from '../../public/webp/bulding3.webp'
 import Button from '@/app/components/ui/Button'
 import { RiShiningLine } from "react-icons/ri";
 import { GoArrowRight } from "react-icons/go";
@@ -17,11 +17,11 @@ export default function LandingHero() {
     useEffect(() => {
         const timer = setInterval(() => {
         setIndex((prev) => (prev + 1) % frames.length);
-        }, 7000);
+        }, 3000);
         return () => clearInterval(timer);
     }, [frames.length]);
     return (
-        <section className="w-full min-h-fit flex flex-col lg:flex-row items-center justify-between gap-48 lg:gap-0 py-30 relative overflow-x-hidden overflow-y-hidden">
+        <section className="w-full px-5 min-h-fit flex flex-col lg:flex-row items-center justify-between gap-48 lg:gap-0 py-30 relative overflow-x-hidden overflow-y-hidden">
                 <div className="w-150 h-150 rounded-full absolute -z-30 bg-[#dbede1] -top-70 backdrop-blur-md -left-30" />
                 <div className="w-90 h-90 rounded-full absolute -z-30 bg-[#dbede1] -bottom-30 right-100" />
                 <div className="bg-white/50 top-0 backdrop-blur-[35px] w-screen h-500 absolute -z-20"/>
@@ -32,7 +32,7 @@ export default function LandingHero() {
                     <p>Building Connected Communities</p>
                 </div>
 
-                <h1 className="text-6xl">Your Complete Housing Ecosystem in Lagos</h1>
+                <h1 className="text-4xl lg:text-6xl">Your Complete Housing Ecosystem in NIgeria</h1>
 
                 <p className="w-[95%]">Discover, rent, buy, invest, and manage properties with flexible payment options. From virtual tours to trusted artisans, everything you need for your housing journey.</p>
 
@@ -54,7 +54,7 @@ export default function LandingHero() {
 
                         <Button
                         variant="outline"
-                        title="Broswe Property"
+                        title="Browse Property"
                         color='black'
                         rightSection={<GoArrowRight/>} />
                         </div>
@@ -93,8 +93,8 @@ export default function LandingHero() {
                         src={frames[index]} 
                         alt={`Frame ${index + 1}`}
                         priority
-                        fill 
-                        className="object-fill"
+                        fill
+                        className="object-cover"
                     />
                     </motion.div>
                 </AnimatePresence>
