@@ -14,7 +14,7 @@ export default function Footer() {
     ]
     return (
         <footer className="bg-[#101828] flex flex-col items-center w-full py-10 px-10">
-            <div className="w-[96%] flex justify-between gap-5">
+            <div className="w-full max-w-[96%] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
                 <div className="ww-fit">
                     <Image src={logo} alt='logo' width={20} height={20} className='w-20 lg:w-40 mb-5' priority />
                     <h2>...driven by tech, defined by impact</h2>

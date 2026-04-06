@@ -21,7 +21,7 @@ export default function LandingHero() {
         return () => clearInterval(timer);
     }, [frames.length]);
     return (
-        <section className="w-full px-5 min-h-fit flex flex-col lg:flex-row items-center justify-between gap-48 lg:gap-0 py-30 relative overflow-x-hidden overflow-y-hidden">
+        <section className="w-full px-5 min-h-fit flex flex-col lg:flex-row items-center justify-between gap-48 lg:gap-0 py-10 lg:py-20 relative overflow-x-hidden overflow-y-hidden">
                 <div className="w-150 h-150 rounded-full absolute -z-30 bg-[#dbede1] -top-70 backdrop-blur-md -left-30" />
                 <div className="w-90 h-90 rounded-full absolute -z-30 bg-[#dbede1] -bottom-30 right-100" />
                 <div className="bg-white/50 top-0 backdrop-blur-[35px] w-screen h-500 absolute -z-20"/>

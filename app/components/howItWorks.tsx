@@ -3,6 +3,8 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselPrevious,
+  CarouselNext
 } from "@/components/ui/carousel"
 
 export default function HowItWorks() {
@@ -39,6 +41,8 @@ export default function HowItWorks() {
 
             <div className="w-full flex lg:hidden mt-10">
                 <Carousel>
+                    <CarouselPrevious className="absolute top-1/2 -translate-y-1/2 left-5 z-10 bg-white p-2 rounded-full shadow-md"/>
+                    <CarouselNext className="absolute top-1/2 -translate-y-1/2 right-5 z-10 bg-white p-2 rounded-full shadow-md"/>
                 <CarouselContent className=" cursor-pointer">
                  {datas.map((data) => (
                     <CarouselItem  key={data.id} className="flex flex-col items-center gap-3">

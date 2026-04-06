@@ -4,7 +4,7 @@ import { MdOutlineShield } from "react-icons/md";
 import { PiBuildingsBold } from "react-icons/pi";
 import Image from "next/image";
 import secure from '../../public/webp/trust.webp'
-import {inView, motion} from 'framer-motion'
+import { motion} from 'framer-motion'
 import useOnceInView from "@/lib/hooks";
 
 export default  function BuiltSecurity() {

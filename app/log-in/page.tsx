@@ -6,7 +6,10 @@ import { loginTypes } from "@/types"
 import { useRouter } from "next/navigation"
 import { useToast } from "../components/ui/ToastProvider"
 
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+await delay(5000);
 export default function Login() {
+    
     const [email, setEmail] = useState("")
     const [password, setPassword]= useState("")
 
@@ -14,6 +17,7 @@ export default function Login() {
     const router = useRouter()
     const { addToast } = useToast();
 
+    
     const handleSubmit = async () => {
         
         console.log('burron Pressed')

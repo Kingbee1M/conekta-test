@@ -6,7 +6,7 @@ import { FiHome } from "react-icons/fi";
 import { LuPiggyBank } from "react-icons/lu";
 import { GrLineChart } from "react-icons/gr";
 import { LuHammer } from "react-icons/lu";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import useOnceInView from "@/lib/hooks";
 
 export default function EverythingYou() {

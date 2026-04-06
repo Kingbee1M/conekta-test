@@ -8,6 +8,8 @@ import { ToastProvider } from "./components/ui/ToastProvider";
 import { Montserrat, Cormorant_Garamond, Poppins } from "next/font/google";
 import NavbarWrapper from "./components/ui/clientNav";
 import Footer from "./components/ui/footer";
+import NextProgress from "./components/ui/NextProgress";
+import { Suspense } from "react";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -42,9 +44,13 @@ export default function RootLayout({
         <StoreProvider>
           <ToastProvider>
           <div id="cookie-portal" />
+
+          <Suspense fallback={null}>
+        <NextProgress />
+      </Suspense>
           <NavbarWrapper />
 
-          <main className="w-full mt-16 overflow-x-hidden">
+          <main className="w-full mt-10 lg:mt-16 overflow-x-hidden">
             {children}
           </main>
 
