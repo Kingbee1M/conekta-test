@@ -23,7 +23,7 @@ export default function Navbar() {
         w-screen fixed top-0 left-0 z-40
         flex flex-col lg:flex-row lg:items-center lg:justify-between
         transition-all duration-300 ease-in-out
-        pr-5 bg-white border-y border-[#272626] border-solid lg:py-8
+        pr-5 bg-white border-y border-gray-200 border-solid lg:py-8
         ${isOpen ? 'h-64' : 'h-12'} 
         overflow-hidden
         `}>
