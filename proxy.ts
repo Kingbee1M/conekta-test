@@ -6,15 +6,34 @@ export function proxy(request: NextRequest) {
   const token = request.cookies.get('access_token')?.value;
   const { pathname } = request.nextUrl;
 
-  const isPublicPath = pathname === '/log-in' || pathname === '/sign-up' || pathname === '/';
+  const PUBLIC_PATHS = [
+    '/log-in',
+    '/sign-up',
+    '/password',
+    '/reset-password',
+    '/create-account',
+    '/add-email',
+    '/verify-email',
+    '/get-started',
+    '/',
+  ];
 
 
-  if (!isPublicPath && !token) {
+  const isPublicPage = PUBLIC_PATHS.some((path) => 
+    pathname === path || pathname.startsWith(`${path}/`)
+  );
+
+
+  if (!isPublicPage && !token) {
     return NextResponse.redirect(new URL('/log-in', request.url));
   }
 
 
-  if (isPublicPath && token) {
+  const isAuthPage = PUBLIC_PATHS.filter(p => p !== '/').some(path => 
+    pathname === path || pathname.startsWith(`${path}/`)
+  );
+
+  if (isAuthPage && token) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 

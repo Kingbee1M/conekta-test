@@ -9,6 +9,7 @@ import { RiShiningLine } from "react-icons/ri";
 import { GoArrowRight } from "react-icons/go";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import {useRouter} from 'next/navigation'
 
 export default function LandingHero() {
     const frames = [hero, hero1, hero2];
@@ -20,6 +21,8 @@ export default function LandingHero() {
         }, 3000);
         return () => clearInterval(timer);
     }, [frames.length]);
+
+    const router = useRouter()
     return (
         <section className="w-full px-5 min-h-fit flex flex-col lg:flex-row items-center justify-between gap-48 lg:gap-0 py-10 lg:py-20 relative overflow-x-hidden overflow-y-hidden">
                 <div className="w-150 h-150 rounded-full absolute -z-30 bg-[#dbede1] -top-70 backdrop-blur-md -left-30" />
@@ -50,7 +53,9 @@ export default function LandingHero() {
                         <Button
                         title="Get Started"
                         rightSection={<GoArrowRight/>}
-                        color='white' />
+                        color='white'
+                        onClick={()=>router.push('/get-started')}
+                        />
 
                         <Button
                         variant="outline"

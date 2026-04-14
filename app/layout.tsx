@@ -40,7 +40,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} ${garamond.variable} ${poppins.variable} font-sans bg-background w-screen overflow-x-hidden`}>
+      <body className={`${montserrat.variable} ${garamond.variable} ${poppins.variable} font-sans bg-background w-screen overflow-x-hidden min-h-screen flex flex-col items-center justify-between`}>
         <StoreProvider>
           <ToastProvider>
           <div id="cookie-portal" />

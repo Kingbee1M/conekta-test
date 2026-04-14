@@ -3,12 +3,31 @@ import { useState } from "react"
 import { signupUser } from "@/shared/features/auth/auth.action"
 import { useAppDispatch } from "@/lib/hooks"
 import { signupTypes } from "@/types"
+import { useSearchParams } from "next/navigation"
+import TenantForm from "../components/ternantForm"
+import LordForm from "../components/lordForm"
+import ArtisanForm from "../components/artisanForm"
+import InvestorForm from "../components/investorForm"
+
+interface AuthFormProps {
+    email: string;
+    setEmail: (val: string) => void;
+    password: string;
+    setPassword: (val: string) => void;
+    name: string;
+    setName: (val: string) => void;
+    onSubmit: () => void;
+    role?: string | null;
+}
 
 export default function SignUp() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [name, setName] = useState("")
     const [error, setError] = useState('');
+
+    const searchParams = useSearchParams();
+    const role = searchParams.get('role');
     
     const dispatch = useAppDispatch();
 
@@ -29,39 +48,22 @@ export default function SignUp() {
         }
     };
 
+    const renderForm = () => {
+    switch (role) {
+        case 'lord':
+        return <LordForm email={email} setEmail={setEmail} onSubmit={handleFormSubmit} />;
+        case 'artisan':
+        return <ArtisanForm email={email} setEmail={setEmail} onSubmit={handleFormSubmit} />;
+        case 'inestor':
+        return <InvestorForm email={email} setEmail={setEmail} onSubmit={handleFormSubmit} />;
+        default:
+        return <TenantForm email={email} setEmail={setEmail} onSubmit={handleFormSubmit} />;
+    }
+}
+
     return (
-        <div className="flex flex-col items-center gap-7">
-            <h1>Sign Up</h1>
-
-            {error && <p className="text-red-500">{error}</p>}
-
-            {/* Use 'e.target.value' to capture what the user types */}
-            <input 
-                type="text" 
-                placeholder="name" 
-                value={name} 
-                onChange={(e) => setName(e.target.value)} 
-            />
-            <input 
-                type="email" 
-                placeholder="email" 
-                value={email} 
-                onChange={(e) => setEmail(e.target.value)} 
-            />
-            <input 
-                type="password" 
-                placeholder="password" 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
-            />
-            
-            {/* Call the function directly on click */}
-            <button 
-                className="bg-blue-500 p-2 text-white" 
-                onClick={handleFormSubmit}
-            >
-                Submit
-            </button>
-        </div>
+        <section className="min-h-screen flex items-center justify-center">
+            {renderForm()}
+        </section>
     )
 }
