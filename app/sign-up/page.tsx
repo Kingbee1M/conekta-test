@@ -51,13 +51,13 @@ export default function SignUp() {
     const renderForm = () => {
     switch (role) {
         case 'lord':
-        return <LordForm email={email} setEmail={setEmail} onSubmit={handleFormSubmit} />;
+        return <LordForm email={email} setEmail={setEmail} password={password} setPassword={setPassword} name={name} setName={setName} onSubmit={handleFormSubmit} />;
         case 'artisan':
-        return <ArtisanForm email={email} setEmail={setEmail} onSubmit={handleFormSubmit} />;
+        return <ArtisanForm email={email} setEmail={setEmail} password={password} setPassword={setPassword} name={name} setName={setName} onSubmit={handleFormSubmit} />;
         case 'inestor':
-        return <InvestorForm email={email} setEmail={setEmail} onSubmit={handleFormSubmit} />;
+        return <InvestorForm email={email} setEmail={setEmail} password={password} setPassword={setPassword} name={name} setName={setName} onSubmit={handleFormSubmit} />;
         default:
-        return <TenantForm email={email} setEmail={setEmail} onSubmit={handleFormSubmit} />;
+        return <TenantForm email={email} setEmail={setEmail} password={password} setPassword={setPassword} name={name} setName={setName} onSubmit={handleFormSubmit} />;
     }
 }
 
