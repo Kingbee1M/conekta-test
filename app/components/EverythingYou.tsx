@@ -22,7 +22,7 @@ export default function EverythingYou() {
             <h2 className="text-xl lg:text-3xl text-center">Everything You Need in One Platform</h2>
             <p className="text-sm lg:text-base">From property discovery to management, we&apos;ve built a complete ecosystem for your housing needs.</p>
 
-            <div className="grid grid-cols-2 grid-rows-2 w-full justify-between lg:grid-cols-[repeat(4,280px)] lg:grid-rows-1 gap-5 mt-10">
+            <div className="grid grid-cols-2 grid-rows-2 w-full justify-between lg:grid-cols-[repeat(4,300px)] lg:grid-rows-1 mt-10">
                 {needs.map((need, index) => (
                     <motion.div
                     ref={ref}
@@ -32,9 +32,9 @@ export default function EverythingYou() {
                     transition={{duration: 0.8, delay:1*index/2, ease: 'easeInOut'}}
                     className="relative overflow-clip group w-fit flex flex-col items-start justify-between gap-3 border-2 border-[#E5E5E5] hover:border-none rounded-lg px-4 py-3 lg:py-9 hover:shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1)]">
                         <div className="absolute left-0 -top-70 h-70 w-0 border-2 border-x-primary-green group-hover:translate-y-70 duration-200 group-hover:delay-0 ease-in-out delay-300" />
-                        <div className="absolute bottom-0 -left-70 h-0 w-70 border-2 border-y-primary-green group-hover:translate-x-70 duration-200 ease-in-out group-hover:delay-100 delay-200" />
+                        <div className="absolute bottom-0 -left-90 h-0 w-90 border-2 border-y-primary-green group-hover:translate-x-90 duration-200 ease-in-out group-hover:delay-100 delay-200" />
                         <div className="absolute right-0 -bottom-70 h-70 w-0 border-2 border-x-primary-green group-hover:-translate-y-70 duration-200 ease-in-out group-hover:delay-200 delay-100"  />
-                        <div className="absolute top-0 -right-70 h-0 w-70 border-2 border-y-primary-green group-hover:-translate-x-70 duration-200 ease-in-out group-hover:delay-300 delay-0" />
+                        <div className="absolute top-0 -right-90 h-0 w-90 border-2 border-y-primary-green group-hover:-translate-x-90 duration-200 ease-in-out group-hover:delay-300 delay-0" />
 
                         <p className='p-3 text-2xl rounded-lg' style={{backgroundColor: need.color, color: need.text}}>{need.icon}</p>
                         <h3 className="">{need.title}</h3>

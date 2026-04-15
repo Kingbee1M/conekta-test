@@ -7,9 +7,9 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastProvider } from "./components/ui/ToastProvider";
 import { Montserrat, Cormorant_Garamond, Poppins } from "next/font/google";
 import NavbarWrapper from "./components/ui/clientNav";
-import Footer from "./components/ui/footer";
 import NextProgress from "./components/ui/NextProgress";
 import { Suspense } from "react";
+import FooterWrapper from "./components/ui/clientFooter";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -50,11 +50,11 @@ export default function RootLayout({
       </Suspense>
           <NavbarWrapper />
 
-          <main className="w-full mt-10 lg:mt-16 overflow-x-hidden">
+          <main className="w-full max-w-360 mt-10 lg:mt-16">
             {children}
           </main>
 
-          <Footer />
+          <FooterWrapper />
           </ToastProvider>
 
           <CookieBanner />

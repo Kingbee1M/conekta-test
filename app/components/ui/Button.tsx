@@ -7,27 +7,24 @@ interface CustomButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement
   leftSection?: ReactNode;
   rightSection?: ReactNode;
   isLoading?: boolean;
-  color?: string; 
+  textClass?: string
 }
 
 const CustomButton = ({
   title,
   variant = 'primary',
   size = 'md',
-  color = 'white', // Default string color
   leftSection,
   rightSection,
   isLoading,
   className = '',
+  textClass = '',
   disabled,
   ...props
 }: CustomButtonProps) => {
 
-  // Logic to handle hex codes missing the '#'
-  const finalColor = /^[0-9A-F]{3,6}$/i.test(color) ? `#${color}` : color;
-
   const variants = {
-    primary: 'bg-[#257448] text-white hover:opacity-90 shadow-md text-white',
+    primary: 'bg-[#257448] text-white hover:bg-white hover:text-[#257448] shadow-md text-white',
     secondary: 'bg-[#DBFCE7] text-secondary-foreground hover:bg-secondary/80',
     outline: 'border border-border bg-transparent hover:bg-accent hover:text-accent-foreground',
     ghost: 'bg-transparent hover:bg-accent hover:text-accent-foreground',
@@ -44,7 +41,7 @@ const CustomButton = ({
 
   return (
     <button
-      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className} group`}
       disabled={disabled || isLoading}
       {...props}
     >
@@ -56,24 +53,21 @@ const CustomButton = ({
       {/* Left Section */}
       {!isLoading && leftSection && (
         <span 
-          className="mr-2 flex items-center text-xl" 
-          style={{ color: finalColor }} // This forces the "currentColor" of the icon
+          className={`mr-2 flex items-center text-xl ${textClass}`}
         >
           {leftSection}
         </span>
       )}
 
       {/* Button Text */}
-      <span 
-          style={{ color: finalColor }}>
+      <span className={`${textClass}`}>
         {title}
       </span>
 
       {/* Right Section */}
       {!isLoading && rightSection && (
         <p 
-          className="ml-2 flex items-center text-xl" 
-          style={{ color: finalColor }}
+          className={`ml-2 flex items-center text-xl ${textClass}`}
         >
           {rightSection}
         </p>

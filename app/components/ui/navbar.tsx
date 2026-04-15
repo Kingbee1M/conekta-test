@@ -19,8 +19,9 @@ export default function Navbar() {
         { title: 'List Property', link: '/list-property' },
     ]
     return (
-        <nav className={`
-        w-screen fixed top-0 left-0 z-40
+        <nav className=" w-screen fixed top-0 left-0 z-40 flex justify-center">
+        <section className={`
+        w-full max-w-360
         flex flex-col lg:flex-row lg:items-center lg:justify-between
         transition-all duration-300 ease-in-out
         pr-5 bg-white border-y border-gray-200 border-solid lg:py-8
@@ -63,6 +64,7 @@ export default function Navbar() {
                 </Link>
                 
             </div>
+        </section>
         </nav>
     )
 }

@@ -45,22 +45,22 @@ export default function CookieBanner() {
 
   const bannerContent = (
     <div className="fixed inset-0 z-9999 flex items-end justify-center p-6 pointer-events-none">
-      <div className="bg-gray-900 text-white p-6 rounded-lg shadow-2xl flex flex-col md:flex-row items-center gap-4 pointer-events-auto border border-gray-700 max-w-4xl w-full">
+      <div className="bg-white text-[#212121] p-6 rounded-lg shadow-2xl flex flex-col md:flex-row items-center gap-4 pointer-events-auto border border-primary-green max-w-4xl w-full">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold mb-1 text-white">Cookie Consent</h3>
-          <p className="text-sm text-gray-400">
+          <h3 className="text-lg font-semibold mb-1 text-[#212121]">Cookie Consent</h3>
+          <p className="text-sm text-[#212121]">
             We use cookies to ensure you get the best experience on **Emporium**. 
           </p>
         </div>
         <button 
           onClick={() => dispatch(acceptCookies())}
-          className="bg-blue-600 px-6 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium"
+          className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors font-medium"
         >
           Accept All
         </button>
         <button 
           onClick={declineCookie}
-          className="bg-red-600 px-6 py-2 rounded-md hover:bg-red-700 transition-colors font-medium"
+          className="bg-red-600 px-6 py-2 text-white rounded-md hover:bg-red-700 transition-colors font-medium"
         >
           Decline
         </button>

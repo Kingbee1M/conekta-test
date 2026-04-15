@@ -17,6 +17,7 @@
   --color-secondary-green: #DBFCE7;
   --color-text-primary: #262626;
   --color-tertiary-green: #009966;
+  --color-new-green: #00B075;
 }
 
 @theme inline {
@@ -154,8 +155,34 @@
      font-weight: 700;
   }
 
-  p, input, button, span, a, textArea {
+  p, input, button, span, a, textArea, label {
     font-family: var(--font-montserrat);
     color: #4a5565;
   }
+}
+
+.inputDiv {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 8 5px;
+  background-color: #F3F3F5;
+}
+
+.outerDiv {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inputTag {
+  width: 100%;
+  padding: 0 8px;
+  border: none;
+}
+
+.icons {
+  font-size: 18px;
+  color: #F3F3F5;
 }
