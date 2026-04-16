@@ -7,10 +7,10 @@ import Link from "next/link";
 import { GoArrowRight } from "react-icons/go";
 import { useState } from "react";
 import { StaticImageData } from "next/image";
-import tenantImg from '../../public/jpg/ternant.jpg'
-import landlordImg from '../../public/jpg/landlord.jpg'
-import investorImg from '../../public/jpg/investor.jpg'
-import artisanImg from '../../public/jpg/artisan.jpg'
+import tenantImg from '../../public/webp/ternant.webp'
+import landlordImg from '../../public/webp/landlord.webp'
+import investorImg from '../../public/webp/investor.webp'
+import artisanImg from '../../public/webp/artisan.webp'
 
 export default function GetStarted () {
     const [activeBg, setActiveBg] = useState<StaticImageData | null>(null);
