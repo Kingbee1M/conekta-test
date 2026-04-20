@@ -1,3 +1,16 @@
+'use client'
+import Link from "next/link";
+import { MdOutlinePersonOutline } from "react-icons/md";
+import { CiMail } from "react-icons/ci";
+import { FiPhone } from "react-icons/fi";
+import { FiEyeOff, FiEye } from "react-icons/fi";
+import logo from '../../public/svg/logo-enhanced.svg'
+import Image from "next/image";
+import { useEffect } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { FaGoogle, FaFacebook } from "react-icons/fa";
+
+
 interface AuthFormProps {
     email: string;
     setEmail: (val: string) => void;
@@ -7,22 +20,108 @@ interface AuthFormProps {
     setName: (val: string) => void;
     onSubmit: () => void;
     role?: string | null;
+    setThemeColor: (color: string) => void;
 }
 
-export default function InvestorForm({ name, setName, email, setEmail, password, setPassword, onSubmit }: AuthFormProps) {
+export default function TenantForm({ 
+    name, setName, email, setEmail, password, setPassword, onSubmit, 
+    setThemeColor // Destructure the new function
+    }: AuthFormProps) {
+
+    useEffect(() => {
+        setThemeColor('#A93FFF'); // Tenant's green
+    }, [setThemeColor]);
     return (
-        <div className="flex flex-col gap-4 w-full max-w-md p-8 bg-white rounded-2xl shadow-sm border border-[#FC58001A]">
-            <h2 className="text-2xl font-bold text-[#FC5800]">Grow Your Business</h2>
-            <p className="text-gray-500 text-sm">Connect with property owners who need your skills.</p>
+        <div className="w-full max-w-md rounded-2xl bg-gray-400 p-1 shadow-sm relative group overflow-clip">
             
-            <input className="border p-3 rounded-lg" type="text" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} />
-            {/* You could add an extra field here for "Trade" (Plumber, Electrician, etc.) */}
-            <input className="border p-3 rounded-lg" type="email" placeholder="Work Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-            <input className="border p-3 rounded-lg" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <div className="absolute inset-x-0 -bottom-full h-full bg-[#A93FFF] z-10 
+            transition-all duration-700 ease-in-out 
+            group-hover:bottom-0"/>
+
+
+        <div className="w-full h-full bg-white rounded-[calc(1rem-2px)] flex flex-col justify-center items-center gap-2 py-8 px-6 relative z-20">
+            <Image src={logo} width={100} height={100} alt="logo" />
+            <h2 className="text-3xl font-bold text-[#A93FFF]">Create Account</h2>
+            <p className="text-gray-500 text-sm">Sign up as Investor</p>
+            <Link href='/get-started' className="text-[#A93FFF] text-sm hover:underline">Change role</Link>
             
-            <button onClick={onSubmit} className="bg-[#FC5800] text-white p-3 rounded-lg font-semibold hover:bg-[#e64f00] transition-colors">
-                Register as Artisan
+            <div className="outerDiv">
+                <label htmlFor="full_name">Full Name</label>
+                <div className="inputDiv">
+                    <MdOutlinePersonOutline/>
+                    <input className="inputTag" placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} />
+                </div>
+                
+            </div>
+            
+            <div className="outerDiv">
+                <label htmlFor="">Email Address</label>
+                <div className="inputDiv">
+                    <CiMail/>
+                    <input className="inputTag" placeholder="You@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
+                </div>
+                
+            </div>
+
+            <div className="outerDiv">
+                <label htmlFor="">Phone number</label>
+                <div className="inputDiv">
+                    <FiPhone/>
+                    <input className="inputTag" type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                </div>
+                
+            </div>
+
+            <div className="outerDiv">
+                <label htmlFor="">Password</label>
+                <div className="inputDiv">
+                    <input className="inputTag" type="password" placeholder="Create a strong password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <button>
+
+                    </button>
+                </div>
+                
+            </div>
+
+            <div className="outerDiv">
+                <label htmlFor="">Confirm Password</label>
+                <div className="inputDiv">
+                    <input className="inputTag" placeholder="Confirm your password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                    <button>
+
+                    </button>
+                </div>
+                
+            </div>
+
+            
+            <div className="w-full flex gap-3 items-center text-sm font-semibold my-3">
+                <Checkbox/>
+                <p>I agree to the <span className="text-[#A93FFF]">Terms of Service</span> and <span className="text-[#A93FFF]">Privacy Policy</span></p>
+            </div>
+            
+
+            <button onClick={onSubmit} className="w-full bg-[#A93FFF] text-white p-3 rounded-lg font-semibold hover:bg-[white] hover:text-[#A93FFF] hover:border-[0.5px] hover:border-[#A93FFF] transition-colors cursor-pointer">
+                Create Account
             </button>
+
+            <div className="w-full flex items-center gap-2">
+                    <hr className="w-full border-gray-500"/>
+                    <span className="w-full text-center text-sm">Or continue with</span>
+                    <hr className="w-full border-gray-500"/>
+            </div>
+                
+
+                <div className="flex justify-between w-full my-5">
+                    <Link href="/" className="flex items-center gap-2 cursor-pointer border border-gray-500 py-3 px-7"><FaGoogle/> Sign Google</Link>
+                    <Link href="/" className="flex items-center gap-2 cursor-pointer border border-gray-500 py-3 px-7"><FaFacebook/> Sign Facebook</Link>
+                </div>
+
+                <p className="text-sm">
+                    Already have an account? <span className="font-semibold text-[#A93FFF]">Sign in</span>
+                </p>
+
+            </div>
         </div>
     );
 }

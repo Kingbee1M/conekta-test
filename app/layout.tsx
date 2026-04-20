@@ -40,7 +40,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} ${garamond.variable} ${poppins.variable} font-sans bg-background w-screen overflow-x-hidden min-h-screen flex flex-col items-center justify-between`}>
+      <body className={`${montserrat.variable} ${garamond.variable} ${poppins.variable} font-sans bg-background w-screen overflow-x-hidden min-h-screen flex flex-col items-center justify-start`}>
         <StoreProvider>
           <ToastProvider>
           <div id="cookie-portal" />
@@ -50,7 +50,7 @@ export default function RootLayout({
       </Suspense>
           <NavbarWrapper />
 
-          <main className="w-full max-w-360 mt-10 lg:mt-16">
+          <main className="w-full max-w-360 10">
             {children}
           </main>
 

@@ -159,21 +159,42 @@
     font-family: var(--font-montserrat);
     color: #4a5565;
   }
+
+  label {
+    font-weight: 600;
+  }
+
+  input {
+    width: 100%;
+    padding: 0 8px;
+    border: none;
+  }
+
+  input:focus {
+    outline: none;
+  }
 }
 
 .inputDiv {
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 8 5px;
+  padding: 8px 10px;
   background-color: #F3F3F5;
+  border-radius: 7px;
+  border: 2px solid transparent; /* Add a transparent border to prevent "jumping" */
+  transition: border-color 0.2s ease;
+}
+
+.inputDiv:focus-within {
+  border: 2px solid gray;
 }
 
 .outerDiv {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
 }
 
 .inputTag {
