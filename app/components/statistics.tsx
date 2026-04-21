@@ -8,7 +8,7 @@ export default function Statistics () {
     { number: 2, suffix: 'B+', prefix: '₦', label: 'Transactions' },
     ];
     return (
-        <section className="w-full py-10 lg:py-20 bg-tertiary-green flex justify-around gap-10 px-2 lg:px-20 mt-10">
+        <section className="w-full py-10 md:py-20 bg-tertiary-green flex justify-around md:gap-10 px-2 md:px-20 my-10">
                 {stats.map((stat) => (
                 <div key={stat.label} className="flex flex-col items-center">
                 <Counter 
@@ -16,7 +16,7 @@ export default function Statistics () {
                     suffix={stat.suffix} 
                     prefix={stat.prefix} 
                 />
-                <p className="text-[#f1fcf5] opacity-80 text-base">{stat.label}</p>
+                <p className="text-[#f1fcf5] opacity-80 text-[10px] md:text-base">{stat.label}</p>
                 </div>
             ))}
             </section>

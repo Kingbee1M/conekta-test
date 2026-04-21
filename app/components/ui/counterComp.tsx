@@ -31,7 +31,7 @@ export default function Counter({ targetValue, suffix = "", prefix = "" }: Count
   }, [isInView, targetValue, count]);
 
   return (
-    <motion.p ref={ref} className="text-white text-sm lg:text-5xl font-bold">
+    <motion.p ref={ref} className="text-white text-sm md:text-3xl font-bold">
       {rounded}
     </motion.p>
   );

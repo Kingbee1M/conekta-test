@@ -1,4 +1,5 @@
 'use client'
+import dynamic from 'next/dynamic'
 import { useState, useEffect } from "react"
 import { signupUser } from "@/shared/features/auth/auth.action"
 import { useAppDispatch } from "@/lib/hooks"
@@ -9,13 +10,21 @@ import LordForm from "../components/lordForm"
 import ArtisanForm from "../components/artisanForm"
 import InvestorForm from "../components/investorForm"
 import { motion, useMotionValue, useSpring } from "framer-motion"
+import { IoChatbubble } from "react-icons/io5";
+import HelpPortal from "../components/ui/helpPortal"
 
 
 export default function SignUp() {
+    const HelpPortal = dynamic(() => import('../components/ui/helpPortal'), { 
+    ssr: false 
+})
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [confirmPassword, setConfirmPassword] = useState("")
     const [name, setName] = useState("")
+    const [phone, setPhone] = useState("")
     const [themeColor, setThemeColor] = useState("#00AC72");
+    const [isHelpOpen, setIsHelpOpen] = useState(false);
 
     const searchParams = useSearchParams();
     const role = searchParams.get('role');
@@ -48,7 +57,9 @@ export default function SignUp() {
         const userData: signupTypes = {
             name: name,
             email: email,
-            password: password
+            password: password,
+            phone: phone,
+            role: role || 'tenant'
         };
 
         const result = await dispatch(signupUser(userData));
@@ -64,7 +75,7 @@ export default function SignUp() {
     const renderForm = () => {
     // 1. This object contains everything the children need
     const auth = {
-        email, setEmail, password, setPassword, name, setName, 
+        email, setEmail, password, setPassword, name, setName, phone, setPhone, confirmPassword, setConfirmPassword,
         onSubmit: handleFormSubmit,
         setThemeColor // The "Shooter"
     };
@@ -108,6 +119,17 @@ export default function SignUp() {
             <div className="z-10 w-full flex justify-center">
                 {renderForm()}
             </div>
+
+                <HelpPortal 
+                isOpen={isHelpOpen} 
+                onClose={() => setIsHelpOpen(false)} 
+                themeColor={themeColor} 
+            />
+
+            <button className="fixed bottom-15 right-5 hidden md:block w-fit cursor-pointer z-30" onClick={() => setIsHelpOpen(!isHelpOpen)}>
+                <IoChatbubble className="text-7xl" style={{color: themeColor}}/>
+                <span className="absolute top-5 right-1 text-xs text-white font-bold">Need help?</span>
+            </button>
             
         </section>
     )

@@ -44,7 +44,7 @@ export default function Navbar() {
                 {navs.map((nav, index) => (
                     <li key={index} className=''>
                         <Link href={nav.link}
-                        className={`font-inter cursor-pointer hover:text-primary-green-hover text-sm lg-text-base
+                        className={`font-inter cursor-pointer hover:text-primary-green-hover text-xs lg-text-base
                         ${pathname === nav.link ? 'text-primary-green' : ''}`}>
                             {nav.title}
                         </Link> 
@@ -54,13 +54,13 @@ export default function Navbar() {
             
             <div className="flex items-center px-7 lg:px-0 gap-3 mt-4 lg:mt-0">
                 <Link href={'/notification'} className="relative w-fit p-2 hover:bg-gray-200 cursor-pointer rounded-md">
-                <div className="bg-red h-2 w-2 rounded-full absolute top-1 right-1 bg-red-500 "/>
-                    <IoIosNotificationsOutline className="text-2xl" />
+                <div className="bg-red h-1 w-1 rounded-full absolute top-1 right-1 bg-red-500 "/>
+                    <IoIosNotificationsOutline className="text-md" />
                 </Link>
                 
                 <Link href={'/profile'} className="relative w-fit p-2 hover:bg-gray-200 cursor-pointer rounded-md">
-                <div className="bg-red h-2 w-2 rounded-full absolute top-1 right-1 bg-red-500"/>
-                    <MdPersonOutline className="text-2xl cursor-pointer" />
+                <div className="bg-red h-1 w-1 rounded-full absolute top-1 right-1 bg-red-500"/>
+                    <MdPersonOutline className="text-md cursor-pointer" />
                 </Link>
                 
             </div>

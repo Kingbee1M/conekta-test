@@ -162,12 +162,14 @@
 
   label {
     font-weight: 600;
+    font-size: 14px;
   }
 
   input {
     width: 100%;
     padding: 0 8px;
     border: none;
+    font-size: 12px;
   }
 
   input:focus {
@@ -195,6 +197,7 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
+  margin-bottom: 10px;
 }
 
 .inputTag {
@@ -206,4 +209,21 @@
 .icons {
   font-size: 18px;
   color: #F3F3F5;
+}
+
+.chat-bubble-tail {
+  position: relative;
+}
+
+.chat-bubble-tail::after {
+  content: '';
+  position: absolute;
+  bottom: -5px; /* Adjust to move tail up/down */
+  right: 15px;  /* Adjust to move tail left/right */
+  width: 20px;
+  height: 20px;
+  background: inherit; /* Matches the button's gradient/color */
+  clip-path: polygon(0 0, 100% 0, 100% 100%); /* Creates the triangle shape */
+  transform: rotate(45deg);
+  z-index: -1; /* Keeps it behind the button border if needed */
 }

@@ -36,7 +36,7 @@ export default function Footer() {
                                     <li key={label} className="text-gray-600 hover:text-primary-green transition-colors text-sm">
                                     {/* Check if it's a route or contact info */}
                                     {value.startsWith('/') ? (
-                                        <Link href={value} className="text-white hover:text-primary-green">{label}</Link>
+                                        <Link href={value} className="text-white hover:text-primary-green text-xs">{label}</Link>
                                     ) : (
                                         <div className="flex items-center gap-2 text-primary-green">
                                         {/* Render specific icons based on the label */}

@@ -32,16 +32,16 @@ const CustomButton = ({
   };
 
   const sizes = {
-    sm: 'px-3 py-1.5 text-xs rounded-sm',
-    md: 'px-3 lg:px-5 py-2 lg:py-2.5 text-sm rounded-md',
-    lg: 'px-8 py-3 text-base rounded-lg',
+    sm: 'py-1.5 text-xs rounded-sm',
+    md: 'py-2 lg:py-2.5 text-sm rounded-md',
+    lg: 'py-3 text-base rounded-lg',
   };
 
   const baseStyles = 'inline-flex items-center justify-center font-medium transition-all active:scale-95 disabled:pointer-events-none disabled:opacity-50 font-poppins cursor-pointer truncate';
 
   return (
     <button
-      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className} group`}
+      className={`${baseStyles} ${variants[variant]} ${className} ${sizes[size]}  group`}
       disabled={disabled || isLoading}
       {...props}
     >

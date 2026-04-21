@@ -7,9 +7,12 @@ import { useRouter } from "next/navigation"
 import { useToast } from "../components/ui/ToastProvider"
 import Image from "next/image"
 import logo from '../../public/svg/logo-enhanced.svg'
+import { CiMail, CiLock} from "react-icons/ci";
+import Link from "next/link"
+import { FaGoogle, FaFacebook } from "react-icons/fa";
 
-const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-await delay(5000);
+// const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+// await delay(5000);
 export default function Login() {
     
     const [email, setEmail] = useState("")
@@ -50,39 +53,53 @@ export default function Login() {
     };
     
     return (
-        <section className="flex flex-col justify-center items-center gap-7 bg-linear-to-br from-[#EDFDF5] via-[#EDFDF5] h-screen  to-white">
+        <section className="flex flex-col justify-center min-h-screen items-center gap-7 bg-linear-to-br from-[#EDFDF5] via-[#EDFDF5] h-screen  to-white">
 
-            <form className="p-5 w-full max-w-120 items-center border-gray-300 rounded-lg border-2 border-solid bg-white flex flex-col gap-4">
+            <form 
+            onSubmit={handleSubmit}
+            className="py-5 px-7 w-full min-h-[50vh] overflow-y-auto max-w-90 items-center border-gray-300 rounded-lg border-2 border-solid bg-white flex flex-col gap-1">
                 
                 <Image src={logo} width={100} height={100} alt="logo" className="w-30" />
 
                 <h1>Welcome Back</h1>
 
-                <p>Sign in to your Conekta account</p>
+                <p className="mb-5">Sign in to your Conekta account</p>
 
                 
-
-                <div className="outerDiv">
-                    <label>Email</label>
+                <div className="outerDiv mb-4">
+                    <label className="text-xs" htmlFor="email">Email</label>
                     <div className="inputDiv">
-                        <input type="text" placeholder="email" value={email} onChange={(e)=>setEmail(e.target.value)} className="textInput" />
+                        <CiMail/>
+                        <input type="text" id="email" placeholder="email" value={email} onChange={(e)=>setEmail(e.target.value)} className="textInput" />
                     </div>
                 </div>
 
-                <div className="outerDiv">
-                    <label>Password</label>
+                <div className="outerDiv mb-4">
+                    <label className="text-xs" htmlFor="password">Password</label>
                     <div className="inputDiv">
-                        <input type="text" placeholder="password" value={password} onChange={(e)=>setPassword(e.target.value)} />
+                        <CiLock/>
+                        <input type="text" id="password" placeholder="password" value={password} onChange={(e)=>setPassword(e.target.value)} />
                     </div>
                 </div>
                 
                 
                 <button 
-                    className="bg-blue-500 p-2 text-white" 
-                    onClick={()=>handleSubmit()}
-                >
-                    Submit
+                type="submit"
+                className="w-full my-3 bg-[#00AC72] text-white px-3 py-1 rounded-lg font-semibold hover:bg-[white] hover:text-[#008f5d] border-[0.5px] hover:border-[#008f5d] transition-colors cursor-pointer">
+                    Sign in
                 </button>
+
+                <div className="w-full flex items-center gap-2 my-2">
+                    <hr className="flex-1 md:w-full border-gray-500"/>
+                    <span className="w-fit text-center text-sm">Or continue with</span>
+                    <hr className="flex-1 md:w-full border-gray-500"/>
+                </div>
+                    
+
+                <div className="flex justify-evenly md:justify-between w-full my-3">
+                    <Link href="/" className="flex items-center gap-2 cursor-pointer border border-gray-500 py-3 w-[45%] justify-center rounded-xl text-xs md:text-sm font-bold px-3"><FaGoogle/>Google</Link>
+                    <Link href="/" className="flex items-center gap-2 cursor-pointer border border-gray-500 py-3 w-[45%] justify-center rounded-xl text-xs md:text-sm font-bold px-3"><FaFacebook/>Facebook</Link>
+                </div>
             </form>
             
         </section>

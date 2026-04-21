@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import './globals.css'
 import StoreProvider from "@/lib/storeProvider";
 import CookieBanner from "./components/ui/cookieBanner";
 import DevStorageTool from "./components/ui/DevStorageTool";
@@ -40,17 +40,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} ${garamond.variable} ${poppins.variable} font-sans bg-background w-screen overflow-x-hidden min-h-screen flex flex-col items-center justify-start`}>
+      <body className={`${montserrat.variable} ${garamond.variable} ${poppins.variable} w-full max-w-screen flex flex-col items-center justify-center overflow-x-hidden`}>
         <StoreProvider>
           <ToastProvider>
           <div id="cookie-portal" />
+          <div id="help-portal" />
 
           <Suspense fallback={null}>
         <NextProgress />
       </Suspense>
           <NavbarWrapper />
 
-          <main className="w-full max-w-360 10">
+          <main className="w-full max-w-360 flex-1 flex-col items-center justify-center ">
             {children}
           </main>
 

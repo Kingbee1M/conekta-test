@@ -117,7 +117,7 @@ export default function EverythingYou() {
                     From property discovery to management, we&apos;ve built a complete ecosystem for your housing needs.
                 </motion.p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mt-12 gap-6 w-full">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[220px_220px_220px_220px] md:grid-rows-[] mt-12 gap-6 md:justify-evenly w-full">
                     {needs.map((need, index) => (
                         <motion.div
                             ref={ref}
@@ -125,7 +125,7 @@ export default function EverythingYou() {
                             initial={{ y: 50, opacity: 0 }}
                             animate={isInView ? { y: 0, opacity: 1 } : {}}
                             transition={{ duration: 0.8, delay: index * 0.1 }}
-                            className={`relative group flex flex-col items-start gap-4 rounded-xl px-6 py-10 transition-all duration-700 border ${
+                            className={`relative group flex flex-col items-start gap-4 rounded-xl px-3 py-5 transition-all duration-700 border ${
                                 isHovered 
                                 ? 'bg-white/5 border-white/10 backdrop-blur-sm shadow-2xl' 
                                 : 'bg-white border-gray-200 shadow-sm'

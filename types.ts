@@ -2,7 +2,8 @@ export type signupTypes = {
     name: string;
     email: string;
     password: string;
-    avatar?: string;
+    phone: string,
+    role: string
 }
 
 export type loginTypes = {

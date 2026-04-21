@@ -19,11 +19,12 @@ export default function BuiltSecurity() {
     ]
 
     return (
-        <section className="px-5 grid grid-cols-1 grid-rows-1 gap-y-10 lg:grid-cols-2 gap-5 mt-12 items-center w-full">
-            <div className="flex flex-col items-center lg:items-start gap-7 w-full">
-                <h2 className="text-2xl lg:text-left lg:text-4xl font-bold">Built on Trust & Security</h2>
-                <p className="text-center w-full lg:text-left">We prioritize your safety with verified listings, secure payments, and transparent processes.</p>
+        <section className="px-5 w-full flex flex-col my-16 gap-8">
 
+            <h2 className="text-2xl lg:text-left lg:text-3xl font-bold">Built on Trust & Security</h2>
+                <p className="text-center w-full text-xs md:text-sm lg:text-left">We prioritize your safety with verified listings, secure payments, and transparent processes.</p>
+           <div className="grid grid-cols-1 grid-rows-1 gap-y-10 lg:grid-cols-2 gap-5 mt-5 items-center w-full">
+            <div className="flex flex-col items-center lg:items-start gap-7 w-full">
                 {feats.map((feat, index) => (
                     <motion.div
                         key={feat.title}
@@ -38,13 +39,13 @@ export default function BuiltSecurity() {
                             transition: { type: "spring", stiffness: 400, damping: 17 }
                         }}
                     >
-                        <p className="p-3 bg-[#D0FAE5] text-tertiary-green rounded-md text-xl z-10">{feat.icon}</p>
+                        <p className="p-3 bg-[#D0FAE5] text-tertiary-green rounded-md text-base z-10">{feat.icon}</p>
                         <div className="z-10">
-                            <h3 className="font-semibold">{feat.title}</h3>
-                            <p className="text-sm text-gray-600">{feat.desc}</p>
+                            <h3 className="font-semibold text-base">{feat.title}</h3>
+                            <p className="md:text-sm text-gray-600 text-xs">{feat.desc}</p>
                         </div>
 
-                        {/* 3. The Animated Bar */}
+                        {/* the Animated Bar */}
                         <motion.div
                             className="absolute bottom-0 left-0 h-1 bg-green-500"
                             initial={{ width: 0 }}
@@ -59,7 +60,7 @@ export default function BuiltSecurity() {
                 ))}
             </div>
 
-            {/* 4. The Image Container with Mouse Watchers */}
+            {/* the Image Container with Mouse Watchers */}
             <motion.div
                 ref={ref}
                 onMouseEnter={() => setIsImageHovered(true)}
@@ -78,6 +79,7 @@ export default function BuiltSecurity() {
                     className="w-full rounded-2xl shadow-2xl shadow-black/20"
                 />
             </motion.div>
+            </div>
         </section>
     )
 }
