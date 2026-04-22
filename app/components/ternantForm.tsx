@@ -37,7 +37,7 @@ export default function TenantForm({
         setThemeColor('#00AC72'); // Tenant's green
     }, [setThemeColor]);
     return (
-        <div className="w-full max-w-md rounded-2xl bg-gray-400 p-1 shadow-sm relative group overflow-clip">
+        <div className="w-full max-w-md rounded-2xl bg-white md:bg-gray-400 p-1 shadow-sm relative group overflow-clip">
             
             <div className="absolute inset-x-0 -bottom-full h-full bg-[#00AC72] z-10 
             transition-all duration-700 ease-in-out 

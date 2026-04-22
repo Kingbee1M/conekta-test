@@ -101,13 +101,12 @@ export default function GetStarted () {
                     return(
                     <div 
                         key={opt.role}
-                        // CRITICAL: Re-add these two lines to make the colors change!
                         onMouseEnter={() => setActiveColor(opt.color)}
                         onMouseLeave={() => setActiveColor("#00AC72")} 
-                        className={`max-w-150 shadow-md py-5 px-9 rounded-xl bg-white/80 backdrop-blur-sm flex flex-col gap-5 relative overflow-clip group border-2 transition-all duration-300
+                        className={`max-w-70 md:max-w-150 shadow-md py-2 md:py-5 px-3 md:px-9 rounded-xl bg-white/80 backdrop-blur-sm flex flex-col gap-5 relative overflow-clip group border-2 transition-all duration-300
                         ${ternant ? 'border-[#00ac738c] hover:border-[#00AC72]' : lord ? 'border-[#2476FF8c] hover:border-[#2476FF]' : investor ? 'border-[#9E25FE8c] hover:border-[#9E25FE]' : 'border-[#FC58008c] hover:border-[#FC5800]'}`}>
                         
-                        {/* ... (rest of your card content) */}
+                        {/* (rest of your card content) */}
                         <span className={`w-12 h-12 text-white flex justify-center items-center text-2xl rounded-xl
                         ${ternant ? 'bg-[#00AC72]' : lord ? 'bg-[#2476FF]' : investor ? 'bg-[#9E25FE]' : 'bg-[#FC5800]'}`}>{opt.icon}</span>
                         <h2 className="text-xl font-bold">{opt.title}</h2>
@@ -126,7 +125,7 @@ export default function GetStarted () {
 
                         <Link 
                             href={`${opt.link}?role=${opt.role}`} 
-                            className="flex items-center gap-2 font-bold transition-all hover:gap-3"
+                            className="flex items-center gap-2 font-bold transition-all hover:gap-3 text-sm"
                             style={{ color: opt.color }}
                         >
                             Get started <GoArrowRight/>

@@ -19,7 +19,7 @@ export default function BuiltSecurity() {
     ]
 
     return (
-        <section className="px-5 w-full flex flex-col my-16 gap-8">
+        <section className="px-5 w-full flex flex-col my-16 gap-8 overflow-x-clip">
 
             <h2 className="text-2xl lg:text-left lg:text-3xl font-bold">Built on Trust & Security</h2>
                 <p className="text-center w-full text-xs md:text-sm lg:text-left">We prioritize your safety with verified listings, secure payments, and transparent processes.</p>

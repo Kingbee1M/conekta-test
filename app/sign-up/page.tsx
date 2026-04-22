@@ -9,7 +9,7 @@ import TenantForm from "../components/ternantForm"
 import LordForm from "../components/lordForm"
 import ArtisanForm from "../components/artisanForm"
 import InvestorForm from "../components/investorForm"
-import { motion, useMotionValue, useSpring } from "framer-motion"
+import {motion, useAnimation, useMotionValue, useSpring, PanInfo} from "framer-motion"
 import { IoChatbubble } from "react-icons/io5";
 import HelpPortal from "../components/ui/helpPortal"
 
@@ -18,6 +18,36 @@ export default function SignUp() {
     const HelpPortal = dynamic(() => import('../components/ui/helpPortal'), { 
     ssr: false 
 })
+
+
+    const helpButtonControls = useAnimation();
+
+    // We type the 'info' parameter as PanInfo, and 'event' as PointerEvent | MouseEvent | TouchEvent
+    const handleDragEnd = (
+        event: MouseEvent | TouchEvent | PointerEvent, 
+        info: PanInfo
+    ) => {
+        const screenWidth = window.innerWidth;
+        
+        // 'info.point.x' is the absolute position on the screen
+        const finalX = info.point.x;
+
+        if (finalX < screenWidth / 2) {
+            // Snap to the left
+            // We calculate the distance to move left based on screen width
+            helpButtonControls.start({ 
+                x: -(screenWidth - 80), 
+                transition: { type: "spring", stiffness: 250, damping: 25 } 
+            });
+        } else {
+            // Snap back to the original right-5 position
+            helpButtonControls.start({ 
+                x: 0, 
+                transition: { type: "spring", stiffness: 250, damping: 25 } 
+            });
+        }
+    };
+
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
@@ -82,55 +112,76 @@ export default function SignUp() {
 
     switch (role) {
         case 'landlord':
-            return <LordForm {...auth} />; // Use the spread operator (...)
+            return <LordForm {...auth} />; 
         case 'artisan':
             return <ArtisanForm {...auth} />;
-        case 'investor': // Fixed typo "inestor"
+        case 'investor':
             return <InvestorForm {...auth} />;
         default:
-            return <TenantForm {...auth} />; // Pass 'auth', not 'AuthFormProps'
+            return <TenantForm {...auth} />;
     }
 }
 
     return (
-        <section className="min-h-screen h-full flex items-center justify-center bg-white py-10">
-            
-            <motion.div 
-    className="pointer-events-none absolute z-0 opacity-50"
-    style={{
-        x: shadowX,
-        y: shadowY,
-        translateX: "-50%",
-        translateY: "-50%",
-    }}
->
-    <div 
-        className="h-125 w-125 rounded-full blur-[120px] transition-colors duration-700" 
-        style={{ backgroundColor: themeColor }} // Use the state here!
-    />
-</motion.div>
-
-
-
-            
-            <div className="absolute inset-0 z-0 opacity-[0.03] bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-size-[40px_40px]" />
-
-            
-            <div className="z-10 w-full flex justify-center">
-                {renderForm()}
-            </div>
-
-                <HelpPortal 
-                isOpen={isHelpOpen} 
-                onClose={() => setIsHelpOpen(false)} 
-                themeColor={themeColor} 
+    <section className="min-h-screen h-full flex items-center justify-center bg-white py-10">
+        
+        {/* 1. DYNAMIC MOUSE-TRACKING BLOB */}
+        {/* This is the large colorful circle that follows your cursor. 
+            It uses the 'themeColor' state to change colors based on the active form. */}
+        <motion.div 
+            className="pointer-events-none absolute z-0 opacity-50"
+            style={{
+                x: shadowX,
+                y: shadowY,
+                translateX: "-50%",
+                translateY: "-50%",
+            }}
+        >
+            <div 
+                className="h-125 w-125 rounded-full blur-[120px] transition-colors duration-700 hidden md:flex" 
+                style={{ backgroundColor: themeColor }}
             />
+        </motion.div>
 
-            <button className="fixed bottom-15 right-5 hidden md:block w-fit cursor-pointer z-30" onClick={() => setIsHelpOpen(!isHelpOpen)}>
-                <IoChatbubble className="text-7xl" style={{color: themeColor}}/>
-                <span className="absolute top-5 right-1 text-xs text-white font-bold">Need help?</span>
-            </button>
-            
-        </section>
-    )
+        {/* 2. BACKGROUND GRID PATTERN */}
+        {/* This creates that subtle "blueprint" or "graph paper" look. 
+            The opacity is very low (0.03) so it doesn't distract from the form. */}
+        <div className="absolute inset-0 z-0 opacity-[0.03] bg-[linear-gradient(to_right,#808080_1px,transparent_1px),linear-gradient(to_bottom,#808080_1px,transparent_1px)] bg-size-[40px_40px]" />
+
+        {/* 3. THE FORM CONTAINER */}
+        {/* This renders the specific form (Tenant, Lord, Artisan, etc.) 
+            based on the 'role' parameter in your URL. */}
+        <div className="z-10 w-full flex justify-center">
+            {renderForm()}
+        </div>
+
+        {/* 4. HELP PORTAL MODAL */}
+        {/* This is the dimmed overlay that appears when 'isHelpOpen' is true. */}
+        <HelpPortal 
+            isOpen={isHelpOpen} 
+            onClose={() => setIsHelpOpen(false)} 
+            themeColor={themeColor} 
+        />
+
+        {/* 5. FLOATING HELP TRIGGER BUTTON */}
+        {/* The chat bubble icon at the bottom right. 
+            The color and border will match the current theme color. */}
+        <motion.button 
+            drag // Allows movement in all directions
+            // Keep the constraints so they don't drag it behind the header or off the bottom
+            dragConstraints={{ left: -(window.innerWidth - 80), right: 0, top: -600, bottom: 0 }}
+            animate={helpButtonControls}
+            onDragEnd={handleDragEnd}
+            whileTap={{ scale: 0.9 }}
+            className="fixed bottom-15 right-5 w-fit cursor-pointer z-30 touch-none" 
+            onClick={() => setIsHelpOpen(!isHelpOpen)}
+        >
+            <IoChatbubble className="text-6xl md:text-7xl" style={{color: themeColor}}/>
+            <span className="absolute top-4 md:top-5 right-1 text-[10px] md:text-xs text-white font-bold select-none">
+                Need help?
+            </span>
+        </motion.button>
+        
+    </section>
+)
 }
