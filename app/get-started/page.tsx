@@ -66,8 +66,8 @@ export default function GetStarted () {
     }, [mouseX, mouseY]);
 
     const options = [
-        {icon: <FiHome/>, title: 'Renter / Buyer', desc: 'Find your perfect home with flexible payment options', points: ['Browse Properties', 'Virtual Tours', 'Flexible Payments', 'Property Management',], link: '/sign-up', role: 'tenant', color: '#00AC72'},
-        {icon: <TbBuildingSkyscraper/>, title: 'Property Owner / Developer', desc: 'List and manage your properties efficiently', points: ['List Properties','Tenant Management','Analytics Dashboard','Secure Payments',], link: '/sign-up', role: 'landlord', color: '#2476FF'},
+        {icon: <FiHome/>, title: 'Renter / Buyer', desc: 'Find your perfect home with flexible payment options', points: ['Browse Properties', 'Virtual Tours', 'Flexible Payments', 'Property Management',], link: '/sign-up', role: 'customer', color: '#00AC72'},
+        {icon: <TbBuildingSkyscraper/>, title: 'Property Owner / Developer', desc: 'List and manage your properties efficiently', points: ['List Properties','Tenant Management','Analytics Dashboard','Secure Payments',], link: '/sign-up', role: 'lister', color: '#2476FF'},
         {icon: <GrLineChart/>, title: 'Fractional Investor', desc: 'Start investing in real estate from ₦500,000', points: ['Browse Investments', 'Portfolio Tracking', 'Monthly Returns', 'Low Entry Cost',], link: '/sign-up', role: 'investor', color: '#9E25FE'},
         {icon: <LuHammer/>, title: 'Artisan / Service Provider', desc: 'Connect with property owners and renters', points: ['Get Job Requests', 'Build Portfolio', 'Secure Payments', 'Customer Reviews',], link: '/sign-up', role: 'artisan', color: '#FC5800'},
     ]

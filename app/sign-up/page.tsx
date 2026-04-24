@@ -11,15 +11,14 @@ import ArtisanForm from "../components/artisanForm"
 import InvestorForm from "../components/investorForm"
 import {motion, useAnimation, useMotionValue, useSpring, PanInfo} from "framer-motion"
 import { IoChatbubble } from "react-icons/io5";
-import HelpPortal from "../components/ui/helpPortal"
-
+import { useRouter } from 'next/router'
 
 export default function SignUp() {
     const HelpPortal = dynamic(() => import('../components/ui/helpPortal'), { 
     ssr: false 
 })
 
-
+    const router = useRouter()
     const helpButtonControls = useAnimation();
 
     // We type the 'info' parameter as PanInfo, and 'event' as PointerEvent | MouseEvent | TouchEvent
@@ -55,7 +54,7 @@ export default function SignUp() {
     const [phone, setPhone] = useState("")
     const [themeColor, setThemeColor] = useState("#00AC72");
     const [isHelpOpen, setIsHelpOpen] = useState(false);
-
+    const [isLoading, setIsLoading] = useState(false);
     const searchParams = useSearchParams();
     const role = searchParams.get('role');
     
@@ -84,23 +83,38 @@ export default function SignUp() {
     // mouse tracking ends
 
     const handleFormSubmit = async () => {
-        const userData: signupTypes = {
-            name: name,
-            email: email,
-            password: password,
-            phone: phone,
-            role: role || 'tenant'
-        };
+    // 1. Prevent duplicate submissions
+    if (isLoading) return;
+    
+    setIsLoading(true);
 
-        const result = await dispatch(signupUser(userData));
-        
-        if (result.success) {
-            console.log('hey')
-        } else {
-            console.log(result);
-            //setError(result.error);
-        }
+    const userData: signupTypes = {
+        name: name,
+        email: email,
+        password: password,
+        phone: phone,
+        role: role || 'lister' // Ensure this matches the API "lister" requirement
     };
+
+    // 2. Await the action result
+    const result = await dispatch(signupUser(userData));
+    
+    setIsLoading(false);
+
+    if (result.success) {
+        // 3. Handle Success
+        // Assuming you have a toast library or just using alert for now
+        alert('Registration successful! Please check your email to verify your account.');
+        
+        // Redirect to the login or a "check your email" page
+        router.push('/log-in'); 
+    } else {
+        // 4. Handle Error
+        // This 'result.error' is the message we caught in the action's catch block
+        // alert(result.error || 'Something went wrong. Please try again.');
+        // console.error('Signup failed:', result.error);
+    }
+};
 
     const renderForm = () => {
     // 1. This object contains everything the children need

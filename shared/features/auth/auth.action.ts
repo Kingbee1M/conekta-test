@@ -46,17 +46,25 @@ export const loginUser = (credentials: loginTypes) => async (dispatch: AppDispat
   }
 };
 
-export const signupUser = (credentials: signupTypes) => async () => {
+export const signupUser = (frontendData: signupTypes) => async () => {
   try {
+    const [first_name, ...lastNames] = frontendData.name.trim().split(/\s+/);
+    const last_name = lastNames.join(" ") || " ";
+
+    const apiPayload = {
+      first_name,
+      last_name,
+      email: frontendData.email,
+      phone_number: frontendData.phone,
+      password: frontendData.password,
+      role: frontendData.role 
+    };
+
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(credentials)
+      body: JSON.stringify(apiPayload)
     });
-    const contentType = response.headers.get("content-type");
-    if (!contentType || !contentType.includes("application/json")) {
-      throw new Error("Server did not return JSON. Check if the backend is running.");
-    }
 
     const data = await response.json();
 
@@ -67,10 +75,21 @@ export const signupUser = (credentials: signupTypes) => async () => {
     return { success: true, data };
 
   } catch (error: unknown) {
-    const err = error as errorType; 
-    return { 
-      success: err.success, 
-      error: err.error || "An unknown error occurred" 
+    // 1. Define a default error object using your type
+    const errorResponse: errorType = {
+      success: false,
+      error: "An unknown error occurred"
     };
+
+    // 2. Check if the error is a standard Error object
+    if (error instanceof Error) {
+      errorResponse.error = error.message;
+    } 
+    // 3. Handle cases where the backend sends a specific object
+    else if (typeof error === 'object' && error !== null && 'message' in error) {
+       errorResponse.error = String((error as { message: string }).message);
+    }
+
+    return errorResponse;
   }
 };

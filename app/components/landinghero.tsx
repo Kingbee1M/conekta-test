@@ -28,7 +28,7 @@ export default function LandingHero() {
             
             <div className='w-full max-w-360  flex flex-col lg:flex-row items-center justify-between gap-48 md:gap-0 py-10 md:py-5 md:px-6'>
             {/* Left Section */}
-                <div className="w-[55%] flex items-start flex-col gap-8 px-4 md:px-0">
+                <div className="w-full md:w-[55%] flex items-start flex-col gap-8 px-4 md:px-0">
                     <div className="flex items-center bg-secondary-green py-1 px-2 rounded-xl gap-2 text-xs ml-5">
                         <Image src={img} alt="house" width={400} height={400} className="w-5"/> 
                         <p>Building Connected Communities</p>
@@ -51,7 +51,7 @@ export default function LandingHero() {
                         <div className="flex items-center gap-5 md:gap-2">
                             <Button
                             title="Get Started"
-                            className='px-6 md:px-4'
+                            className='px-2 md:px-4'
                             rightSection={<GoArrowRight/>}
                             onClick={()=>router.push('/get-started')}
                             textClass='text-white group-hover:text-[#257448]'
@@ -59,7 +59,7 @@ export default function LandingHero() {
 
                             <Button
                             variant="outline"
-                            className='px-6 md:px-4'
+                            className='px-2 md:px-4'
                             title="Browse Property"
                             color='black'
                             rightSection={<GoArrowRight/>} />

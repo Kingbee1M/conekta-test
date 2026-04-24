@@ -12,8 +12,8 @@ export type loginTypes = {
 }
 
 export type errorType = {
-    error: string,
-    success: string
+    error: string;
+    success: boolean; // Changed to boolean to match your logic
 }
 
 export type usertype = {
@@ -40,3 +40,22 @@ export type userInfoType = {
     user: usertype
     product: productType[]
 }
+
+// types.ts
+// export type SignupResult = 
+//   | { success: true; data: any } 
+//   | { success: false; error: string };
+
+// export type userData = {
+
+//   uuid: string,
+//   email: string,
+//   profile: Profile
+//   roles: string [customer, lister]
+// }
+
+// export type Profile = {
+//     first_name: string,
+//     last_name: string,
+//     phone_number: string
+// }
