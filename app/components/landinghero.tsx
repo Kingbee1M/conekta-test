@@ -24,7 +24,7 @@ export default function LandingHero() {
 
     const router = useRouter()
     return (
-        <section className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen flex justify-center px-5 min-h-fit bg-linear-to-br from-[#ECFDF5] to-white pt-50 overflow-x-clip">
+        <section className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen flex justify-center px-5 min-h-fit bg-linear-to-br from-[#ECFDF5] to-white pt-15 md:pt-30 overflow-x-clip">
             
             <div className='w-full max-w-360  flex flex-col lg:flex-row items-center justify-between gap-48 md:gap-0 py-10 md:py-5 md:px-6'>
             {/* Left Section */}
