@@ -26,7 +26,7 @@ export default function LandingHero() {
     return (
         <section className="relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen flex justify-center px-5 min-h-fit bg-linear-to-br from-[#ECFDF5] to-white pt-15 md:pt-30 overflow-x-clip">
             
-            <div className='w-full max-w-360  flex flex-col lg:flex-row items-center justify-between gap-48 md:gap-0 py-10 md:py-5 md:px-6'>
+            <div className='w-full max-w-360  flex flex-col lg:flex-row items-start justify-between gap-48 md:gap-0 py-10 md:py-5 md:px-6'>
             {/* Left Section */}
                 <div className="w-full md:w-[55%] flex items-start flex-col gap-8 px-4 md:px-0">
                     <div className="flex items-center bg-secondary-green py-1 px-2 rounded-xl gap-2 text-xs ml-5">
@@ -69,21 +69,34 @@ export default function LandingHero() {
 
 
                 <div className="w-full max-w-100  relative">
-                    <p 
+                    <motion.p 
+                    animate={{ y: [0, -15, 0] }}
+                    transition={{ 
+                        duration: 4, 
+                        repeat: Infinity, 
+                        ease: "easeInOut" 
+                    }}
                     className="absolute bg-white p-4 text-base lg:text-3xl z-20 flex flex-col
                     text-primary-green font-bold w-25 lg:w-41 rounded-lg -top-10 right-0">
                             20,000+ 
                         <span className="text-[10px] lg:text-xs text-text-primary">
                             Happy Users
                         </span>
-                    </p>
-                    <p className="absolute bg-white p-4 text-base lg:text-3xl z-20 flex flex-col
+                    </motion.p>
+                    <motion.p 
+                    animate={{ y: [0, -15, 0] }}
+                    transition={{ 
+                        duration: 4, 
+                        repeat: Infinity, 
+                        ease: "easeInOut",
+                        delay: 1 
+                    }} className="absolute bg-white p-4 text-base lg:text-3xl z-20 flex flex-col
                     text-primary-green font-bold w-31 lg:w-40 rounded-lg -bottom-5 left-0 lg:-left-5">
                             5,000+ 
                         <span className="text-[10px] lg:text-xs text-text-primary">
                             Properties Listed
                         </span>
-                    </p>
+                    </motion.p>
                     <AnimatePresence mode="popLayout" initial={false}>
                         <motion.div
                         key={index}

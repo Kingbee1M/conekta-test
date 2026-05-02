@@ -11,7 +11,7 @@ import ArtisanForm from "../components/artisanForm"
 import InvestorForm from "../components/investorForm"
 import {motion, useAnimation, useMotionValue, useSpring, PanInfo} from "framer-motion"
 import { IoChatbubble } from "react-icons/io5";
-import { useRouter } from 'next/router'
+import { useRouter } from 'next/navigation'
 
 export default function SignUp() {
     const HelpPortal = dynamic(() => import('../components/ui/helpPortal'), { 
@@ -125,7 +125,7 @@ export default function SignUp() {
     };
 
     switch (role) {
-        case 'landlord':
+        case 'lister':
             return <LordForm {...auth} />; 
         case 'artisan':
             return <ArtisanForm {...auth} />;
@@ -191,7 +191,7 @@ export default function SignUp() {
             onClick={() => setIsHelpOpen(!isHelpOpen)}
         >
             <IoChatbubble className="text-6xl md:text-7xl" style={{color: themeColor}}/>
-            <span className="absolute top-4 md:top-5 right-1 text-[10px] md:text-xs text-white font-bold select-none">
+            <span className="absolute top-5 md:top-7 right-1 md:right-2 text-[9px] md:text-[10px] text-white font-bold select-none">
                 Need help?
             </span>
         </motion.button>

@@ -9,6 +9,7 @@
   --font-montserrat: var(--font-montserrat);
   --font-garamond: var(--font-garamond);
   --font-poppins: var(--font-poppins);
+  --font-inter: var(--font-inter)
 
 
   /* --------COLORS-------- */
@@ -144,7 +145,7 @@
     @apply font-sans;
   }
   h1, h2, h3, h4, h5 {
-    font-family:  var(--font-poppins);
+    font-family:  var(--font-inter);
     color: #101828 ;
   }
   h1 {
@@ -156,7 +157,7 @@
   }
 
   p, input, button, span, a, textArea, label {
-    font-family: var(--font-montserrat);
+    font-family: var(--font-inter);
     color: #4a5565;
   }
 
