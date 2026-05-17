@@ -7,8 +7,8 @@ export default function LandigBot() {
             <p className="text-[#d0fae5] text-xs lg:text-xl w-[65%] text-center">Join thousands of Nigerians who are finding, financing, and managing their dream homes with Conekta.</p>
 
             <div className="flex flex-col lg:flex-row gap-3">
-                <Link href={'/sign-up'} className="text-primary-green px-5 py-3 bg-white rounded-lg cursor-pointer hover:bg-primary-green hover:text-white" >Get started for Free</Link>
-                <Link href={'/find-property'} className="text-primary-green px-5 py-3 bg-white rounded-lg cursor-pointer hover:bg-primary-green hover:text-white">Browse Properties</Link>
+                <Link href={'/sign-up'} className="text-primary-green px-5 py-3 bg-white rounded-lg cursor-pointer hover:bg-primary-green hover:bg-secondary-green" >Get started for Free</Link>
+                <Link href={'/find-property'} className="text-primary-green px-5 py-3 bg-white rounded-lg cursor-pointer hover:bg-primary-green hover:bg-secondary-green">Browse Properties</Link>
             </div>
 
         </section>

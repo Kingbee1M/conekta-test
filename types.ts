@@ -1,9 +1,11 @@
-export type signupTypes = {
-    name: string;
+
+export interface signupTypes {
+    first_name: string;
+    last_name: string;
     email: string;
+    phone_number: string;
     password: string;
-    phone: string,
-    role: string
+    role: string;
 }
 
 export type loginTypes = {

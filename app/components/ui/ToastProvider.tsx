@@ -69,8 +69,8 @@ export function ToastProvider({ children }: { children: ReactNode }) {
           <div
             key={toast.id}
             className={`p-4 rounded-lg shadow-xl border pointer-events-auto transition-all duration-300 animate-in slide-in-from-right ${
-              toast.variant === 'error' ? 'bg-red-600 border-red-500 text-white' : 
-              toast.variant === 'success' ? 'bg-emerald-600 border-emerald-500 text-white' : 
+              toast.variant === 'error' ? 'bg-red-400 border-red-500 text-white' : 
+              toast.variant === 'success' ? 'bg-emerald-400 border-emerald-500 text-white' : 
               'bg-slate-800 border-slate-700 text-white'
             }`}
           >
@@ -81,7 +81,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
               </div>
               <button 
                 onClick={() => removeToast(toast.id)} 
-                className="text-white/50 hover:text-white"
+                className="text-white hover:text-white"
               >
                 &times;
               </button>

@@ -1,107 +1,128 @@
 'use client'
-import { useState } from "react"
-import { loginUser } from "@/shared/features/auth/auth.action"
-import { useAppDispatch } from "@/lib/hooks"
-import { loginTypes } from "@/types"
 import { useRouter } from "next/navigation"
+import { useAppDispatch } from "@/lib/hooks"
+import { loginUser } from "@/shared/features/auth/auth.action"
 import { useToast } from "../components/ui/ToastProvider"
+import { useFormik } from "formik"
+import { z } from "zod"
 import Image from "next/image"
 import logo from '../../public/svg/logo-enhanced.svg'
-import { CiMail, CiLock} from "react-icons/ci";
+import { CiMail, CiLock } from "react-icons/ci"
 import Link from "next/link"
-import { FaGoogle, FaFacebook } from "react-icons/fa";
+import { FaGoogle, FaFacebook } from "react-icons/fa"
 
-// const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-// await delay(5000);
+// 1. Zod Schema
+const loginSchema = z.object({
+    email: z.string().min(1, "Email is required").email("Invalid email format"),
+    password: z.string().min(1, "Password is required").min(6, "Password must be at least 6 characters"),
+    portal: z.string().min(1, "Please select a portal")
+})
+
 export default function Login() {
-    
-    const [email, setEmail] = useState("")
-    const [password, setPassword]= useState("")
-
     const dispatch = useAppDispatch();
-    const router = useRouter()
+    const router = useRouter();
     const { addToast } = useToast();
 
-    
-    const handleSubmit = async () => {
-        
-        console.log('burron Pressed')
-        const formData: loginTypes = { email, password };
-        const result = await dispatch(loginUser(formData));
-        console.log(result)
-        
-        if (result.success) {
-            addToast({
-                title: "Login Failed",
-                description: "Logging in",
-                variant: "success",
-                duration: 5000
+    // 2. Formik with manual validation
+    const formik = useFormik({
+        initialValues: {
+            email: "",
+            password: "",
+            portal: "customer"
+        },
+        validate: (values) => {
+            const result = loginSchema.safeParse(values);
+            if (result.success) return {};
+
+            // Flatten the Zod errors into a simple object { field: "message" }
+            const errors: Record<string, string> = {};
+            result.error.issues.forEach((issue) => {
+                if (issue.path[0]) {
+                    errors[issue.path[0] as string] = issue.message;
+                }
             });
-            
-            setTimeout(() => {
-                router.push('/dashboard');
-            }, 2000)
+            return errors;
+        },
+        onSubmit: async (values) => {
+            const result = await dispatch(loginUser(values));
+            if (result.success) {
+                addToast({ title: "Success", description: "Welcome back!", variant: "success", duration: 3000 });
+                setTimeout(() => router.push('/dashboard'), 2000);
+            } else {
+                addToast({ title: "Login Failed", description: result.message || "Invalid credentials", variant: "error", duration: 5000 });
+            }
         }
-        else {
-        addToast({
-            title: "Login Failed",
-            description: result.message || "Invalid credentials",
-            variant: "error",
-            duration: 5000
-        });
-        }
-    };
-    
+    });
+
     return (
-        <section className="flex flex-col justify-center min-h-screen items-center gap-7 bg-linear-to-br from-[#EDFDF5] via-[#EDFDF5] h-screen  to-white">
-
-            <form 
-            onSubmit={handleSubmit}
-            className="py-5 px-7 w-full min-h-[50vh] overflow-y-auto max-w-90 items-center border-gray-300 rounded-lg border-2 border-solid bg-white flex flex-col gap-1">
-                
+        <section className="flex py-16 flex-col justify-center min-h-screen items-center gap-7 bg-linear-to-br from-[#EDFDF5] via-[#EDFDF5] to-white">
+            <form onSubmit={formik.handleSubmit} className="py-5 px-7 w-full max-w-95 items-center border-gray-300 rounded-lg border-2 border-solid bg-white flex flex-col gap-1">
                 <Image src={logo} width={100} height={100} alt="logo" className="w-30" />
+                {/* #2E975EB2
+                #FFFFFFB2 */}
+                <h1 className="font-bold text-xl mt-2">Welcome Back</h1>
+                <p className="mb-5 text-gray-500 text-sm text-center">Sign in to your Conekta account</p>
 
-                <h1>Welcome Back</h1>
+                {/* Styled Portal Selector */}
+                <div className="w-full mb-6">
+                    <label className="text-xs font-semibold mb-2 block text-gray-700">Select Portal</label>
+                    <div className="flex bg-gray-100 p-1 rounded-xl gap-1">
+                        {['customer', 'lister'].map((option) => (
+                            <label 
+                                key={option}
+                                className={`flex-1 text-center py-2 rounded-lg cursor-pointer transition-all text-sm font-medium capitalize
+                                    ${formik.values.portal === option ? 'bg-white text-[#00AC72] shadow-sm' : 'text-gray-500'}`}
+                            >
+                                <input 
+                                    type="radio"
+                                    name="portal"
+                                    className="hidden"
+                                    checked={formik.values.portal === option}
+                                    onChange={() => formik.setFieldValue('portal', option)}
+                                />
+                                {option}
+                            </label>
+                        ))}
+                    </div>
+                </div>
 
-                <p className="mb-5">Sign in to your Conekta account</p>
-
-                
-                <div className="outerDiv mb-4">
-                    <label className="text-xs" htmlFor="email">Email</label>
-                    <div className="inputDiv">
+                {/* Email Field */}
+                <div className="outerDiv mb-4 w-full">
+                    <label className="text-xs font-semibold" htmlFor="email">Email</label>
+                    <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.email && formik.errors.email ? 'border-red-500' : 'border-gray-300'}`}>
                         <CiMail/>
-                        <input type="text" id="email" placeholder="email" value={email} onChange={(e)=>setEmail(e.target.value)} className="textInput" />
+                        <input type="email" id="email" {...formik.getFieldProps('email')} placeholder="email@example.com" className="w-full outline-none" />
                     </div>
+                    {formik.touched.email && formik.errors.email && <span className="text-[10px] text-red-500 mt-1">{formik.errors.email}</span>}
                 </div>
 
-                <div className="outerDiv mb-4">
-                    <label className="text-xs" htmlFor="password">Password</label>
-                    <div className="inputDiv">
+                {/* Password Field */}
+                <div className="outerDiv mb-4 w-full">
+                    <label className="text-xs font-semibold" htmlFor="password">Password</label>
+                    <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.password && formik.errors.password ? 'border-red-500' : 'border-gray-300'}`}>
                         <CiLock/>
-                        <input type="text" id="password" placeholder="password" value={password} onChange={(e)=>setPassword(e.target.value)} />
+                        <input type="password" id="password" {...formik.getFieldProps('password')} placeholder="••••••••" className="w-full outline-none" />
                     </div>
+                    {formik.touched.password && formik.errors.password && <span className="text-[10px] text-red-500 mt-1">{formik.errors.password}</span>}
                 </div>
-                
-                
+
                 <button 
-                type="submit"
-                className="w-full my-3 bg-[#00AC72] text-white px-3 py-1 rounded-lg font-semibold hover:bg-[white] hover:text-[#008f5d] border-[0.5px] hover:border-[#008f5d] transition-colors cursor-pointer">
-                    Sign in
+                    type="submit"
+                    disabled={formik.isSubmitting}
+                    className="w-full my-3 bg-[#00AC72] text-white px-3 py-2 rounded-lg font-semibold hover:bg-white hover:text-[#008f5d] border border-transparent hover:border-[#008f5d] transition-all disabled:opacity-50"
+                >
+                    {formik.isSubmitting ? "Signing in..." : "Sign in"}
                 </button>
 
                 <div className="w-full flex items-center gap-2 my-2">
-                    <hr className="flex-1 md:w-full border-gray-500"/>
-                    <span className="w-fit text-center text-sm">Or continue with</span>
-                    <hr className="flex-1 md:w-full border-gray-500"/>
+                    <hr className="flex-1 border-gray-300"/><span className="text-sm text-gray-400">Or</span><hr className="flex-1 border-gray-300"/>
                 </div>
-                    
 
-                <div className="flex justify-evenly md:justify-between w-full my-3">
-                    <Link href="/" className="flex items-center gap-2 cursor-pointer border border-gray-500 py-3 w-[45%] justify-center rounded-xl text-xs md:text-sm font-bold px-3"><FaGoogle/>Google</Link>
-                    <Link href="/" className="flex items-center gap-2 cursor-pointer border border-gray-500 py-3 w-[45%] justify-center rounded-xl text-xs md:text-sm font-bold px-3"><FaFacebook/>Facebook</Link>
+                <div className="flex justify-between w-full my-3 gap-3">
+                    <button type="button" className="flex items-center gap-2 border border-gray-300 py-3 flex-1 justify-center rounded-xl text-xs font-bold hover:bg-gray-50"><FaGoogle className="text-red-500"/>Google</button>
+                    <button type="button" className="flex items-center gap-2 border border-gray-300 py-3 flex-1 justify-center rounded-xl text-xs font-bold hover:bg-gray-50"><FaFacebook className="text-blue-600"/>Facebook</button>
                 </div>
             </form>
-            
         </section>
     )
 }

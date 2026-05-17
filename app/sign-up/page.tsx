@@ -12,6 +12,9 @@ import InvestorForm from "../components/investorForm"
 import {motion, useAnimation, useMotionValue, useSpring, PanInfo} from "framer-motion"
 import { IoChatbubble } from "react-icons/io5";
 import { useRouter } from 'next/navigation'
+import { useFormik } from "formik"
+import { z } from "zod"
+import { useToast } from '../components/ui/ToastProvider'
 
 export default function SignUp() {
     const HelpPortal = dynamic(() => import('../components/ui/helpPortal'), { 
@@ -60,6 +63,8 @@ export default function SignUp() {
     
     const dispatch = useAppDispatch();
 
+    const { addToast } = useToast()
+
     //mouse tracking
     // 1. Setup Motion Values for X and Y
     const mouseX = useMotionValue(0);
@@ -82,57 +87,114 @@ export default function SignUp() {
 
     // mouse tracking ends
 
-    const handleFormSubmit = async () => {
-    // 1. Prevent duplicate submissions
-    if (isLoading) return;
-    
-    setIsLoading(true);
-
-    const userData: signupTypes = {
-        name: name,
-        email: email,
-        password: password,
-        phone: phone,
-        role: role || 'lister' // Ensure this matches the API "lister" requirement
+    // Helper to split "First Last" into { first_name, last_name }
+    const splitFullName = (fullName: string) => {
+        const parts = fullName.trim().split(/\s+/);
+        return {
+            first_name: parts[0] || "",
+            last_name: parts.slice(1).join(" ") || ""
+        };
     };
 
-    // 2. Await the action result
-    const result = await dispatch(signupUser(userData));
-    
-    setIsLoading(false);
+    // Zod Schema
+    const signupSchema = z.object({
+        name: z.string().min(1, "Full name is required"),
+        email: z.string().email("Invalid email format"),
+        phone: z.string().min(10, "Invalid phone number"),
+        password: z.string().min(8, "Password must be at least 8 characters"),
+        confirmPassword: z.string()
+    }).refine((data) => data.password === data.confirmPassword, {
+        message: "Passwords do not match",
+        path: ["confirmPassword"],
+    });
 
-    if (result.success) {
-        // 3. Handle Success
-        // Assuming you have a toast library or just using alert for now
-        alert('Registration successful! Please check your email to verify your account.');
+    const formik = useFormik({
+        initialValues: {
+            name: "",
+            email: "",
+            phone: "",
+            password: "",
+            confirmPassword: "",
+            role: searchParams.get('role') || 'lister'
+        },
+        validate: (values) => {
+            const result = signupSchema.safeParse(values);
+            if (result.success) return {};
+            const errors: Record<string, string> = {};
+            result.error.issues.forEach((issue) => {
+                if (issue.path[0]) errors[issue.path[0] as string] = issue.message;
+            });
+            return errors;
+        },
+        onSubmit: async (values) => {
+            console.log("button clicked")
+            const { first_name, last_name } = splitFullName(values.name);
+            
+            const payload = {
+                first_name,
+                last_name,
+                email: values.email,
+                phone_number: values.phone,
+                password: values.password,
+                role: values.role
+            };
+
+            const result = await dispatch(signupUser(payload as signupTypes));
+            
+            if (result.success) {
+                addToast({ 
+                    title: "Success!", 
+                    description: "Account created successfully.", 
+                    variant: "success" 
+                });
+                router.push('/log-in'); 
+            } else {
+                addToast({ 
+                    title: "Signup Failed", 
+                    description: result.message || "Something went wrong.", 
+                    variant: "error" 
+                });
+            }
+        }
+    });
+
+    // We pass this object to LordForm, TenantForm, etc.
+    const authProps = {
+        // Formik values
+        name: formik.values.name,
+        email: formik.values.email,
+        phone: formik.values.phone,
+        password: formik.values.password,
+        confirmPassword: formik.values.confirmPassword,
         
-        // Redirect to the login or a "check your email" page
-        router.push('/log-in'); 
-    } else {
-        // 4. Handle Error
-        // This 'result.error' is the message we caught in the action's catch block
-        // alert(result.error || 'Something went wrong. Please try again.');
-        // console.error('Signup failed:', result.error);
-    }
-};
+        // Formik setters/handlers
+        setName: (val: string) => formik.setFieldValue('name', val),
+        setEmail: (val: string) => formik.setFieldValue('email', val),
+        setPhone: (val: string) => formik.setFieldValue('phone', val),
+        setPassword: (val: string) => formik.setFieldValue('password', val),
+        setConfirmPassword: (val: string) => formik.setFieldValue('confirmPassword', val),
+        
+        // Errors (Pass these down so inputs can turn red)
+        errors: formik.errors,
+        touched: formik.touched,
+        
+        onSubmit: formik.handleSubmit,
+        isLoading: formik.isSubmitting,
+        setThemeColor,
+        setFieldTouched: formik.setFieldTouched,
+    };
 
     const renderForm = () => {
-    // 1. This object contains everything the children need
-    const auth = {
-        email, setEmail, password, setPassword, name, setName, phone, setPhone, confirmPassword, setConfirmPassword,
-        onSubmit: handleFormSubmit,
-        setThemeColor // The "Shooter"
-    };
 
     switch (role) {
         case 'lister':
-            return <LordForm {...auth} />; 
+            return <LordForm {...authProps} />; 
         case 'artisan':
-            return <ArtisanForm {...auth} />;
+            return <ArtisanForm {...authProps} />;
         case 'investor':
-            return <InvestorForm {...auth} />;
+            return <InvestorForm {...authProps} />;
         default:
-            return <TenantForm {...auth} />;
+            return <TenantForm {...authProps} />;
     }
 }
 

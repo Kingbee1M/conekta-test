@@ -63,7 +63,7 @@ export default function DevStorageTool() {
       <div className="bg-slate-800/50 border border-slate-700 p-3 rounded-lg space-y-2 text-[11px]">
         <div className="flex items-center gap-3 border-b border-slate-700 pb-2 mb-2">
           <div className="h-8 w-8 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold">
-            {authData.user.name.charAt(0)}
+            {/* {authData.user.name.charAt(0)} */}
           </div>
           <div>
             <p className="text-emerald-400 font-bold leading-none">{authData.user.name}</p>

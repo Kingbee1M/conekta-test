@@ -1,10 +1,10 @@
-
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 export function proxy(request: NextRequest) {
-  const token = request.cookies.get('access_token')?.value;
+  const isLoggedIn = request.cookies.get('isLoggedIn')?.value === 'true';
   const { pathname } = request.nextUrl;
+
 
   const PUBLIC_PATHS = [
     '/log-in',
@@ -24,17 +24,21 @@ export function proxy(request: NextRequest) {
   );
 
 
-  if (!isPublicPage && !token) {
-    return NextResponse.redirect(new URL('/log-in', request.url));
+  if (!isPublicPage && !isLoggedIn) {
+    const url = new URL('/log-in', request.url);
+    url.searchParams.set('callbackUrl', pathname); 
+    return NextResponse.redirect(url);
   }
-
 
   const isAuthPage = PUBLIC_PATHS.filter(p => p !== '/').some(path => 
     pathname === path || pathname.startsWith(`${path}/`)
   );
 
-  if (isAuthPage && token) {
-    return NextResponse.redirect(new URL('/dashboard', request.url));
+  if (isAuthPage && isLoggedIn) {
+    const callbackUrl = request.nextUrl.searchParams.get('callbackUrl');
+    const destination = callbackUrl || '/dashboard'; 
+    
+    return NextResponse.redirect(new URL(destination, request.url));
   }
 
   return NextResponse.next();
@@ -48,9 +52,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - svg (your icon folder)  <-- ADD THIS
-     * - images (any other public folders) <-- ADD THIS
+     * - svg (if your logos are in public/svg)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|svg|images|public).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|svg|public).*)',
   ],
 };

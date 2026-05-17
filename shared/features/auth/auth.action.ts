@@ -1,95 +1,75 @@
 import { setUserInfo } from '@/shared/store/authSlice';
-import { handleSecureAuth } from '@/shared/cookie.action';
 import { AppDispatch } from '@/shared/store/store';
 import { signupTypes } from '@/types';
 import { loginTypes } from '@/types';
 import { errorType } from '@/types';
+import { use } from 'react';
 
 export const loginUser = (credentials: loginTypes) => async (dispatch: AppDispatch) => {
   try {
-     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`, {
-      method: 'POST', 
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login/`, {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(credentials)
+      body: JSON.stringify(credentials),
+      credentials: 'include', // Sends/receives cookies
     });
-    
-    const data = await response.json();
-    console.log(data)
 
-    if (!response.ok) {
-      return { 
-        success: false, 
-        message: data.message || 'Login failed. Please check your credentials.' 
-      };
+    const result = await response.json();
+    console.log("Login Response:", result);
+    if (response.ok || result.status_code === 201) {
+      const userData = result.data || result.user;
+
+      if (userData) {
+        dispatch(setUserInfo(userData));
+      }
+
+      return { success: true, message: result.message };
     }
 
-    await handleSecureAuth({ 
-      accessToken: data.data.tokens.access.token
-    });
+    return {
+      success: false,
+      message: result.message || 'Login failed. Please check your credentials.'
+    };
 
-    dispatch(setUserInfo({
-      email: data.email,
-      name: data.name,
-      id: '',
-      createdAt: '',
-      updatedAt: '',
-      deletedAt: '',
-      avatar: '',
-      role: '',
-      store: null
-    }));
-
-    return { success: true };
   } catch (error) {
     console.error("Login Error:", error);
-    return { success: false, error };
+    return { success: false, message: "An unexpected error occurred." };
   }
 };
 
-export const signupUser = (frontendData: signupTypes) => async () => {
+
+export const signupUser = (userData: signupTypes) => async (dispatch: AppDispatch) => {
   try {
-    const [first_name, ...lastNames] = frontendData.name.trim().split(/\s+/);
-    const last_name = lastNames.join(" ") || " ";
-
-    const apiPayload = {
-      first_name,
-      last_name,
-      email: frontendData.email,
-      phone_number: frontendData.phone,
-      password: frontendData.password,
-      role: frontendData.role 
-    };
-
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/register`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/register/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(apiPayload)
+      body: JSON.stringify(userData),
+      credentials: 'include', // Important if your backend sets a session/cookie immediately
     });
 
-    const data = await response.json();
+    const result = await response.json();
+    console.log("Signup Response:", result);
 
-    if (!response.ok) {
-      throw new Error(data.message || 'Signup failed');
+    // Backend standard for "Created" is 201
+    console.log(result)
+    if (response.ok || result.status_code === 201) {
+      
+      // If your backend logs the user in immediately after signup:
+      const user = result.data || result.user;
+      console.log(user)
     }
 
-    return { success: true, data };
-
-  } catch (error: unknown) {
-    // 1. Define a default error object using your type
-    const errorResponse: errorType = {
-      success: false,
-      error: "An unknown error occurred"
+    // Handle errors (e.g., email already exists)
+    return {
+      success: true,
+      message: result.message 
     };
 
-    // 2. Check if the error is a standard Error object
-    if (error instanceof Error) {
-      errorResponse.error = error.message;
-    } 
-    // 3. Handle cases where the backend sends a specific object
-    else if (typeof error === 'object' && error !== null && 'message' in error) {
-       errorResponse.error = String((error as { message: string }).message);
-    }
-
-    return errorResponse;
+  } catch (error) {
+    console.error("Signup Error:", error);
+    return { 
+      success: false, 
+      message: "An unexpected error occurred during signup." 
+    };
   }
 };

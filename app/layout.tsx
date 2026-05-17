@@ -10,6 +10,7 @@ import NavbarWrapper from "./components/ui/clientNav";
 import NextProgress from "./components/ui/NextProgress";
 import { Suspense } from "react";
 import FooterWrapper from "./components/ui/clientFooter";
+import AuthWatcher from "@/lib/authProvider";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -48,24 +49,26 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${montserrat.variable} ${garamond.variable} ${poppins.variable} ${inter.variable} w-full max-w-screen flex flex-col items-center justify-center overflow-x-hidden`}>
         <StoreProvider>
-          <ToastProvider>
-          <div id="cookie-portal" />
-          <div id="help-portal" />
+          <AuthWatcher>
+            <ToastProvider>
+            <div id="cookie-portal" />
+            <div id="help-portal" />
 
-          <Suspense fallback={null}>
-        <NextProgress />
-      </Suspense>
-          <NavbarWrapper />
+            <Suspense fallback={null}>
+          <NextProgress />
+        </Suspense>
+            <NavbarWrapper />
 
-          <main className="w-full max-w-360 flex-1 flex-col items-center justify-center ">
-            {children}
-          </main>
+            <main className="w-full max-w-360 flex-1 flex-col items-center justify-center ">
+              {children}
+            </main>
 
-          <FooterWrapper />
-          </ToastProvider>
+            <FooterWrapper />
+            </ToastProvider>
 
-          <CookieBanner />
-          {process.env.NODE_ENV === 'development' && <DevStorageTool />}
+            <CookieBanner />
+            {process.env.NODE_ENV === 'development' && <DevStorageTool />}
+          </AuthWatcher>
         </StoreProvider>
       </body>
     </html>
