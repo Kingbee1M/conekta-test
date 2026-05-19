@@ -10,6 +10,9 @@ import logo from '../../public/svg/logo-enhanced.svg'
 import { CiMail, CiLock } from "react-icons/ci"
 import Link from "next/link"
 import { FaGoogle, FaFacebook } from "react-icons/fa"
+import { useState } from "react"
+import { FiEyeOff, FiEye } from "react-icons/fi";
+
 
 // 1. Zod Schema
 const loginSchema = z.object({
@@ -22,7 +25,7 @@ export default function Login() {
     const dispatch = useAppDispatch();
     const router = useRouter();
     const { addToast } = useToast();
-
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false)
     // 2. Formik with manual validation
     const formik = useFormik({
         initialValues: {
@@ -101,7 +104,10 @@ export default function Login() {
                     <label className="text-xs font-semibold" htmlFor="password">Password</label>
                     <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.password && formik.errors.password ? 'border-red-500' : 'border-gray-300'}`}>
                         <CiLock/>
-                        <input type="password" id="password" {...formik.getFieldProps('password')} placeholder="••••••••" className="w-full outline-none" />
+                        <input type={isPasswordVisible ? "text" : "password"}  id="password" {...formik.getFieldProps('password')} placeholder="••••••••" className="w-full outline-none" />
+                        <button type="button" onClick={() => setIsPasswordVisible(!isPasswordVisible)}>
+                            {isPasswordVisible ? <FiEye /> : <FiEyeOff />}
+                        </button>
                     </div>
                     {formik.touched.password && formik.errors.password && <span className="text-[10px] text-red-500 mt-1">{formik.errors.password}</span>}
                 </div>
@@ -122,6 +128,8 @@ export default function Login() {
                     <button type="button" className="flex items-center gap-2 border border-gray-300 py-3 flex-1 justify-center rounded-xl text-xs font-bold hover:bg-gray-50"><FaGoogle className="text-red-500"/>Google</button>
                     <button type="button" className="flex items-center gap-2 border border-gray-300 py-3 flex-1 justify-center rounded-xl text-xs font-bold hover:bg-gray-50"><FaFacebook className="text-blue-600"/>Facebook</button>
                 </div>
+                
+            <p className="mt-5">Don&apos;t have an account? <Link href="/get-started" className="text-sm text-tertiary-green">Create one</Link></p>
             </form>
         </section>
     )

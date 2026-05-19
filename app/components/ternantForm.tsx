@@ -1,5 +1,4 @@
 'use client'
-import Link from "next/link";
 import { MdOutlinePersonOutline } from "react-icons/md";
 import { CiMail, CiLock } from "react-icons/ci";
 import { FiPhone, FiEyeOff, FiEye } from "react-icons/fi";
@@ -9,6 +8,7 @@ import { useEffect, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { FaGoogle, FaFacebook } from "react-icons/fa";
 import { FormikErrors, FormikTouched } from 'formik';
+import Link from "next/link";
 
 interface SignupFormValues {
     name: string;
@@ -65,7 +65,7 @@ export default function TenantForm({
                 <Image src={logo} width={100} height={100} alt="logo" />
                 <h2 className="text-3xl font-bold text-[#00AC72]">Create Account</h2>
                 <p className="text-gray-500 text-sm">Sign up as Renter / Buyer</p>
-                <Link href='/get-started' className="text-new-green text-sm hover:underline">Change role</Link>
+                <Link href='/get-started' className="text-tertiary-green text-sm hover:underline">Change role</Link>
 
                 {/* Full Name */}
                 <div className="outerDiv w-full">
@@ -195,6 +195,7 @@ export default function TenantForm({
                     Already have an account? <Link href='/log-in' className="font-semibold text-primary-green">Sign in</Link>
                 </p>
             </div>
+
         </form>
     );
 }

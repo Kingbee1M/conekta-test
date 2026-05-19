@@ -65,7 +65,7 @@ export default function TenantForm({
                 <Image src={logo} width={100} height={100} alt="logo" />
                 <h2 className="text-3xl font-bold text-[#2171FF]">Create Account</h2>
                 <p className="text-gray-500 text-sm">Sign up as Renter / Buyer</p>
-                <Link href='/get-started' className="text-new-green text-sm hover:underline">Change role</Link>
+                <Link href='/get-started' className="text-[#2171FF] text-sm hover:underline">Change role</Link>
 
                 {/* Full Name */}
                 <div className="outerDiv w-full">
