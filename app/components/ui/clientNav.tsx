@@ -8,7 +8,8 @@ const noNav = [
   '/dashboard', 
   '/loading-dashboard', 
   '/lister', 
-  '/customer'
+  '/customer',
+  '/verify-email'
 ];
 
 export default function NavbarWrapper() {

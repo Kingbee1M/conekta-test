@@ -1,7 +1,7 @@
 'use client'
 import { usePathname } from 'next/navigation';
 import Footer from './footer';
-const noNav = ['/log-in', '/sign-up'];
+const noNav = ['/log-in', '/sign-up', '/verify-email'];
 
 export default function FooterWrapper() {
   const pathname = usePathname();

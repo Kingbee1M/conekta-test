@@ -191,7 +191,7 @@
 }
 
 .inputDiv:focus-within {
-  border: 2px solid gray;
+  border: 2px solid #00AC72;
 }
 
 .outerDiv {

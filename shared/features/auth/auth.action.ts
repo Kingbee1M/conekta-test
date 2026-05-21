@@ -2,8 +2,6 @@ import { setUserInfo } from '@/shared/store/authSlice';
 import { AppDispatch } from '@/shared/store/store';
 import { signupTypes } from '@/types';
 import { loginTypes } from '@/types';
-import { errorType } from '@/types';
-import { use } from 'react';
 
 export const loginUser = (credentials: loginTypes) => async (dispatch: AppDispatch) => {
   try {
@@ -11,7 +9,7 @@ export const loginUser = (credentials: loginTypes) => async (dispatch: AppDispat
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(credentials),
-      credentials: 'include', // Sends/receives cookies
+      credentials: 'include',
     });
 
     const result = await response.json();
@@ -28,7 +26,7 @@ export const loginUser = (credentials: loginTypes) => async (dispatch: AppDispat
 
     return {
       success: false,
-      message: result.message || 'Login failed. Please check your credentials.'
+      message: result.message || 'sucess'
     };
 
   } catch (error) {
