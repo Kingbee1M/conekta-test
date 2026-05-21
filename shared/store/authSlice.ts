@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction, Action } from '@reduxjs/toolkit';
 import { REHYDRATE } from 'redux-persist';
 
+// 1. NESTED SUB-STRUCTURE INTERFACES
 interface Store {
   id: string;
   createdAt: string;
@@ -11,16 +12,26 @@ interface Store {
   status: string;
 }
 
-interface UserData {
-  id: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: string;
-  name: string;
+interface UserProfile {
+  full_name: string;
+}
+
+// Represents the internal nested user object inside the root payload shell
+interface InnerUserData {
+  uuid: string;
   email: string;
-  avatar: string;
-  role: string;
-  store: Store | null;
+  other_roles: string[];
+  profile: UserProfile;
+}
+
+// 2. ROOT PAYLOAD SHELL STRUCTURE
+// This perfectly maps to your active console snapshot keys
+interface UserData {
+  active_role: string;
+  kyc_verified: boolean;
+  email_verified: boolean;
+  user: InnerUserData;       // The nested backend object profile layout
+  store: Store | null;       // Retaining your existing workspace property safely
 }
 
 interface AuthState {
@@ -63,7 +74,6 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(REHYDRATE, (state, action) => {
-      // Cast the action to our custom RehydrateAction
       const rehydrateAction = action as RehydrateAction;
       const persistedAuth = rehydrateAction.payload?.auth;
       

@@ -12,8 +12,8 @@ import Link from "next/link"
 import { FaGoogle, FaFacebook } from "react-icons/fa"
 import { useState } from "react"
 import { FiEyeOff, FiEye } from "react-icons/fi";
-
-
+import { useStore } from "react-redux" // 1. Import useStore from react-redux
+import { RootState } from "@/shared/store/store"
 // 1. Zod Schema
 const loginSchema = z.object({
     email: z.string().min(1, "Email is required").email("Invalid email format"),
@@ -26,6 +26,7 @@ export default function Login() {
     const router = useRouter();
     const { addToast } = useToast();
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+    const store = useStore<RootState>(); // 2. Initialize the store instance hook
     // 2. Formik with manual validation
     const formik = useFormik({
         initialValues: {
@@ -47,14 +48,29 @@ export default function Login() {
             return errors;
         },
         onSubmit: async (values) => {
-            const result = await dispatch(loginUser(values));
-            if (result.success) {
-                addToast({ title: "Success", description: "Welcome back!", variant: "success", duration: 3000 });
-                setTimeout(() => router.push('/dashboard'), 2000);
-            } else {
-                addToast({ title: "Login Failed", description: result.message || "Invalid credentials", variant: "error", duration: 5000 });
-            }
-        }
+    const result = await dispatch(loginUser(values));
+    
+    if (result.success) {
+        addToast({ 
+            title: "Success", 
+            description: "Welcome back!", 
+            variant: "success", 
+            duration: 3000 
+        });
+        
+        // Push straight to the intermediate loading route wrapper
+        setTimeout(() => {
+            router.push('/loading-dashboard');
+        }, 2000);
+    } else {
+        addToast({ 
+            title: "Login Failed", 
+            description: result.message || "Invalid credentials", 
+            variant: "error", 
+            duration: 5000 
+        });
+    }
+}
     });
 
     return (
