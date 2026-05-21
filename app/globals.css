@@ -19,6 +19,7 @@
   --color-text-primary: #262626;
   --color-tertiary-green: #009966;
   --color-tertiary-green: #00B075;
+  --color-active-link: #DBFCE7CC;
 }
 
 @theme inline {

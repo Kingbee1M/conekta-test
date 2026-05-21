@@ -47,7 +47,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} ${garamond.variable} ${poppins.variable} ${inter.variable} w-full max-w-screen flex flex-col items-center justify-center overflow-x-hidden`}>
+      <body className={`${montserrat.variable} ${garamond.variable} ${poppins.variable} ${inter.variable} w-full max-w-screen min-h-screen flex flex-col items-center justify-between overflow-x-hidden`}>
         <StoreProvider>
           <AuthWatcher>
             <ToastProvider>
