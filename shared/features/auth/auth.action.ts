@@ -42,32 +42,38 @@ export const signupUser = (userData: signupTypes) => async (dispatch: AppDispatc
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(userData),
-      credentials: 'include', // Important if your backend sets a session/cookie immediately
+      credentials: 'include',
     });
 
     const result = await response.json();
-    console.log("Signup Response:", result);
+    console.log("Signup Response Check:", result);
 
-    // Backend standard for "Created" is 201
-    console.log(result)
-    if (response.ok || result.status_code === 201) {
-      
-      // If your backend logs the user in immediately after signup:
+    // ✅ FIX 1: Trust the backend's explicit success boolean flag
+    if (result.success === true) {
       const user = result.data || result.user;
-      console.log(user)
+      
+      if (user) {
+        dispatch(setUserInfo(user));
+      }
+
+      // Return a true success object back to onSubmit
+      return {
+        success: true,
+        message: result.message || "Account created successfully!"
+      };
     }
 
-    // Handle errors (e.g., email already exists)
+    // ✅ FIX 2: If result.success is false (e.g. Email already in use), return success: false
     return {
-      success: true,
-      message: result.message 
+      success: false,
+      message: result.message || "Signup failed. Please try again."
     };
 
   } catch (error) {
     console.error("Signup Error:", error);
     return { 
       success: false, 
-      message: "An unexpected error occurred during signup." 
+      message: "An unexpected network error occurred during signup." 
     };
   }
 };
