@@ -11,6 +11,7 @@ import NextProgress from "./components/ui/NextProgress";
 import { Suspense } from "react";
 import FooterWrapper from "./components/ui/clientFooter";
 import AuthWatcher from "@/lib/authProvider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -58,11 +59,13 @@ export default function RootLayout({
           <NextProgress />
         </Suspense>
             <NavbarWrapper />
+            <TooltipProvider>
 
             <main className="w-full max-w-360 flex-1 flex-col items-center justify-center ">
               {children}
             </main>
 
+            </TooltipProvider>
             <FooterWrapper />
             </ToastProvider>
 
