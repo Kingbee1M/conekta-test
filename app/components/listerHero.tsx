@@ -13,7 +13,7 @@ export default function ListerHero () {
         {title: 'Profile Score', count: '85%', icon: <><IoPersonOutline/></>},
     ]
     return (
-        <div className="w-full p-5 flex flex-col justify-end gap-4 text-white shadow-md shadow-black relative overflow-hidden rounded-2xl bg-linear-to-r from-[#144228d1] to-[#25744989]">
+        <div className="w-full p-5 flex flex-col justify-end gap-4 text-white  relative overflow-hidden rounded-2xl bg-linear-to-r from-[#24764a] to-[#01a273]">
             <div className="w-[70%] flex flex-col gap-2">
                 <h1 className="text-white text-3xl">My Lister Workspace</h1>
                 <p className="text-white text-sm w-2/3">An Intelegent overview of your property portfolio and profile metrics</p>
