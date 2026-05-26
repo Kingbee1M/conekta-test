@@ -14,7 +14,7 @@ export default function ListerLayout({ children }: ListerLayoutProps) {
   const closeSidebar = () => setIsMobileOpen(false);
 
   return (
-    <div className="block md:grid md:grid-cols-[200px_1fr] min-h-screen w-full overflow-x-hidden">
+    <div className="block md:grid md:grid-cols-[200px_1fr] min-h-screen max-h-100 w-full overflow-x-hidden">
       
       {/* =========================================================================
           DESKTOP SIDEBAR CONTAINER (Hidden on Mobile View)
@@ -36,7 +36,7 @@ export default function ListerLayout({ children }: ListerLayoutProps) {
 
       {/* B. Slide-Out Panel Container */}
       <div 
-        className={`fixed top-0 left-0 bottom-0 w-[240px] bg-primary-green z-50 shadow-2xl transition-transform duration-300 ease-in-out md:hidden ${
+        className={`fixed top-0 left-0 bottom-0 w-60 bg-primary-green z-50 shadow-2xl transition-transform duration-300 ease-in-out md:hidden ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
