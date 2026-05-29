@@ -34,7 +34,7 @@ export default function ListerHero () {
                 ))}
             </div>
             
-        <Image src={building} alt="building" height={10} width={10} className="w-90 absolute -right-20 -top-10" />
+        <Image src={building} alt="building" height={10} width={10} className="w-[50%] absolute -right-20 -top-5" />
         </div>
     )
 }

@@ -13,5 +13,5 @@ export interface RecentActivityItem {
   type: ActivityType;
   title: string;
   description: string;
-  timestamp: string; // ISO format string
+  timestamp: string;
 }
