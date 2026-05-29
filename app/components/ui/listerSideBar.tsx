@@ -23,8 +23,8 @@ export default function ListerSideBar() {
     const userSlug = currentName
         .toLowerCase()
         .trim()
-        .replace(/[^a-z0-9\s-]/g, '') // Remove special characters instead of encoding them
-        .replace(/\s+/g, '-');        // Turn spaces into single dashes
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-');
 
     const links = [
         { title: 'Dashboard', link: `/lister/${userSlug}`, icon: link1, isInbox: false, exact: true },

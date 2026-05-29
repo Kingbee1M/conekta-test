@@ -17,7 +17,7 @@ export default function HelpPortal({ isOpen, onClose, themeColor }: HelpPortalPr
     return createPortal(
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[999] flex items-center justify-center p-4">
+                <div className="fixed inset-0 z-999 flex items-center justify-center p-4">
                     
                     {/* 1. DIMMED BACKGROUND (Backdrop) */}
                     <motion.div 
@@ -33,7 +33,7 @@ export default function HelpPortal({ isOpen, onClose, themeColor }: HelpPortalPr
                         initial={{ opacity: 0, scale: 0.9, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                        className="relative w-full max-w-lg bg-white shadow-2xl rounded-3xl overflow-hidden flex flex-col min-h-[400px]"
+                        className="relative w-full max-w-lg bg-white shadow-2xl rounded-3xl overflow-hidden flex flex-col min-h-100"
                     >
                         {/* Status Bar / Header Decor */}
                         <div className="h-2 w-full" style={{ backgroundColor: themeColor }} />

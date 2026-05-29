@@ -22,6 +22,12 @@ import { Tooltip, TooltipContent, TooltipTrigger, } from '@/components/ui/toolti
 import LineChartComp from '@/app/components/ui/lineChartcomp';
 import { ActivityType, RecentActivityItem } from '@/shared/enums/activity';
 import RecentActivityComp from '@/app/components/ui/recentActivites';
+import AddPropertyModal from '@/app/components/ui/addProperty';
+import { PropertyData } from '@/app/components/propertyDisplay';
+import { PropertyCard } from '@/app/components/propertyDisplay';
+import h1 from '@/public/jpg/house1.jpg'
+import h2 from '@/public/jpg/house2.jpg'
+import h3 from '@/public/jpg/house3.jpg'
 
 const sampleActivities: RecentActivityItem[] = [
   {
@@ -61,10 +67,48 @@ const sampleActivities: RecentActivityItem[] = [
   }
 ];
 
+
+const MOCK_INVENTORY: PropertyData[] = [
+  {
+    id: "prop-1",
+    title: "Studio Apartment in ikeja",
+    location: "Ikeja, Lagos",
+    beds: 1,
+    baths: 1,
+    rating: 7,
+    price: 150000,
+    imageUrl: h1
+  },
+  {
+    id: "prop-2",
+    title: "Luxury 2 Bed Penthouse",
+    location: "Lekki Phase 1, Lagos",
+    beds: 2,
+    baths: 2,
+    rating: 9,
+    price: 350000,
+    imageUrl: h2
+  },
+  {
+    id: "prop-3",
+    title: "Minimalist Executive Suite",
+    location: "Ikoyi, Lagos",
+    beds: 1,
+    baths: 2,
+    rating: 8,
+    price: 220000,
+    imageUrl: h3
+  }
+];
 export default function ListerDashboard() {
   const params = useParams();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [openAdd, setOpenAdd] = useState(false)
+
+  const addPropertyFunc = () => {
+    setOpenAdd(!openAdd)
+  }
 
   const pillNav = [
     { title: 'Discover', icon: descover, link: '/' },
@@ -74,9 +118,9 @@ export default function ListerDashboard() {
   ];
 
   const miniMenu = [
-    { title: 'Create Listing', icon: <FaHouseMedical />, color: 'bg-emerald-600' },
-    { title: 'Get Verified', icon: <MdVerifiedUser />, color: 'bg-blue-600' },
-    { title: 'Need Help', icon: <LuCircleHelp />, color: 'bg-zinc-600' },
+    { title: 'Create Listing', icon: <FaHouseMedical />, color: 'bg-emerald-600', func: addPropertyFunc },
+    { title: 'Get Verified', icon: <MdVerifiedUser />, color: 'bg-blue-600', func: addPropertyFunc },
+    { title: 'Need Help', icon: <LuCircleHelp />, color: 'bg-zinc-600', func: addPropertyFunc },
   ];
 
   const sampleHousesListed = [
@@ -128,6 +172,14 @@ const mockPropertiesSold = [
     }
   }, [isAuthenticated, router]);
 
+      const { user } = useSelector((state: RootState) => state.auth);
+      const currentName = user?.user?.profile?.full_name || '';
+      const userSlug = currentName
+          .toLowerCase()
+          .trim()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-');
+
   return (
     <div className="w-full min-h-full max-w-7xl gap-7 mx-auto flex flex-col relative pb-20">
       <ListerTopBar />
@@ -166,9 +218,10 @@ const mockPropertiesSold = [
   {/* Child Submenu Cluster Section */}
   <div className="flex flex-col items-center gap-3 w-full">
     {miniMenu.map((mini, index) => (
-      <div 
+      <div
+        onClick={mini.func} 
         key={index} 
-        className="transition-all duration-300 ease-out transform origin-bottom flex items-center justify-center"
+        className="transition-all duration-300 ease-out transform origin-bottom flex items-center justify-cente"
         style={{
           transitionDelay: isMenuOpen ? `${index * 50}ms` : '0ms',
           opacity: isMenuOpen ? 1 : 0,
@@ -180,29 +233,31 @@ const mockPropertiesSold = [
         <Tooltip>
           {/* pointer-events-auto explicitly ensures the buttons work when visible */}
           <TooltipTrigger asChild>
-            <button className={`w-11 h-11 rounded-full ${mini.color} text-white flex items-center justify-center text-lg shadow-md hover:scale-110 active:scale-95 transition-transform duration-150 pointer-events-auto`}>
+            <button className={` cursor-pointer w-11 h-11 rounded-full ${mini.color} text-white flex items-center justify-center text-lg shadow-md hover:scale-110 active:scale-95 transition-transform duration-150 pointer-events-auto`}>
               {mini.icon}
             </button>
           </TooltipTrigger>
           <TooltipContent side="left" className="font-semibold text-xs shadow-md">
-            {mini.title}
-          </TooltipContent>
-        </Tooltip>
-      </div>
-    ))}
-  </div>
-
-  {/* Master Control Trigger Button */}
-  <button 
-    className="bg-primary-green w-14 h-14 rounded-full flex justify-center items-center shadow-lg hover:bg-[#1c5836] text-white text-xl active:scale-95 transition-all duration-300 relative overflow-hidden pointer-events-auto" 
-    onClick={() => setIsMenuOpen(!isMenuOpen)}
-  >
-    <div className={`transform transition-transform duration-300 ${isMenuOpen ? 'rotate-90 scale-90' : 'rotate-0'}`}>
-      {isMenuOpen ? <FaTimes /> : <FaPlus />}
+                {mini.title}
+              </TooltipContent>
+            </Tooltip>
+          </div>
+        ))}
     </div>
-  </button>
 
-</div>
+      <AddPropertyModal isOpen={openAdd} onClose={()=> setOpenAdd(false)} />
+
+      {/* Master Control Trigger Button */}
+      <button 
+        className="bg-primary-green w-14 h-14 rounded-full flex justify-center items-center shadow-lg hover:bg-[#1c5836] text-white text-xl active:scale-95 transition-all duration-300 relative overflow-hidden pointer-events-auto" 
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+      >
+        <div className={`transform transition-transform duration-300 ${isMenuOpen ? 'rotate-90 scale-90' : 'rotate-0'}`}>
+          {isMenuOpen ? <FaTimes /> : <FaPlus />}
+        </div>
+      </button>
+
+    </div>
 
         {/* Master Control Trigger Button */}
         <button 
@@ -222,6 +277,26 @@ const mockPropertiesSold = [
           <LineChartComp data={mockPropertiesSold} title='Properties Sold' />
           <RecentActivityComp activities={sampleActivities} />
       </section>
+
+      <section className="w-full flex flex-col gap-5">
+      {/* Header Block Section */}
+      <div className="flex justify-between items-center w-full">
+        <h1 className="text-lg font-bold text-gray-800 tracking-tight">Latest uploads</h1>
+        <Link 
+          href={`/lister/${userSlug}/properties`}
+          className="text-xs font-semibold text-primary-green hover:underline transition-all"
+        >
+          View All
+        </Link> 
+      </div>
+
+      {/* Grid Canvas Framework for rendering Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 w-full">
+        {MOCK_INVENTORY.map((property) => (
+          <PropertyCard key={property.id} property={property} />
+        ))}
+      </div>
+    </section>
     </div>
   );
 }
