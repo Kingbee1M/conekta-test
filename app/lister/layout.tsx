@@ -14,12 +14,12 @@ export default function ListerLayout({ children }: ListerLayoutProps) {
   const closeSidebar = () => setIsMobileOpen(false);
 
   return (
-    <div className="block md:grid md:grid-cols-[200px_1fr] min-h-screen max-h-100 w-full overflow-x-hidden">
+    <div className="block md:grid md:grid-cols-[200px_1fr] h-screen w-full overflow-x-hidden overflow-y-auto">
       
       {/* =========================================================================
           DESKTOP SIDEBAR CONTAINER (Hidden on Mobile View)
           ========================================================================= */}
-      <aside className="hidden md:block bg-primary-green w-full min-h-screen sticky top-0 h-screen overflow-y-auto">
+      <aside className="hidden md:block bg-primary-green w-full h-full max-h-screen sticky top-0 overflow-y-auto">
         <ListerSideBar />
       </aside>
 
@@ -62,7 +62,7 @@ export default function ListerLayout({ children }: ListerLayoutProps) {
       {/* =========================================================================
           MAIN CORE VIEW CONTENT PANEL AREA
           ========================================================================= */}
-      <div className="flex flex-col min-h-screen w-full bg-gray-50">
+      <div className="flex flex-col h-auto w-full bg-gray-50">
         
         {/* Mobile-Only Header Bar containing our hamburger drawer button toggle action */}
         <header className="flex md:hidden items-center justify-between px-4 h-14 bg-white border-b border-gray-200 sticky top-0 z-40 w-full">

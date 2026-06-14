@@ -15,6 +15,7 @@ export function proxy(request: NextRequest) {
     '/verify-email',
     '/get-started',
     '/verify-email',
+    '/loading-dashboard',
     '/',
   ];
 

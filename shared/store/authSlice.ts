@@ -13,10 +13,11 @@ interface Store {
 }
 
 interface UserProfile {
-  full_name: string;
+  first_name: string
+  last_name: string
 }
 
-// Represents the internal nested user object inside the root payload shell
+
 interface InnerUserData {
   uuid: string;
   email: string;
@@ -24,14 +25,12 @@ interface InnerUserData {
   profile: UserProfile;
 }
 
-// 2. ROOT PAYLOAD SHELL STRUCTURE
-// This perfectly maps to your active console snapshot keys
-interface UserData {
+ export interface UserData {
   active_role: string;
   kyc_verified: boolean;
   email_verified: boolean;
-  user: InnerUserData;       // The nested backend object profile layout
-  store: Store | null;       // Retaining your existing workspace property safely
+  user: InnerUserData;
+  store: Store | null;
 }
 
 interface AuthState {

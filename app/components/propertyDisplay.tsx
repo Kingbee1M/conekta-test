@@ -5,17 +5,9 @@ import { CiLocationOn } from 'react-icons/ci';
 import { IoBedOutline } from 'react-icons/io5';
 import { PiBathtub } from 'react-icons/pi';
 import { FaStar } from 'react-icons/fa';
+import { PropertyData } from '@/types';
 
-export interface PropertyData {
-  id: string;
-  title: string;
-  location: string;
-  beds: number;
-  baths: number;
-  rating: number; // e.g., 7
-  price: number;   // e.g., 150000
-  imageUrl: StaticImageData;
-}
+
 
 interface PropertyCardProps {
   property: PropertyData;
@@ -33,7 +25,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
   return (
     <article className="w-full bg-[#f4f4f4] rounded-2xl overflow-hidden border border-gray-100 shadow-sm transition-all hover:shadow-md flex flex-col">
       {/* Aspect Ratio container for the image */}
-      <div className="relative w-full aspect-[4/3] bg-gray-200">
+      <div className="relative w-full aspect-4/3 bg-gray-200">
         <Image
           src={property.imageUrl}
           alt={property.title}

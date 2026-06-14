@@ -25,3 +25,19 @@ export default function useOnceInView(options = {}) {
   return { ref, isInView };
 }
 
+
+export function getNameInitials(fullName: string): string {
+  if (!fullName || typeof fullName !== 'string') return '';
+  const nameParts = fullName.trim().split(/\s+/);
+
+  if (nameParts.length === 0 || nameParts[0] === '') return '';
+
+  const firstInitial = nameParts[0].charAt(0).toUpperCase();
+
+  if (nameParts.length > 1) {
+    const lastInitial = nameParts[nameParts.length - 1].charAt(0).toUpperCase();
+    return `${firstInitial}${lastInitial}`;
+  }
+
+  return firstInitial;
+}

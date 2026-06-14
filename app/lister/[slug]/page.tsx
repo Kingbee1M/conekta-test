@@ -23,7 +23,7 @@ import LineChartComp from '@/app/components/ui/lineChartcomp';
 import { ActivityType, RecentActivityItem } from '@/shared/enums/activity';
 import RecentActivityComp from '@/app/components/ui/recentActivites';
 import AddPropertyModal from '@/app/components/ui/addProperty';
-import { PropertyData } from '@/app/components/propertyDisplay';
+import { PropertyData } from '@/types';
 import { PropertyCard } from '@/app/components/propertyDisplay';
 import h1 from '@/public/jpg/house1.jpg'
 import h2 from '@/public/jpg/house2.jpg'
@@ -68,7 +68,7 @@ const sampleActivities: RecentActivityItem[] = [
 ];
 
 
-const MOCK_INVENTORY: PropertyData[] = [
+ export const MOCK_INVENTORY: PropertyData[] = [
   {
     id: "prop-1",
     title: "Studio Apartment in ikeja",
@@ -77,7 +77,8 @@ const MOCK_INVENTORY: PropertyData[] = [
     baths: 1,
     rating: 7,
     price: 150000,
-    imageUrl: h1
+    imageUrl: h1,
+    created_at: "2026-06-10T10:30:00.000Z" // 4 days ago
   },
   {
     id: "prop-2",
@@ -87,7 +88,8 @@ const MOCK_INVENTORY: PropertyData[] = [
     baths: 2,
     rating: 9,
     price: 350000,
-    imageUrl: h2
+    imageUrl: h2,
+    created_at: "2026-06-12T15:45:00.000Z" // 2 days ago
   },
   {
     id: "prop-3",
@@ -97,7 +99,30 @@ const MOCK_INVENTORY: PropertyData[] = [
     baths: 2,
     rating: 8,
     price: 220000,
-    imageUrl: h3
+    imageUrl: h3,
+    created_at: "2026-06-11T09:15:00.000Z" // 3 days ago
+  },
+  {
+    id: "prop-4",
+    title: "Spacious 4 Bed Family Combo",
+    location: "Victoria Island, Lagos",
+    beds: 4,
+    baths: 4,
+    rating: 10,
+    price: 600000,
+    imageUrl: h1,
+    created_at: "2026-06-14T01:00:00.000Z" // Brand New (Today)
+  },
+  {
+    id: "prop-5",
+    title: "Cozy Smart Bungalow",
+    location: "Surulere, Lagos",
+    beds: 2,
+    baths: 1,
+    rating: 6,
+    price: 950000,
+    imageUrl: h2,
+    created_at: "2026-06-08T18:20:00.000Z" // Older listing
   }
 ];
 export default function ListerDashboard() {
@@ -172,20 +197,12 @@ const mockPropertiesSold = [
     }
   }, [isAuthenticated, router]);
 
-      const { user } = useSelector((state: RootState) => state.auth);
-      const currentName = user?.user?.profile?.full_name || '';
-      const userSlug = currentName
-          .toLowerCase()
-          .trim()
-          .replace(/[^a-z0-9\s-]/g, '')
-          .replace(/\s+/g, '-');
 
   return (
     <div className="w-full min-h-full max-w-7xl gap-7 mx-auto flex flex-col relative pb-20">
       <ListerTopBar />
 
       {/* Pill Navigation */}
-      <div>
         <div className='w-full flex gap-3 mt-5 text-sm'>
           {pillNav.map((pill, index) => (
             <Link href={pill.link} key={index} className='flex gap-2 px-3 py-1 rounded-full hover:bg-primary-green/10 border-[#00000033] border-solid border items-center transition-colors'>
@@ -194,7 +211,6 @@ const mockPropertiesSold = [
             </Link>
           ))}
         </div>
-      </div>
 
       {/* Analytics Grid Row */}
       <div className='w-full grid grid-cols-[7fr_3fr] grid-rows-[260px] gap-5 mt-5'>
@@ -283,7 +299,7 @@ const mockPropertiesSold = [
       <div className="flex justify-between items-center w-full">
         <h1 className="text-lg font-bold text-gray-800 tracking-tight">Latest uploads</h1>
         <Link 
-          href={`/lister/${userSlug}/properties`}
+          href={`/lister/properties`}
           className="text-xs font-semibold text-primary-green hover:underline transition-all"
         >
           View All

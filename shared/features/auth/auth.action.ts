@@ -1,79 +1,107 @@
-import { setUserInfo } from '@/shared/store/authSlice';
+import { clearUserInfo } from '@/shared/store/authSlice';
 import { AppDispatch } from '@/shared/store/store';
-import { signupTypes } from '@/types';
-import { loginTypes } from '@/types';
+import { executeCoreRequest, ApiResponse } from '@/lib/api'; 
+import { signupTypes, loginTypes } from '@/types';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
-export const loginUser = (credentials: loginTypes) => async (dispatch: AppDispatch) => {
+
+interface AuthApiResponse extends ApiResponse {
+  success?: boolean;
+}
+
+
+function getErrorMessage(error: unknown): string {
+  if (error && typeof error === 'object') {
+    const rtkError = error as FetchBaseQueryError;
+    if (rtkError.data && typeof rtkError.data === 'object') {
+      const dataPayload = rtkError.data as Record<string, unknown>;
+      if (typeof dataPayload.message === 'string') return dataPayload.message;
+    }
+    const nativeError = error as Error;
+    if (typeof nativeError.message === 'string') return nativeError.message;
+  }
+  return "An unexpected error occurred.";
+}
+
+
+export const loginUser = (credentials: loginTypes) => async () => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login/`, {
-      method: 'POST',
+    const result = await executeCoreRequest<AuthApiResponse>({
+      url: '/auth/login/',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(credentials),
-      credentials: 'include',
+      method: 'POST',
+      body: credentials,
     });
 
-    const result = await response.json();
-    console.log("Login Response:", result);
-    if (response.ok || result.status_code === 201) {
-      const userData = result.data || result.user;
+    console.log("Login Response via Bouncer:", result);
 
-      if (userData) {
-        dispatch(setUserInfo(userData));
-      }
-
+    if (result.code === 200 || result.code === 201) {
       return { success: true, message: result.message };
     }
 
     return {
       success: false,
-      message: result.message || 'sucess'
+      message: result.message || 'Login failed.'
     };
 
-  } catch (error) {
-    console.error("Login Error:", error);
-    return { success: false, message: "An unexpected error occurred." };
+  } catch (error: unknown) {
+    console.error("Login Error via Bouncer:", error);
+    return { 
+      success: false, 
+      message: getErrorMessage(error)
+    };
   }
 };
 
 
-export const signupUser = (userData: signupTypes) => async (dispatch: AppDispatch) => {
+export const signupUser = (userData: signupTypes) => async () => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/register/`, {
+    const result = await executeCoreRequest<AuthApiResponse>({
+      url: '/auth/register/',
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData),
-      credentials: 'include',
+      body: userData,
     });
 
-    const result = await response.json();
-    console.log("Signup Response Check:", result);
+    console.log("Signup Response via Bouncer:", result);
 
-    // ✅ FIX 1: Trust the backend's explicit success boolean flag
-    if (result.success === true) {
-      const user = result.data || result.user;
-      
-      if (user) {
-        dispatch(setUserInfo(user));
-      }
-
-      // Return a true success object back to onSubmit
+    if (result.success === true || result.status_code === 201) {
       return {
         success: true,
         message: result.message || "Account created successfully!"
       };
     }
 
-    // ✅ FIX 2: If result.success is false (e.g. Email already in use), return success: false
     return {
       success: false,
       message: result.message || "Signup failed. Please try again."
     };
 
-  } catch (error) {
-    console.error("Signup Error:", error);
+  } catch (error: unknown) {
+    console.error("Signup Error via Bouncer:", error);
     return { 
       success: false, 
-      message: "An unexpected network error occurred during signup." 
+      message: getErrorMessage(error)
     };
+  }
+};
+
+
+export const logoutUser = () => async (dispatch: AppDispatch) => {
+  try {
+    const result = await executeCoreRequest<AuthApiResponse>({
+      url: '/auth/logout/',
+      method: 'POST',
+    });
+    console.log("Logout Response via Bouncer:", result);
+    
+  } catch (error) {
+    console.error("Backend logout failed, forcing frontend state cleanup:", error);
+  } finally {
+    dispatch(clearUserInfo());
+
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('persist:root'); 
+      window.location.href = '/log-in'; 
+    }
   }
 };

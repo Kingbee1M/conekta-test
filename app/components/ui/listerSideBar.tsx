@@ -2,9 +2,13 @@
 import logo from '@/public/svg/logo-outline-white.svg'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useSelector } from 'react-redux';
-import { RootState } from '@/shared/store/store';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState, AppDispatch } from '@/shared/store/store';
 import { usePathname } from 'next/navigation';
+import { logoutUser } from '@/shared/features/auth/auth.action';
+import { useState } from 'react';
+import Loading from '@/app/loading'; 
+import { FlatUserData } from '@/types';
 
 import link1 from '@/public/svg/Template.svg'
 import link2 from '@/public/svg/CreditCardOutline.svg'
@@ -13,29 +17,62 @@ import link4 from '@/public/svg/Icon.svg'
 import link5 from '@/public/svg/iconamoon_profile.svg'
 import link6 from '@/public/svg/ph_building-apartment.svg'
 
-export default function ListerSideBar() {
+import settings from '@/public/svg/settings.svg'
+import help from '@/public/svg/help.svg'
+import logout from '@/public/svg/logout.svg'
+
+interface ListerSideBarProps {
+  onItemClick?: () => void; 
+}
+
+export default function ListerSideBar({ onItemClick }: ListerSideBarProps) {
     const { user } = useSelector((state: RootState) => state.auth);
-    const currentName = user?.user?.profile?.full_name || '';
+    
+    const typedUser = user as FlatUserData & { user?: FlatUserData } | null;
+    const targetUserObj = typedUser?.user || typedUser;
+    const firstName = targetUserObj?.profile?.first_name || '';
+    const lastName = targetUserObj?.profile?.last_name || '';
+    
+    const currentName = firstName || lastName ? `${firstName} ${lastName}`.trim() : '';
+    
     const unreadInboxCount = 5;
     const pathname = usePathname();
-    
-    // Clean string slug matching standard router segment paths
+
+    const dispatch = useDispatch<AppDispatch>();
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+    const handleLogout = async () => {
+        try {
+            setIsLoggingOut(true); 
+            await dispatch(logoutUser());
+        } catch (error) {
+            console.error("Logout failed:", error);
+            setIsLoggingOut(false); 
+        }
+    };
+
+    // Build the workspace slug clean string
     const userSlug = currentName
-        .toLowerCase()
-        .trim()
-        .replace(/[^a-z0-9\s-]/g, '')
-        .replace(/\s+/g, '-');
+        ? encodeURIComponent(currentName.toLowerCase().replace(/\s+/g, '-'))
+        : 'workspace';
 
     const links = [
         { title: 'Dashboard', link: `/lister/${userSlug}`, icon: link1, isInbox: false, exact: true },
-        { title: 'Properties', link: `/lister/${userSlug}/properties`, icon: link6, isInbox: false },
-        { title: 'Analytics', link: `/lister/${userSlug}/analytics`, icon: link3, isInbox: false },
-        { title: 'My Wallet', link: `/lister/${userSlug}/myWallet`, icon: link2, isInbox: false },
-        { title: 'Inbox', link: `/lister/${userSlug}/inbox`, icon: link4, isInbox: true },
-        { title: 'My Profile', link: `/lister/${userSlug}/my-profile`, icon: link5, isInbox: false },
+        { title: 'Properties', link: `/lister/properties`, icon: link6, isInbox: false },
+        { title: 'Analytics', link: `/lister/analytics`, icon: link3, isInbox: false },
+        { title: 'My Wallet', link: `/lister/myWallet`, icon: link2, isInbox: false },
+        { title: 'Inbox', link: `/lister/inbox`, icon: link4, isInbox: true },
+        { title: 'My Profile', link: `/lister/my-profile`, icon: link5, isInbox: false },
     ];
 
-    if (!currentName) {
+    const links2 = [
+        { title: 'Settings', link: `/lister/settings`, icon: settings, isInbox: false, exact: true },
+        { title: 'Help & Support', link: `/lister/support`, icon: help, isInbox: false },
+        { title: 'Log Out', link: '#', icon: logout, isInbox: false },
+    ];
+
+    // ✅ FIX: Keep the skeleton pulsing loader running *only* if the entire user authentication block is missing
+    if (!user) {
         return (
             <div className="py-5 px-3 flex flex-col h-full text-white animate-pulse">
                 <div className="mb-8 flex items-center px-5">
@@ -51,57 +88,117 @@ export default function ListerSideBar() {
     }
 
     return (
-        <div className="py-5 px-3 flex flex-col h-full text-white">
-            <div className="mb-8 flex items-center px-5">
-                <Image src={logo} alt="logo" width={40} height={40} className="w-10 h-auto" />
+        <>
+            {isLoggingOut && <Loading />}
+
+            <div className="py-5 px-3 flex flex-col justify-between h-full text-white">
+                <div className='flex flex-col'>
+                    <div className="mb-8 flex items-center px-5">
+                        <Image src={logo} alt="logo" width={40} height={40} className="w-10 h-auto" />
+                    </div>
+
+                    <nav className="flex flex-col space-y-2">
+                        {links.map((link) => {
+                            const normalizedPath = pathname.replace(/\/$/, '');
+                            const normalizedLink = link.link.replace(/\/$/, '');
+
+                            const isActive = link.exact 
+                                ? normalizedPath === normalizedLink
+                                : normalizedPath.startsWith(normalizedLink);
+
+                            return (
+                                <Link 
+                                    key={link.title} 
+                                    href={link.link} 
+                                    onClick={onItemClick} 
+                                    className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 hover:bg-white/10 active:scale-[0.98] group ${
+                                        isActive ? 'bg-green-300/40 hover:bg-active-link font-semibold' : ''
+                                    }`}
+                                >
+                                    <div className="flex items-center space-x-3.5">
+                                        <Image 
+                                            src={link.icon} 
+                                            alt={link.title} 
+                                            width={20} 
+                                            height={20} 
+                                            className={`w-5 h-5 transition ${
+                                                isActive ? 'opacity-100 scale-105' : 'opacity-80 group-hover:opacity-100'
+                                            }`} 
+                                        />
+                                        <span className="text-sm font-medium tracking-wide group-hover:text-white text-white/95">
+                                            {link.title}
+                                        </span>
+                                    </div>
+
+                                    {link.isInbox && unreadInboxCount > 0 && (
+                                        <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white shadow-sm animate-pulse">
+                                            {unreadInboxCount}
+                                        </span>
+                                    )}
+                                </Link>
+                            );
+                        })}
+                    </nav>
+                </div>
+
+                <div>
+                    <nav className="flex flex-col space-y-2">
+                        {links2.map((link, index) => {
+                            const normalizedPath = pathname.replace(/\/$/, '');
+                            const normalizedLink = link.link.replace(/\/$/, '');
+                            const isActive = normalizedPath === normalizedLink;
+                            const isLogoutButton = index === 2;
+
+                            return isLogoutButton ? (
+                                <button
+                                    key={link.title}
+                                    type="button"
+                                    onClick={handleLogout}
+                                    disabled={isLoggingOut}
+                                    className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 hover:bg-red-600 disabled:opacity-50 active:scale-[0.98] group cursor-pointer text-left"
+                                >
+                                    <div className="flex items-center space-x-3.5">
+                                        <Image
+                                            src={link.icon}
+                                            alt={link.title}
+                                            width={20}
+                                            height={20}
+                                            className="w-5 h-5 opacity-80 group-hover:opacity-100"
+                                        />
+                                        <span className="text-sm font-medium tracking-wide group-hover:text-white text-white/95">
+                                            {isLoggingOut ? 'Logging out...' : link.title}
+                                        </span>
+                                    </div>
+                                </button>
+                            ) : (
+                                <Link
+                                    key={link.title}
+                                    href={link.link}
+                                    onClick={onItemClick}
+                                    className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 hover:bg-white/10 active:scale-[0.98] group ${
+                                        isActive ? 'bg-green-300/40 hover:bg-active-link font-semibold' : ''
+                                    }`}
+                                >
+                                    <div className="flex items-center space-x-3.5">
+                                        <Image
+                                            src={link.icon}
+                                            alt={link.title}
+                                            width={20}
+                                            height={20}
+                                            className={`w-5 h-5 transition ${
+                                                isActive ? 'opacity-100 scale-105' : 'opacity-80 group-hover:opacity-100'
+                                            }`}
+                                        />
+                                        <span className="text-sm font-medium tracking-wide group-hover:text-white text-white/95">
+                                            {link.title}
+                                        </span>
+                                    </div>
+                                </Link>
+                            );
+                        })}
+                    </nav>
+                </div>
             </div>
-
-            <nav className="flex flex-col space-y-2">
-                {links.map((link) => {
-                    // Normalize both strings to prevent minor trailing slash mismatches
-                    const normalizedPath = pathname.replace(/\/$/, '');
-                    const normalizedLink = link.link.replace(/\/$/, '');
-
-                    const isActive = link.exact 
-                        ? normalizedPath === normalizedLink
-                        : normalizedPath.startsWith(normalizedLink);
-
-                    // Debug tracker: Check what values are trying to compare in your browser console
-                    console.log(`Comparing Active UI -> Pathname: "${normalizedPath}" | Link: "${normalizedLink}" -> Match: ${isActive}`);
-
-                    return (
-                        <Link 
-                            key={link.title} 
-                            href={link.link} 
-                            className={`flex items-center justify-between px-4 py-3 rounded-xl transition-all duration-200 hover:bg-white/10 active:scale-[0.98] group ${
-                                isActive ? 'bg-green-300/40 hover:bg-active-link font-semibold' : ''
-                            }`}
-                        >
-                            <div className="flex items-center space-x-3.5">
-                                <Image 
-                                    src={link.icon} 
-                                    alt={link.title} 
-                                    width={20} 
-                                    height={20} 
-                                    className={`w-5 h-5 transition ${
-                                        isActive ? 'opacity-100 scale-105' : 'opacity-80 group-hover:opacity-100'
-                                    }`} 
-                                />
-                                <span className="text-sm font-medium tracking-wide group-hover:text-white text-white/95">
-                                    {link.title}
-                                </span>
-                            </div>
-
-                            {/* FLOATING BADGE */}
-                            {link.isInbox && unreadInboxCount > 0 && (
-                                <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white shadow-sm animate-pulse">
-                                    {unreadInboxCount}
-                                </span>
-                            )}
-                        </Link>
-                    );
-                })}
-            </nav>
-        </div>
+        </>
     );
 }
