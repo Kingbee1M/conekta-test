@@ -1,3 +1,4 @@
+import { StaticImageData } from 'next/image';
 
 export interface signupTypes {
     first_name: string;
@@ -43,21 +44,29 @@ export type userInfoType = {
     product: productType[]
 }
 
-// types.ts
-// export type SignupResult = 
-//   | { success: true; data: any } 
-//   | { success: false; error: string };
+export interface FlatUserData {
+  uuid?: string;
+  email?: string;
+  roles?: string[];
+  active_role?: string;
+  profile?: {
+    first_name: string;
+    last_name: string;
+    phone_number?: string;
+  };
+}
 
-// export type userData = {
 
-//   uuid: string,
-//   email: string,
-//   profile: Profile
-//   roles: string [customer, lister]
-// }
+export type SortOption = 'Newest' | 'Price: Low to High' | 'Price: High to Low' | 'Most Popular';
 
-// export type Profile = {
-//     first_name: string,
-//     last_name: string,
-//     phone_number: string
-// }
+export interface PropertyData {
+  id: string;
+  title: string;
+  location: string;
+  beds: number;
+  baths: number;
+  rating: number; // e.g., 7
+  price: number;   // e.g., 150000
+  imageUrl: StaticImageData;
+  created_at: string; // Optional: ISO date string for sorting by newest
+}

@@ -12,8 +12,7 @@ import Link from "next/link"
 import { FaGoogle, FaFacebook } from "react-icons/fa"
 import { useState } from "react"
 import { FiEyeOff, FiEye } from "react-icons/fi";
-import { useStore } from "react-redux" // 1. Import useStore from react-redux
-import { RootState } from "@/shared/store/store"
+
 // 1. Zod Schema
 const loginSchema = z.object({
     email: z.string().min(1, "Email is required").email("Invalid email format"),
@@ -26,8 +25,7 @@ export default function Login() {
     const router = useRouter();
     const { addToast } = useToast();
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
-    const store = useStore<RootState>(); // 2. Initialize the store instance hook
-    // 2. Formik with manual validation
+    
     const formik = useFormik({
         initialValues: {
             email: "",
@@ -38,7 +36,6 @@ export default function Login() {
             const result = loginSchema.safeParse(values);
             if (result.success) return {};
 
-            // Flatten the Zod errors into a simple object { field: "message" }
             const errors: Record<string, string> = {};
             result.error.issues.forEach((issue) => {
                 if (issue.path[0]) {
@@ -47,38 +44,45 @@ export default function Login() {
             });
             return errors;
         },
-        onSubmit: async (values) => {
-    const result = await dispatch(loginUser(values));
-    
-    if (result.success) {
-        addToast({ 
-            title: "Success", 
-            description: "Welcome back!", 
-            variant: "success", 
-            duration: 3000 
-        });
-        
-        // Push straight to the intermediate loading route wrapper
-        setTimeout(() => {
-            router.push('/loading-dashboard');
-        }, 2000);
-    } else {
-        addToast({ 
-            title: "Login Failed", 
-            description: result.message || "Invalid credentials", 
-            variant: "error", 
-            duration: 5000 
-        });
-    }
-}
+        onSubmit: async (values, { setSubmitting }) => {
+            try {
+                const result = await dispatch(loginUser(values));
+                
+                if (result.success) {
+                    addToast({ 
+                        title: "Success", 
+                        description: "Welcome back!", 
+                        variant: "success", 
+                        duration: 3000 
+                    });
+                    
+                    setTimeout(() => {
+                        console.log('beginning routing......')
+                        router.replace('/loading-dashboard');
+                        console.log('beginning routing......')
+                    }, 2000);
+                } else {
+                    addToast({ 
+                        title: "Login Failed", 
+                        description: result.message || "Invalid credentials", 
+                        variant: "error", 
+                        duration: 5000 
+                    });
+                    // Unlock the form button if authentication fails
+                    setSubmitting(false);
+                }
+            } catch (error) {
+                console.error("Submission crash:", error);
+                setSubmitting(false);
+            }
+        }
     });
 
     return (
         <section className="flex py-16 flex-col justify-center min-h-screen items-center gap-7 bg-linear-to-br from-[#EDFDF5] via-[#EDFDF5] to-white">
+            {/* Formik hooks directly into this onSubmit event and executes preventDefault() for you */}
             <form onSubmit={formik.handleSubmit} className="py-5 px-7 w-full max-w-95 items-center border-gray-300 rounded-lg border-2 border-solid bg-white flex flex-col gap-1">
                 <Image src={logo} width={100} height={100} alt="logo" className="w-30" />
-                {/* #2E975EB2
-                #FFFFFFB2 */}
                 <h1 className="font-bold text-xl mt-2">Welcome Back</h1>
                 <p className="mb-5 text-gray-500 text-sm text-center">Sign in to your Conekta account</p>
 
@@ -145,7 +149,8 @@ export default function Login() {
                     <button type="button" className="flex items-center gap-2 border border-gray-300 py-3 flex-1 justify-center rounded-xl text-xs font-bold hover:bg-gray-50"><FaFacebook className="text-blue-600"/>Facebook</button>
                 </div>
                 
-            <p className="mt-5">Don&apos;t have an account? <Link href="/get-started" className="text-sm text-tertiary-green">Create one</Link></p>
+                <p className="mt-5">Don&apos;t have an account? <Link href="/get-started" className="text-sm text-tertiary-green">Create one</Link></p>
+                <button>Pull me</button>
             </form>
         </section>
     )

@@ -14,6 +14,10 @@ import { MdOutlineEdit, MdMeetingRoom } from "react-icons/md";
 import { CiLocationOn, CiMoneyBill } from "react-icons/ci";
 import { IoLayersOutline } from "react-icons/io5";
 import Image from 'next/image';
+import Combobox from './ComboBox';
+import { MdPool } from "react-icons/md";
+import { FaAudioDescription } from "react-icons/fa";
+import { purposeType } from '../../../shared/enums/purpose.eums';
 
 interface AddPropertyModalProps {
   isOpen: boolean;
@@ -33,7 +37,8 @@ const useIsMounted = () => {
 
 // Validation Schema using Yup
 const validationSchema = Yup.object({
-  propertyName: Yup.string().required('Property Name is required'),
+  title: Yup.string().required('Property Name is required'),
+  description: Yup.string().required('Description is required'),
   address: Yup.string().required('Address is required'),
   city: Yup.string().required('City is required'),
   postalCode: Yup.string().required('Postal Code is required'),
@@ -41,7 +46,7 @@ const validationSchema = Yup.object({
   floors: Yup.number().typeError('Must be a number').integer('Must be an integer').nullable(),
   restRoomNo: Yup.number().typeError('Must be a number').integer('Must be an integer').nullable(),
   unitNo: Yup.string().nullable(),
-  type: Yup.mixed().oneOf([propertyType.SINGLE_UNIT, propertyType.MULTIPLE_UNIT]).required(),
+  type: Yup.mixed().oneOf([propertyType.commercial, propertyType.residential]).required(),
 });
 
 export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalProps) {
@@ -56,15 +61,16 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
   // Formik Initializer
   const formik = useFormik({
     initialValues: {
-      propertyName: '',
-      address: '',
+      title: '',
+      description: '',
       city: '',
       postalCode: '',
       price: '',
       floors: '',
       restRoomNo: '',
       unitNo: '',
-      type: propertyType.SINGLE_UNIT,
+      amenities: [],
+      type: propertyType.residential,
     },
     validationSchema,
     onSubmit: (values) => {
@@ -95,8 +101,8 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
   if (!isOpen || !isMounted) return null;
 
   const typesOptions = [
-    { value: propertyType.SINGLE_UNIT, label: 'Single Unit', icon: <TiHomeOutline className="text-base" /> },
-    { value: propertyType.MULTIPLE_UNIT, label: 'Multi Unit', icon: <HiOutlineBuildingOffice2 className="text-base" /> }
+    { value: propertyType.residential, label: 'Residential', icon: <TiHomeOutline className="text-base" /> },
+    { value: propertyType.commercial, label: 'Commercial', icon: <HiOutlineBuildingOffice2 className="text-base" /> }
   ];
 
   // Media Management Controllers
@@ -180,7 +186,7 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
                     className="absolute top-1 bottom-1 left-1 rounded-lg bg-primary-green shadow-sm transition-all duration-300 ease-out"
                     style={{
                       width: 'calc(50% - 4px)',
-                      transform: formik.values.type === propertyType.MULTIPLE_UNIT ? 'translateX(100%)' : 'translateX(0%)'
+                      transform: formik.values.type === propertyType.commercial ? 'translateX(100%)' : 'translateX(0%)'
                     }}
                   />
                   {typesOptions.map((option) => {
@@ -204,25 +210,41 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
 
               {/* PROPERTY NAME FIELD */}
               <div className="outerDiv mb-4 w-full">
-                <label className="text-xs font-semibold" htmlFor="propertyName">Property Name</label>
-                <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.propertyName && formik.errors.propertyName ? 'border-red-500' : 'border-gray-300'}`}>
+                <label className="text-xs font-semibold" htmlFor="title">Property Name</label>
+                <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.title && formik.errors.title ? 'border-red-500' : 'border-gray-300'}`}>
                   <MdOutlineEdit />
-                  <input type="text" id="propertyName" {...formik.getFieldProps('propertyName')} placeholder="e.g. Sovereign Luxury Heights" className="w-full outline-none" />
+                  <input type="text" id="title" {...formik.getFieldProps('title')} placeholder="e.g. Sovereign Luxury Heights" className="w-full outline-none" />
                 </div>
-                {formik.touched.propertyName && formik.errors.propertyName && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.propertyName}</span>}
-              </div>
-              
-              {/* STREET ADDRESS FIELD */}
-              <div className="outerDiv mb-4 w-full">
-                <label className="text-xs font-semibold" htmlFor="address">Address</label>
-                <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.address && formik.errors.address ? 'border-red-500' : 'border-gray-300'}`}>
-                  <CiLocationOn />
-                  <input type="text" id="address" {...formik.getFieldProps('address')} placeholder="e.g. 14 Admiralty Way" className="w-full outline-none" />
-                </div>
-                {formik.touched.address && formik.errors.address && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.address}</span>}
+                {formik.touched.title && formik.errors.title && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.title}</span>}
               </div>
 
-            </div>
+              <div className="outerDiv mb-4 w-full">
+                <label className="text-xs font-semibold" htmlFor="propertyDescription">Description</label>
+                <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.description && formik.errors.description ? 'border-red-500' : 'border-gray-300'}`}>
+                  <FaAudioDescription  />
+                  <input type="text" id="propertyDescription" {...formik.getFieldProps('description')} placeholder="e.g. Luxurious apartment with city views" className="w-full outline-none" />
+                </div>
+                {formik.touched.description && formik.errors.description && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.description}</span>}
+              </div>
+              
+              {/*AMENITIES FIELD */}
+                <Combobox
+                  label="Property Amenities"
+                  name="amenities"
+                  options={[
+                    { label: 'Swimming Pool', value: 'pool' },
+                    { label: '24/7 Electricity', value: 'power' },
+                    { label: 'Gymnasium', value: 'gym' },
+                  ]}
+                  value={formik.values.amenities}
+                  onChange={formik.setFieldValue}
+                  onBlur={formik.handleBlur}
+                  icon={<MdPool />}
+                  placeholder="Select or type a custom amenity..."
+                  multiSelect={true}
+                  creatable={true} // 👈 This enables the custom tag typing feature
+                />
+              </div>
 
             {/* RIGHT COMPARTMENT ITEMS: MEDIA STUDIO HUB */}
             <div className='flex flex-col space-y-3 h-full justify-between'>
@@ -259,7 +281,7 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
               </div>
 
               {/* Slider Thumbnails Row List Stream Track */}
-              <div className="flex items-center gap-2 overflow-x-auto py-1 scrollbar-none min-h-[64px]">
+              <div className="flex items-center gap-2 overflow-x-auto py-1 scrollbar-none min-h-16">
                 {mediaList.map((item) => {
                   const isActive = item.id === activeMediaId;
                   return (
@@ -270,7 +292,7 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
                         isActive ? 'border-primary-green ring-2 ring-primary-green/20' : 'border-gray-200 hover:border-gray-400'
                       }`}
                     >
-                      <img src={item.url} alt="Thumbnail preview" className="w-full h-full object-cover" />
+                      <Image src={item.url} alt="Thumbnail preview" className="w-full h-full object-cover" />
                       <button
                         type="button"
                         onClick={(e) => removeMediaItem(item.id, e)}
