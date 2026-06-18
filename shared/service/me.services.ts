@@ -34,7 +34,7 @@ export const profileApiSlice = apiSlice.injectEndpoints({
           const userData = responseBody.data; 
 
           if (userData) {
-            // Automatically push it into your authSlice store layout!
+            console.log("user data: ", userData)
             dispatch(setUserInfo(userData));
           }
         } catch (error) {

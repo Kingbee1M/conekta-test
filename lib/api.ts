@@ -52,14 +52,11 @@ const baseQueryWithReauth: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 export const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithReauth,
-  tagTypes: ['User', 'Vendor'],
+  tagTypes: ['User', 'Listing', ],
   endpoints: (_builder) => ({}),
 });
 
-/**
- * ✅ FIXED: Instead of passing a dangerous mock object that throws errors,
- * we allow full execution over the actual baseQuery engine safely.
- */
+
 export const executeCoreRequest = async <T = unknown>(
   args: string | FetchArgs, 
   apiContext?: Parameters<BaseQueryFn>[1],

@@ -7,7 +7,6 @@ import { RootState } from '@/shared/store/store';
 import { useGetProfileMeQuery } from '@/shared/service/me.services';
 import { FlatUserData } from '@/types';
 
-// 💡 Define a strong runtime layout that mirrors exactly what you saw in the console log
 
 
 export default function LoadingDashboard() {

@@ -3,11 +3,13 @@ import { persistReducer } from 'redux-persist';
 // 1. Swap the old import for your custom SSR-safe storage
 import storage from '@/lib/storage';
 import authReducer from './authSlice';
+import listingReducer from'./listingSlice'
 import cookieReducer from './acceptCookieSlice'; 
 import { apiSlice } from '@/lib/api';
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  listing: listingReducer,
   cookieConsent: cookieReducer, 
   [apiSlice.reducerPath]: apiSlice.reducer, 
 });

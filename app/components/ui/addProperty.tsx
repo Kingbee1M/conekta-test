@@ -4,7 +4,7 @@ import React, { useEffect, useState, useSyncExternalStore, useRef } from 'react'
 import { createPortal } from 'react-dom';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { FaTrashCan } from "react-icons/fa6";
+import { FaTrashCan, FaRegStar, FaStar } from "react-icons/fa6"; // 🟢 Added Star icons
 import { FaTimes } from "react-icons/fa";
 import { propertyType } from '@/shared/enums/propertytype';
 import { TiHomeOutline } from "react-icons/ti";
@@ -17,7 +17,11 @@ import Image from 'next/image';
 import Combobox from './ComboBox';
 import { MdPool } from "react-icons/md";
 import { FaAudioDescription } from "react-icons/fa";
+import { PiResizeBold } from "react-icons/pi";
 import { purposeType } from '../../../shared/enums/purpose.eums';
+import { categoryType } from '@/shared/enums/category.enums';
+import { NigeriaStateEnum, NIGERIA_LGA_MAP } from '@/shared/enums/nigeriaRegions.enums';
+
 
 interface AddPropertyModalProps {
   isOpen: boolean;
@@ -35,17 +39,19 @@ const useIsMounted = () => {
   return useSyncExternalStore(emptySubscribe, () => true, () => false);
 };
 
-// Validation Schema using Yup
 const validationSchema = Yup.object({
   title: Yup.string().required('Property Name is required'),
   description: Yup.string().required('Description is required'),
-  address: Yup.string().required('Address is required'),
   city: Yup.string().required('City is required'),
-  postalCode: Yup.string().required('Postal Code is required'),
+  zip_code: Yup.string().required('zip Code is required'),
+  street: Yup.string().required('street Name is required'),
+  state: Yup.string().required('State selection is required'),
+  lga: Yup.string().required('LGA selection is required'),
   price: Yup.number().typeError('Must be a number').positive('Must be greater than 0').required('Price target is required'),
-  floors: Yup.number().typeError('Must be a number').integer('Must be an integer').nullable(),
-  restRoomNo: Yup.number().typeError('Must be a number').integer('Must be an integer').nullable(),
-  unitNo: Yup.string().nullable(),
+  bedrooms: Yup.number().typeError('Must be a number').integer('Must be an integer').nullable(),
+  bathrooms: Yup.number().typeError('Must be a number').integer('Must be an integer').nullable(),
+  toilets: Yup.string().nullable(),
+  square_meters: Yup.string().required('Property Size is required'),
   type: Yup.mixed().oneOf([propertyType.commercial, propertyType.residential]).required(),
 });
 
@@ -54,22 +60,27 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [animate, setAnimate] = useState(false);
   
-  // Media states
   const [mediaList, setMediaList] = useState<MediaItem[]>([]);
   const [activeMediaId, setActiveMediaId] = useState<string | null>(null);
 
-  // Formik Initializer
   const formik = useFormik({
     initialValues: {
       title: '',
       description: '',
       city: '',
-      postalCode: '',
+      zip_code: '',
       price: '',
-      floors: '',
-      restRoomNo: '',
-      unitNo: '',
+      bedrooms: '',
+      bathrooms: '',
+      toilets: '',
       amenities: [],
+      category: categoryType,
+      purpose: purposeType,
+      square_meters: '',
+      street: '',
+      state: '',
+      primary_image_index: 0,
+      lga: '',
       type: propertyType.residential,
     },
     validationSchema,
@@ -77,7 +88,7 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
       const submittedPayload = {
         ...values,
         price: Number(values.price),
-        floors: values.floors ? Number(values.floors) : null,
+        bedrooms: values.bedrooms ? Number(values.bedrooms) : null,
         media: mediaList.map(m => m.file),
         created_at: new Date().toISOString(),
       };
@@ -105,7 +116,6 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
     { value: propertyType.commercial, label: 'Commercial', icon: <HiOutlineBuildingOffice2 className="text-base" /> }
   ];
 
-  // Media Management Controllers
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const files = Array.from(e.target.files);
@@ -120,6 +130,7 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
       const combined = [...prev, ...nextMediaItems];
       if (prev.length === 0 && nextMediaItems.length > 0) {
         setActiveMediaId(nextMediaItems[0].id);
+        formik.setFieldValue('primary_image_index', 0); // 🟢 Auto-fallback index
       }
       return combined;
     });
@@ -127,8 +138,18 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
 
   const removeMediaItem = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
+    
     setMediaList(prev => {
+      const targetIndex = prev.findIndex(item => item.id === id);
       const filtered = prev.filter(item => item.id !== id);
+      
+      // 🟢 Keep Formik's primary_image_index from breaking if an item is removed
+      if (formik.values.primary_image_index === targetIndex) {
+        formik.setFieldValue('primary_image_index', 0); // Reset to first item
+      } else if (formik.values.primary_image_index > targetIndex) {
+        formik.setFieldValue('primary_image_index', formik.values.primary_image_index - 1); // Shift index down
+      }
+
       if (activeMediaId === id) {
         setActiveMediaId(filtered.length > 0 ? filtered[0].id : null);
       }
@@ -136,7 +157,13 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
     });
   };
 
+  // 🟢 Helper to pinpoint if an item matches the current cover photo index
   const activeMediaItem = mediaList.find(item => item.id === activeMediaId);
+  const activeMediaIndex = mediaList.findIndex(item => item.id === activeMediaId);
+  const isCurrentlyCover = activeMediaIndex === formik.values.primary_image_index;
+
+  const selectedStateKey = formik.values.state as NigeriaStateEnum;
+  const availableLgas = selectedStateKey ? NIGERIA_LGA_MAP[selectedStateKey] : [];
 
   return createPortal(
     <div 
@@ -157,7 +184,6 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
           <button type="button" onClick={onClose} className='text-gray-400 hover:text-rose-500 cursor-pointer transition-colors p-1 rounded-lg'><FaTimes /></button>
         </div>
 
-        {/* Hidden Global Input Trigger for File uploads */}
         <input 
           type="file" 
           ref={fileInputRef} 
@@ -167,12 +193,8 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
           className="hidden" 
         />
 
-        {/* Main Processing Form Context wrapper */}
         <form onSubmit={formik.handleSubmit} className='w-full flex-1 overflow-y-auto p-6 flex flex-col space-y-5'>
           
-          {/* ========================================== */}
-          {/* FIRST LAYOUT BLOCK ROW: TWO-COLUMN PARTITION */}
-          {/* ========================================== */}
           <div className='grid grid-cols-2 gap-2 items-stretch min-h-72.5'>
 
             {/* LEFT COMPARTMENT ITEMS */}
@@ -227,7 +249,6 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
                 {formik.touched.description && formik.errors.description && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.description}</span>}
               </div>
               
-              {/*AMENITIES FIELD */}
                 <Combobox
                   label="Property Amenities"
                   name="amenities"
@@ -242,7 +263,7 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
                   icon={<MdPool />}
                   placeholder="Select or type a custom amenity..."
                   multiSelect={true}
-                  creatable={true} // 👈 This enables the custom tag typing feature
+                  creatable={true}
                 />
               </div>
 
@@ -258,7 +279,34 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
                       alt="Selected Property Resource Preview" width={100} height={100}
                       className="w-full h-full object-cover" 
                     />
+                    
+                    {/* 🟢 Badge indicating if current photo is the cover image */}
+                    <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm px-2.5 py-1 rounded-full flex items-center gap-1.5 text-white text-[10px] font-semibold">
+                      {isCurrentlyCover ? (
+                        <>
+                          <FaStar className="text-amber-400" />
+                          <span>Poster Image</span>
+                        </>
+                      ) : (
+                        <>
+                          <FaRegStar className="text-gray-300" />
+                          <span>Secondary Image</span>
+                        </>
+                      )}
+                    </div>
+
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                      {/* 🟢 Action Button to trigger the state change */}
+                      {!isCurrentlyCover && (
+                        <button
+                          type="button"
+                          onClick={() => formik.setFieldValue('primary_image_index', activeMediaIndex)}
+                          className="px-3 py-1.5 bg-primary-green text-white rounded-lg text-xs font-semibold shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center gap-1.5"
+                        >
+                          <FaStar /> Set as Poster
+                        </button>
+                      )}
+                      
                       <button 
                         type="button"
                         onClick={(e) => removeMediaItem(activeMediaId!, e)}
@@ -282,17 +330,30 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
 
               {/* Slider Thumbnails Row List Stream Track */}
               <div className="flex items-center gap-2 overflow-x-auto py-1 scrollbar-none min-h-16">
-                {mediaList.map((item) => {
+                {mediaList.map((item, index) => {
                   const isActive = item.id === activeMediaId;
+                  const isPoster = index === formik.values.primary_image_index;
                   return (
                     <div
                       key={item.id}
                       onClick={() => setActiveMediaId(item.id)}
                       className={`relative w-14 h-14 rounded-lg overflow-hidden border-2 shrink-0 cursor-pointer transition-all transform hover:scale-105 active:scale-95 ${
-                        isActive ? 'border-primary-green ring-2 ring-primary-green/20' : 'border-gray-200 hover:border-gray-400'
+                        isActive 
+                          ? 'border-primary-green ring-2 ring-primary-green/20' 
+                          : isPoster 
+                          ? 'border-amber-400 ring-2 ring-amber-400/20' 
+                          : 'border-gray-200 hover:border-gray-400'
                       }`}
                     >
-                      <Image src={item.url} alt="Thumbnail preview" className="w-full h-full object-cover" />
+                      <Image src={item.url} alt="Thumbnail preview" fill className="w-full h-full object-cover" />
+                      
+                      {/* 🟢 Miniature star badge overlay on thumbnails layer track */}
+                      {isPoster && (
+                        <div className="absolute bottom-0.5 right-0.5 bg-amber-400 text-white p-0.5 rounded-full shadow-sm text-[8px]">
+                          <FaStar />
+                        </div>
+                      )}
+
                       <button
                         type="button"
                         onClick={(e) => removeMediaItem(item.id, e)}
@@ -305,7 +366,6 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
                   );
                 })}
 
-                {/* Always-Visible Appending Square Capsule Trigger */}
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
@@ -319,12 +379,8 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
             </div>
           </div>
 
-          {/* ========================================== */}
-          {/* BOTTOM REGION ROWS: NATURAL FLUID WRAPPERS */}
-          {/* ========================================== */}
-          <div className="grid grid-cols-2 gap-2">
-            
-            {/* CITY FIELD */}
+          {/* BOTTOM REGION ROWS */}
+          <div className="grid grid-cols-2 gap-2 mt-10">
             <div className="outerDiv mb-4 w-full">
               <label className="text-xs font-semibold" htmlFor="city">City</label>
               <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.city && formik.errors.city ? 'border-red-500' : 'border-gray-300'}`}>
@@ -334,23 +390,19 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
               {formik.touched.city && formik.errors.city && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.city}</span>}
             </div>
 
-            {/* POSTAL CODE FIELD */}
             <div className="outerDiv mb-4 w-full">
-              <label className="text-xs font-semibold" htmlFor="postalCode">Postal Code</label>
-              <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.postalCode && formik.errors.postalCode ? 'border-red-500' : 'border-gray-300'}`}>
+              <label className="text-xs font-semibold" htmlFor="zip_code">Zip Code</label>
+              <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.zip_code && formik.errors.zip_code ? 'border-red-500' : 'border-gray-300'}`}>
                 <CiLocationOn />
-                <input type="text" id="postalCode" {...formik.getFieldProps('postalCode')} placeholder="e.g. 105102" className="w-full outline-none" />
+                <input type="text" id="zip_code" {...formik.getFieldProps('zip_code')} placeholder="e.g. 105102" className="w-full outline-none" />
               </div>
-              {formik.touched.postalCode && formik.errors.postalCode && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.postalCode}</span>}
+              {formik.touched.zip_code && formik.errors.zip_code && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.zip_code}</span>}
             </div>
-
           </div>
 
           <div className="grid grid-cols-2 gap-2">
-
-            {/* FINANCIAL TARGET TARGETING INPUT */}
             <div className="outerDiv mb-4 w-full">
-              <label className="text-xs font-semibold" htmlFor="price">Valuation Price Target ($)</label>
+              <label className="text-xs font-semibold" htmlFor="price">Valuation Price Target</label>
               <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.price && formik.errors.price ? 'border-red-500' : 'border-gray-300'}`}>
                 <CiMoneyBill />
                 <input type="number" id="price" {...formik.getFieldProps('price')} placeholder="e.g. 450000" className="w-full outline-none" />
@@ -358,44 +410,106 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
               {formik.touched.price && formik.errors.price && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.price}</span>}
             </div>
 
-            {/* INTERNAL STRUCTURAL DESIGN DATA SPECS SUB-GRID (Floors, Restrooms, Units) */}
             <div className="grid grid-cols-3 gap-2">
-              
-              {/* TOTAL FLOORS */}
               <div className="outerDiv mb-4 w-full">
-                <label className="text-xs font-semibold" htmlFor="floors">Floors</label>
-                <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.floors && formik.errors.floors ? 'border-red-500' : 'border-gray-300'}`}>
+                <label className="text-xs font-semibold" htmlFor="bedrooms">Bedrooms</label>
+                <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.bedrooms && formik.errors.bedrooms ? 'border-red-500' : 'border-gray-300'}`}>
                   <IoLayersOutline />
-                  <input type="number" id="floors" {...formik.getFieldProps('floors')} placeholder="2" className="w-full outline-none" />
+                  <input type="number" id="bedrooms" {...formik.getFieldProps('bedrooms')} placeholder="2" className="w-full outline-none" />
                 </div>
-                {formik.touched.floors && formik.errors.floors && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.floors}</span>}
+                {formik.touched.bedrooms && formik.errors.bedrooms && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.bedrooms}</span>}
               </div>
 
-              {/* RESTROOMS */}
               <div className="outerDiv mb-4 w-full">
-                <label className="text-xs font-semibold" htmlFor="restRoomNo">Baths</label>
-                <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.restRoomNo && formik.errors.restRoomNo ? 'border-red-500' : 'border-gray-300'}`}>
+                <label className="text-xs font-semibold" htmlFor="bathrooms">Baths</label>
+                <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.bathrooms && formik.errors.bathrooms ? 'border-red-500' : 'border-gray-300'}`}>
                   <MdMeetingRoom />
-                  <input type="number" id="restRoomNo" {...formik.getFieldProps('restRoomNo')} placeholder="4" className="w-full outline-none" />
+                  <input type="number" id="bathrooms" {...formik.getFieldProps('bathrooms')} placeholder="4" className="w-full outline-none" />
                 </div>
-                {formik.touched.restRoomNo && formik.errors.restRoomNo && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.restRoomNo}</span>}
+                {formik.touched.bathrooms && formik.errors.bathrooms && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.bathrooms}</span>}
               </div>
 
-              {/* UNIT NUMBER */}
               <div className="outerDiv mb-4 w-full">
-                <label className="text-xs font-semibold" htmlFor="unitNo">Unit No.</label>
-                <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.unitNo && formik.errors.unitNo ? 'border-red-500' : 'border-gray-300'}`}>
+                <label className="text-xs font-semibold" htmlFor="toilets">Toilets</label>
+                <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.toilets && formik.errors.toilets ? 'border-red-500' : 'border-gray-300'}`}>
                   <TiHomeOutline />
-                  <input type="text" id="unitNo" {...formik.getFieldProps('unitNo')} placeholder="B4" className="w-full outline-none" />
+                  <input type="text" id="toilets" {...formik.getFieldProps('toilets')} placeholder="B4" className="w-full outline-none" />
                 </div>
-                {formik.touched.unitNo && formik.errors.unitNo && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.unitNo}</span>}
+                {formik.touched.toilets && formik.errors.toilets && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.toilets}</span>}
               </div>
-
             </div>
-
           </div>
 
-          {/* Form Actions Footer Panel Row */}
+          <div className='grid grid-cols-2 gap-2'>
+            <div className="outerDiv mb-4 w-full">
+              <label className="text-xs font-semibold" htmlFor="street">Street Name</label>
+              <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.street && formik.errors.street ? 'border-red-500' : 'border-gray-300'}`}>
+                <CiLocationOn />
+                <input type="text" id="street" {...formik.getFieldProps('street')} placeholder="e.g. 15 Cooper Road" className="w-full outline-none" />
+              </div>
+              {formik.touched.street && formik.errors.street && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.street}</span>}
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <div className="outerDiv mb-4 w-full">
+                <label className="text-xs font-semibold" htmlFor="state">State</label>
+                <div className={`inputDiv flex items-center border p-2 rounded gap-2 bg-white ${formik.touched.state && formik.errors.state ? 'border-red-500' : 'border-gray-300'}`}>
+                  <CiLocationOn />
+                  <select
+                    id="state"
+                    value={formik.values.state}
+                    className="w-full outline-none bg-transparent text-sm cursor-pointer"
+                    onChange={(e) => {
+                      formik.setFieldValue('state', e.target.value);
+                      formik.setFieldValue('lga', ''); 
+                    }}
+                    onBlur={formik.handleBlur}
+                  >
+                    <option value="">Select State</option>
+                    {Object.values(NigeriaStateEnum).map((stateName) => (
+                      <option key={stateName} value={stateName}>{stateName}</option>
+                    ))}
+                  </select>
+                </div>
+                {formik.touched.state && formik.errors.state && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.state}</span>}
+              </div>
+
+              <div className="outerDiv mb-4 w-full">
+                <label className="text-xs font-semibold" htmlFor="lga">LGA</label>
+                <div className={`inputDiv flex items-center border p-2 rounded gap-2 bg-white ${
+                  !selectedStateKey ? 'opacity-50 bg-gray-50' : ''
+                } ${formik.touched.lga && formik.errors.lga ? 'border-red-500' : 'border-gray-300'}`}>
+                  <CiLocationOn />
+                  <select
+                    id="lga"
+                    {...formik.getFieldProps('lga')}
+                    disabled={!selectedStateKey || availableLgas.length === 0}
+                    className="w-full outline-none bg-transparent text-sm cursor-pointer disabled:cursor-not-allowed"
+                  >
+                    <option value="">
+                      {!selectedStateKey ? 'Select State first...' : 'Select LGA'}
+                    </option>
+                    {availableLgas.map((lgaName) => (
+                      <option key={lgaName} value={lgaName}>{lgaName}</option>
+                    ))}
+                  </select>
+                </div>
+                {formik.touched.lga && formik.errors.lga && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.lga}</span>}
+              </div>
+            </div>
+          </div>
+
+          <div className='grid grid-cols-2 gap-2'>
+            <div className="outerDiv mb-4 w-full">
+              <label className="text-xs font-semibold" htmlFor="square_meters">Property Size</label>
+              <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.square_meters && formik.errors.square_meters ? 'border-red-500' : 'border-gray-300'}`}>
+                <PiResizeBold />
+                <input type="text" id="square_meters" {...formik.getFieldProps('square_meters')} placeholder="e.g. 150" className="w-full outline-none" />
+              </div>
+              {formik.touched.square_meters && formik.errors.square_meters && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.square_meters}</span>}
+            </div>
+          </div>
+
           <div className="flex space-x-2 pt-4 border-t border-gray-100 mt-auto w-full shrink-0">
             <button 
               type="button" 
