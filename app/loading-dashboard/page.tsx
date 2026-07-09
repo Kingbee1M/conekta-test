@@ -44,8 +44,8 @@ export default function LoadingDashboard() {
       );
 
       if (hasListerPrivilege) {
-        console.log(`🚀 Routing to Lister Space: /lister/${userSlug}`);
-        router.replace(`/lister/${userSlug}`);
+        console.log(`🚀 Routing to Lister Space: /${userSlug}`);
+        router.replace(`/${userSlug}`);
       } else {
         console.log(`🚀 Routing to Customer Space: /customer/dashboard`);
         router.replace(`/customer/dashboard`);

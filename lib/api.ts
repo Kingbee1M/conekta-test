@@ -63,7 +63,7 @@ export const executeCoreRequest = async <T = unknown>(
   extraOptions: Parameters<BaseQueryFn>[2] = {}
 ): Promise<T> => {
   
-  // Use the real API context if provided, otherwise gracefully fall back to a safe layout
+
   const fallbackApi: Parameters<BaseQueryFn>[1] = apiContext || {
     signal: new AbortController().signal,
     abort: (reason) => { console.warn(`Abort called: ${reason}`); },

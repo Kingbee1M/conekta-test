@@ -24,10 +24,10 @@ export default function ListerTopBar () {
             <div className='flex items-center gap-5 text-xl'>
                 <span className='border border-[#F0F0F0] px-4 py-1 rounded-l-full rounded-r-full flex gap-1 items-center text-base'>{role} <IoChevronDownSharp className='text-xs'/></span>
                 <CiSearch />
-                <Link href={`/lister/inbox`}><IoIosNotificationsOutline /></Link>
-                <div className='h-7 w-7 rounded-full bg-secondary-green flex justify-center items-center'>
+                <Link href={`/inbox`}><IoIosNotificationsOutline /></Link>
+                <Link href={'/my-profile'} className='h-10 w-10 rounded-full bg-secondary-green flex justify-center items-center'>
                     <span className='text-tertiary-green'>{initial}</span>
-                </div>
+                </Link>
             </div>
         </header>
     )

@@ -29,6 +29,12 @@ import h1 from '@/public/jpg/house1.jpg'
 import h2 from '@/public/jpg/house2.jpg'
 import h3 from '@/public/jpg/house3.jpg'
 
+const realEstateData = [
+  { name: 'Active Listed', value: 32, color: '#157145' },
+  { name: 'Rented Out', value: 14, color: '#3b82f6' },
+  { name: 'Under Maintenance', value: 5, color: '#f59e0b' }
+];
+
 const sampleActivities: RecentActivityItem[] = [
   {
     id: 'act_01',
@@ -215,7 +221,11 @@ const mockPropertiesSold = [
       {/* Analytics Grid Row */}
       <div className='w-full grid grid-cols-[7fr_3fr] grid-rows-[260px] gap-5 mt-5'>
         <ListerHero />
-        <ListerPieChart />
+        <ListerPieChart 
+          title="Commercial Portfolio" 
+          data={realEstateData} 
+          isLive={true} 
+        />
       </div>
 
       {/* FLATING BUTTON */}
