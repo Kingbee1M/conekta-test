@@ -57,21 +57,20 @@ export default function ListerSideBar({ onItemClick }: ListerSideBarProps) {
         : 'workspace';
 
     const links = [
-        { title: 'Dashboard', link: `/lister/${userSlug}`, icon: link1, isInbox: false, exact: true },
-        { title: 'Properties', link: `/lister/properties`, icon: link6, isInbox: false },
-        { title: 'Analytics', link: `/lister/analytics`, icon: link3, isInbox: false },
-        { title: 'My Wallet', link: `/lister/myWallet`, icon: link2, isInbox: false },
-        { title: 'Inbox', link: `/lister/inbox`, icon: link4, isInbox: true },
-        { title: 'My Profile', link: `/lister/my-profile`, icon: link5, isInbox: false },
+        { title: 'Dashboard', link: `/${userSlug}`, icon: link1, isInbox: false, exact: true },
+        { title: 'Properties', link: `/properties`, icon: link6, isInbox: false },
+        { title: 'Analytics', link: `/analytics`, icon: link3, isInbox: false },
+        { title: 'My Wallet', link: `/myWallet`, icon: link2, isInbox: false },
+        { title: 'Inbox', link: `/inbox`, icon: link4, isInbox: true },
+        { title: 'My Profile', link: `/my-profile`, icon: link5, isInbox: false },
     ];
 
     const links2 = [
-        { title: 'Settings', link: `/lister/settings`, icon: settings, isInbox: false, exact: true },
-        { title: 'Help & Support', link: `/lister/support`, icon: help, isInbox: false },
+        { title: 'Settings', link: `/settings`, icon: settings, isInbox: false, exact: true },
+        { title: 'Help & Support', link: `/support`, icon: help, isInbox: false },
         { title: 'Log Out', link: '#', icon: logout, isInbox: false },
     ];
 
-    // ✅ FIX: Keep the skeleton pulsing loader running *only* if the entire user authentication block is missing
     if (!user) {
         return (
             <div className="py-5 px-3 flex flex-col h-full text-white animate-pulse">

@@ -23,7 +23,8 @@ interface ComboboxProps {
   icon?: React.ReactNode;
   multiSelect?: boolean;
   searchable?: boolean;
-  creatable?: boolean; // 🟢 Add opt-in toggle for typing custom options
+  creatable?: boolean; 
+  disabled?: boolean; // 🔴 Added optional disabled property flag
 }
 
 export default function Combobox({
@@ -39,7 +40,8 @@ export default function Combobox({
   icon,
   multiSelect = false,
   searchable = true,
-  creatable = false, // 🟢 Default to false so it changes nothing unless explicitly turned on
+  creatable = false, 
+  disabled = false, // 🔴 Default fallback assignment set to false
 }: ComboboxProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -72,6 +74,7 @@ export default function Combobox({
   );
 
   const handleOptionSelect = (option: ComboboxOption) => {
+    if (disabled) return; // Guard clause verification
     if (multiSelect) {
       if (selectedValues.includes(option.value)) {
         const updated = selectedValues.filter((v) => v !== option.value);
@@ -88,9 +91,8 @@ export default function Combobox({
     }
   };
 
-  // 🟢 Precision Add: Handle key bindings ONLY if multiSelect and creatable are true
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!multiSelect || !creatable) return;
+    if (disabled || !multiSelect || !creatable) return;
 
     const trimmedQuery = searchQuery.trim();
     
@@ -112,25 +114,31 @@ export default function Combobox({
 
   const handleRemoveItem = (e: React.MouseEvent, optionValue: string | number) => {
     e.stopPropagation(); 
+    if (disabled) return; // Prevent deletions when input wrapper is locked
     const updated = selectedValues.filter((v) => v !== optionValue);
     onChange(name, updated);
   };
 
   return (
-    <div ref={containerRef} className="outerDiv relative">
-      <label className="text-xs font-semibold text-gray-700">{label}</label>
+    <div ref={containerRef} className="outerDiv relative w-full">
+      <label className={`text-xs font-semibold transition-colors ${disabled ? 'text-gray-400' : 'text-gray-700'}`}>{label}</label>
 
       <div
         onClick={() => {
+          if (disabled) return; // Prevent drop expansion on inactive wrapper actions
           setIsOpen(true);
           inputRef.current?.focus();
         }}
-        className={`inputDiv cursor-pointer gap-1.5 min-h-10 flex-wrap ${
+        className={`inputDiv gap-1.5 min-h-10 flex-wrap transition-all ${
+          disabled 
+            ? 'cursor-not-allowed opacity-60' 
+            : 'cursor-pointer hover:border-gray-300'
+        } ${
           touched && error ? 'border-red-500 border-2' : 'border-transparent'
         }`}
-        style={{ backgroundColor: '#F3F3F5', borderRadius: '7px', borderWidth: '2px' }}
+        style={{ backgroundColor: disabled ? '#EAEAEF' : '#F3F3F5', borderRadius: '7px', borderWidth: '2px' }}
       >
-        {icon && <div className=" flex items-center shrink-0 text-[18px]">{icon}</div>}
+        {icon && <div className={`flex items-center shrink-0 text-[18px] ${disabled ? 'text-gray-400' : 'text-gray-500'}`}>{icon}</div>}
 
         <div className="flex flex-wrap items-center gap-1.5 flex-1 min-w-0">
           {multiSelect && selectedValues.length > 0 ? (
@@ -141,13 +149,18 @@ export default function Combobox({
               return (
                 <div
                   key={val}
-                  className="flex items-center gap-1 bg-[#00AC72]/10 border border-[#00AC72]/20 text-[#00AC72] text-xs font-medium px-2 py-0.5 rounded-full select-none max-w-full"
+                  className={`flex items-center gap-1 border text-xs font-medium px-2 py-0.5 rounded-full select-none max-w-full ${
+                    disabled
+                      ? 'bg-gray-200 border-gray-300 text-gray-500'
+                      : 'bg-[#00AC72]/10 border-[#00AC72]/20 text-[#00AC72]'
+                  }`}
                 >
                   <span className="truncate max-w-30">{displayLabel}</span>
                   <button
                     type="button"
+                    disabled={disabled}
                     onClick={(e) => handleRemoveItem(e, val)}
-                    className="hover:bg-[#00AC72]/20 rounded-full p-0.5 transition-colors shrink-0"
+                    className="hover:bg-black/5 rounded-full p-0.5 transition-colors shrink-0 disabled:cursor-not-allowed"
                   >
                     <IoCloseOutline className="text-sm stroke-[3px]" />
                   </button>
@@ -155,34 +168,34 @@ export default function Combobox({
               );
             })
           ) : !multiSelect && selectedValues.length > 0 && !isOpen ? (
-            <span className="text-sm text-gray-900 truncate">
+            <span className={`text-sm truncate ${disabled ? 'text-gray-400' : 'text-gray-900'}`}>
               {options.find((opt) => opt.value === selectedValues[0])?.label || String(selectedValues[0])}
             </span>
           ) : null}
 
-          {(isOpen && searchable) || selectedValues.length === 0 ? (
+          {(!disabled && isOpen && searchable) || (selectedValues.length === 0) ? (
             <input
               ref={inputRef}
               type="text"
+              disabled={disabled}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              onKeyDown={handleKeyDown} // 🟢 Keyboard attachment point
+              onKeyDown={handleKeyDown} 
               placeholder={selectedValues.length === 0 ? placeholder : ''}
-              className="bg-transparent outline-none text-sm p-0 border-none flex-1 min-w-15 text-gray-800"
+              className="bg-transparent outline-none text-sm p-0 border-none flex-1 min-w-15 text-gray-800 disabled:cursor-not-allowed disabled:text-gray-400"
               style={{ padding: 0 }}
             />
           ) : null}
         </div>
 
-        <div className={`text-gray-400 transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-180' : ''}`}>
+        <div className={`text-gray-400 transition-transform duration-200 shrink-0 ${isOpen && !disabled ? 'rotate-180' : ''}`}>
           <IoChevronDownOutline className="text-base" />
         </div>
       </div>
 
-      {isOpen && (
+      {isOpen && !disabled && (
         <div className="absolute left-0 right-0 top-[calc(100%+4px)] bg-white border border-gray-200 rounded-lg shadow-xl z-50 max-h-60 overflow-y-auto overflow-x-hidden py-1">
           
-          {/* 🟢 Precision Add: Conditional drop panel selection alternative link */}
           {creatable && searchQuery.trim() && !options.some(opt => opt.label.toLowerCase() === searchQuery.trim().toLowerCase()) && (
             <div
               onClick={() => {

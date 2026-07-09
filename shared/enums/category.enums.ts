@@ -1,4 +1,4 @@
 export enum categoryType {
-    land = "Land",
-    building = "Building"
+    land = "land",
+    building = "building"
 }

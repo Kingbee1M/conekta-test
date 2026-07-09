@@ -73,9 +73,9 @@ export default function Properties () {
                 </div>
                 <div className='flex items-center gap-4 text-xl'>
                     <Link href={`/lister/inbox`}><IoIosNotificationsOutline /></Link>
-                    <div className='h-10 w-10 rounded-full bg-secondary-green flex justify-center items-center'>
+                    <Link href={'/my-profile'} className='h-10 w-10 rounded-full bg-secondary-green flex justify-center items-center'>
                         <span className='text-tertiary-green'>{initial}</span>
-                    </div>
+                    </Link>
                 </div>
                 <AddPropertyModal isOpen={openAdd} onClose={()=> setOpenAdd(false)} />
             </div>
@@ -93,44 +93,51 @@ export default function Properties () {
                     ))}
                 </div>
 
-                <div className='flex gap-3 items-center'>
-                    <button className='p-2 border border-black rounded-sm' onClick={() => setCols(3)}><Image src={button1} alt="Button 1" width={10} height={10} /></button>
-                    <button className='p-2 border border-black rounded-sm' onClick={() => setCols(4)}><Image src={button2} alt="Button 2" width={10} height={10} /></button>                </div>
 
-                <div ref={sortRef} className="relative text-sm select-none">
-                <button
-                    type="button"
-                    onClick={() => setIsSortOpen(!isSortOpen)}
-                    className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors font-medium cursor-pointer"
-                >
-                    <span>Sort by: <span className="text-primary-green font-semibold">{sortBy}</span></span>
-                    <IoChevronDownOutline className={`text-xs text-gray-400 transition-transform duration-200 ${isSortOpen ? 'rotate-180' : ''}`} />
-                </button>
-
-                {/* FLOATING ACTION OVERLAY BOX */}
-                {isSortOpen && (
-                    <div className="absolute right-0 top-[calc(100%+6px)] bg-white border border-gray-200 rounded-xl shadow-lg py-1.5 w-44 z-50 animate-in fade-in slide-in-from-top-1 duration-100 overflow-hidden">
-                    {sortOptions.map((option) => (
-                        <button
-                        key={option}
-                        type="button"
-                        onClick={() => {
-                            setSortBy(option);
-                            setIsSortOpen(false);
-                            // 💡 Trigger your real filter fetching/sorting state actions here
-                        }}
-                        className={`w-full text-left px-4 py-2 text-xs transition-colors cursor-pointer ${
-                            sortBy === option 
-                            ? 'bg-primary-green/10 text-primary-green font-bold' 
-                            : 'text-gray-600 hover:bg-gray-50'
-                        }`}
-                        >
-                        {option}
-                        </button>
-                    ))}
+                <div className="flex gap-3 items-center">
+                    <div className='flex gap-3 items-center'>
+                        <button className='p-2 border border-black rounded-sm' onClick={() => setCols(3)}><Image src={button1} alt="Button 1" width={10} height={10} /></button>
+                        <button className='p-2 border border-black rounded-sm' onClick={() => setCols(4)}><Image src={button2} alt="Button 2" width={10} height={10} /></button>                
                     </div>
-                )}
+
+                    <div ref={sortRef} className="relative text-sm select-none">
+                    <button
+                        type="button"
+                        onClick={() => setIsSortOpen(!isSortOpen)}
+                        className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors font-medium cursor-pointer"
+                    >
+                        <span>Sort by: <span className="text-primary-green font-semibold">{sortBy}</span></span>
+                        <IoChevronDownOutline className={`text-xs text-gray-400 transition-transform duration-200 ${isSortOpen ? 'rotate-180' : ''}`} />
+                    </button>
+
+                    {/* FLOATING ACTION OVERLAY BOX */}
+                    {isSortOpen && (
+                        <div className="absolute right-0 top-[calc(100%+6px)] bg-white border border-gray-200 rounded-xl shadow-lg py-1.5 w-44 z-50 animate-in fade-in slide-in-from-top-1 duration-100 overflow-hidden">
+                        {sortOptions.map((option) => (
+                            <button
+                            key={option}
+                            type="button"
+                            onClick={() => {
+                                setSortBy(option);
+                                setIsSortOpen(false);
+                                // 💡 Trigger your real filter fetching/sorting state actions here
+                            }}
+                            className={`w-full text-left px-4 py-2 text-xs transition-colors cursor-pointer ${
+                                sortBy === option 
+                                ? 'bg-primary-green/10 text-primary-green font-bold' 
+                                : 'text-gray-600 hover:bg-gray-50'
+                            }`}
+                            >
+                            {option}
+                            </button>
+                        ))}
+                        </div>
+                    )}
+                    </div>
                 </div>
+                
+
+                
             </div>
 
 

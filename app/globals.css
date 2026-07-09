@@ -167,6 +167,10 @@
     font-size: 14px;
   }
 
+  select {
+    font-family: var(--font-inter);
+  }
+
   input {
     width: 100%;
     padding: 0 8px;
