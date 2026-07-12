@@ -21,6 +21,15 @@ import button1 from '@/public/svg/button-option1.svg'
 import button2 from '@/public/svg/button-option2.svg'
 import button3 from '@/public/svg/button-option3.svg'
 import { GridColsOption } from '@/app/components/ui/propertyGrid';
+import { PropertyFilter } from '@/shared/enums/propertysFilter.enums';
+
+import { FaBuildingColumns } from "react-icons/fa6";
+import { BiDoorOpen } from "react-icons/bi";
+import { FaDollarSign } from "react-icons/fa6";
+import { BsFillHouseCheckFill } from "react-icons/bs";
+import { FaHouseCircleXmark } from "react-icons/fa6";
+
+
 
 export default function Properties () {
     const [openAdd, setOpenAdd] = useState(false)
@@ -49,12 +58,14 @@ export default function Properties () {
     return () => document.removeEventListener('mousedown', handleOutside);
     }, []);
 
-    const pillNav = [
-    { title: 'Discover', icon: descover, link: '/' },
-    { title: 'Finance', icon: cash, link: '/' },
-    { title: 'Manage', icon: bag, link: '/' },
-    { title: 'Impact', icon: shake, link: '/' },
-  ];
+    const [handleFilter, setHandleFilter] = useState<PropertyFilter>(PropertyFilter.ALL);
+        const pillNav = [
+        { title: 'All', icon: FaBuildingColumns, filter: PropertyFilter.ALL },
+        { title: 'Avaliable', icon: BiDoorOpen, filter:PropertyFilter.AVAILABLE},
+        { title: 'Sold', icon: FaDollarSign, filter:PropertyFilter.SOLD},
+        { title: 'Rented', icon: BsFillHouseCheckFill, filter:PropertyFilter.RENTED},
+        { title: 'Deactivated', icon: FaHouseCircleXmark, filter:PropertyFilter.DEACTIVATED},
+    ];
 
     const sortOptions: SortOption[] = ['Newest', 'Price: Low to High', 'Price: High to Low', 'Most Popular'];
 
@@ -85,12 +96,23 @@ export default function Properties () {
 
             {/* PILL NAVIGATIONS */}
                 <div className='w-1/2 flex gap-3 text-sm'>
-                    {pillNav.map((pill, index) => (
-                    <Link href={pill.link} key={index} className='flex gap-2 px-3 py-1 rounded-full hover:bg-primary-green/10 border-[#00000033] border-solid border items-center transition-colors'>
-                        <Image src={pill.icon} alt={pill.title} width={12} height={12} className='w-3' />
-                        <span className='text-primary-green font-medium'>{pill.title}</span>
-                    </Link>
-                    ))}
+                    {pillNav.map((pill, index) => {
+                        const isActive = handleFilter === pill.filter;
+                        return (
+                        <button 
+                        onClick={() => setHandleFilter(pill.filter)} 
+                        key={index} 
+                        className={`flex gap-2 px-3 py-1 rounded-full items-center transition-all ${
+                            isActive
+                            ? 'bg-primary-green text-white'
+                            : 'bg-white border border-[#00000033] border-solid text-slate-500 hover:text-slate-800 hover:bg-primary-green/10'
+                        }`}
+                        >
+                        <pill.icon className='' />
+                        <span className={`font-medium ${isActive ? 'text-white' : ''}`}>{pill.title}</span>
+                        </button>
+                    )}
+                    )}
                 </div>
 
 
@@ -120,7 +142,6 @@ export default function Properties () {
                             onClick={() => {
                                 setSortBy(option);
                                 setIsSortOpen(false);
-                                // 💡 Trigger your real filter fetching/sorting state actions here
                             }}
                             className={`w-full text-left px-4 py-2 text-xs transition-colors cursor-pointer ${
                                 sortBy === option 

@@ -1,5 +1,6 @@
 import { apiSlice } from '@/lib/api';
-import { PaginatedListingList, Listing } from '@/types';
+import { PaginatedListingList, Listing, } from '@/types';
+import { PaymentFrequencyEnum } from '../enums/paymentFreqency.enums';
 
 export interface PaymentOption {
   price: number;
@@ -28,6 +29,8 @@ export interface CreateListingPayload {
   primary_image_index: number;
   images: string[];
   payment_options: PaymentOption[];
+  payment_frequency?: PaymentFrequencyEnum[];
+  base_price: number
   amenities?: string[];
   bedrooms?: number;
   bathrooms?: number;
@@ -68,7 +71,6 @@ export const listingApi = apiSlice.injectEndpoints({
         method: 'POST',
         body,
       }),
-      // Automatically invalidates the main cache list so the UI gets fresh data
       invalidatesTags: [{ type: 'Listing', id: 'LIST' }],
     }),
   }),

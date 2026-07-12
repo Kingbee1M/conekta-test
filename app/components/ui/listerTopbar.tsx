@@ -16,7 +16,7 @@ export default function ListerTopBar () {
     
     const currentName = firstName || lastName ? `${firstName} ${lastName}`.trim() : '';
     const initial = currentName.trim().charAt(0).toUpperCase() || '?';
-    const role = user?.active_role || '';
+    const role = user?.active_role || 'Lister';
     return (
         <header className='w-full hidden md:flex md:flex-row justify-between'>
             <p className='text-xl'>Good morning, <span className='text-tertiary-green'>{currentName}</span></p>

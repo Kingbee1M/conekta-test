@@ -10,7 +10,7 @@ import { propertyType } from '@/shared/enums/propertytype';
 import { TiHomeOutline } from "react-icons/ti";
 import { HiOutlineBuildingOffice2 } from "react-icons/hi2";
 import { IoAddCircleOutline } from "react-icons/io5";
-import { MdOutlineEdit, MdMeetingRoom } from "react-icons/md";
+import { MdOutlineEdit, MdMeetingRoom, MdOutlinePayments } from "react-icons/md";
 import { CiLocationOn, CiMoneyBill } from "react-icons/ci";
 import { IoLayersOutline } from "react-icons/io5";
 import Image from 'next/image';
@@ -26,6 +26,7 @@ import { CurrencyEnum } from '@/shared/enums/currency.enums';
 import { useCreateListingMutation } from '@/shared/service/listing.services';
 import { useToast } from './ToastProvider';
 import { CreateListingPayload } from '@/shared/service/listing.services';
+import { paymentFrequencyOptions } from '@/shared/enums/paymentFreqency.enums';
 
 interface AddPropertyModalProps {
   isOpen: boolean;
@@ -54,6 +55,7 @@ const validationSchema = Yup.object({
   lga: Yup.string().required('LGA selection is required'),
   currency: Yup.mixed<CurrencyEnum>().oneOf(Object.values(CurrencyEnum)).required('Currency selection is required'),
   price: Yup.number().typeError('Must be a number').positive('Must be greater than 0').required('Price target is required'),
+  basePrice: Yup.number().typeError('Must be a number').positive('Must be greater than 0').required('Base price is required'),
   structure: Yup.mixed<StructureEnum>().oneOf(Object.values(StructureEnum)).required('Property structure layout is required'),
   bedrooms: Yup.number().typeError('Must be a number').integer('Must be an integer').nullable(),
   bathrooms: Yup.number().typeError('Must be a number').integer('Must be an integer').nullable(),
@@ -61,6 +63,8 @@ const validationSchema = Yup.object({
   square_meters: Yup.string().required('Property Size is required'),
   type: Yup.mixed().oneOf([propertyType.commercial, propertyType.residential]).required(),
 });
+
+
 
 export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalProps) {
   const isMounted = useIsMounted();
@@ -94,6 +98,8 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
       primary_image_index: 0,
       lga: '',
       type: propertyType.residential,
+      payment_frequency: [],
+      basePrice: ''
     },
     validationSchema,
     onSubmit: async (values) => {
@@ -106,7 +112,9 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
           city: values.city,
           zip_code: values.zip_code,
           state: values.state,
+          // amenities: values.amenities,
           lga: values.lga,
+          base_price: Number(values.basePrice),
           structure: values.structure,
           currency: values.currency,
           square_meters: values.square_meters,
@@ -114,6 +122,7 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
           images: mediaList.map(m => m.url),
           payment_options: [{ price: Number(values.price) }],
           purpose: values.purpose.toLowerCase() as purposeType,
+          payment_frequency: values.payment_frequency,
           property_type: values.type.toLowerCase() as propertyType,
           ...(values.bedrooms && { bedrooms: Number(values.bedrooms) }),
           ...(values.bathrooms && { bathrooms: Number(values.bathrooms) }),
@@ -244,7 +253,6 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
           <div className='grid grid-cols-2 gap-6 items-stretch'>
 
             {/* LEFT COMPARTMENT ITEMS */}
-            {/* 🔴 FIXED: Changed from justify-between to gap-4 with full vertical expansion capability */}
             <div className='flex flex-col gap-4 justify-start'>
 
               {/* TOGGLES ROW: TYPE & PURPOSE */}
@@ -417,7 +425,7 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
                         type="button"
                         disabled={isPending}
                         onClick={(e) => removeMediaItem(item.id, e)}
-                        className="absolute -top-1 -right-1 p-0.5 bg-rose-600 rounded-full text-white opacity-0 hover:scale-110 transition-opacity absolute-delete shadow-sm"
+                        className="absolute -top-1 -right-1 p-0.5 bg-rose-600 rounded-full text-white opacity-0 hover:scale-110 transition-opacity shadow-sm"
                         style={{ opacity: 'inherit' }}
                       >
                         <FaTimes className="text-[8px]" />
@@ -583,6 +591,34 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
                   <input type="text" id="square_meters" disabled={isPending} {...formik.getFieldProps('square_meters')} placeholder="e.g. 150" className="w-full text-sm outline-none text-gray-800" />
                 </div>
                 {formik.touched.square_meters && formik.errors.square_meters && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.square_meters}</span>}
+              </div>
+            </div>
+
+            {/* ROW 5: PAYMENT FREQUENCY & BASE PRICE */}
+            <div className="grid grid-cols-2 gap-4">
+              <Combobox
+                label="Accepted Payment Frequencies"
+                name="payment_frequency"
+                placeholder="Choose frequencies (e.g. Monthly, Yearly)..."
+                options={paymentFrequencyOptions}
+                value={formik.values.payment_frequency}
+                onChange={formik.setFieldValue}
+                onBlur={formik.handleBlur}
+                error={formik.touched.payment_frequency ? (formik.errors.payment_frequency as string) : undefined}
+                icon={<MdOutlinePayments />}
+                multiSelect={true}
+                searchable={false}
+                creatable={false}
+                disabled={isPending}
+              />
+
+              <div className="outerDiv w-full">
+                <label className="text-xs font-semibold mb-1 block" htmlFor="basePrice">Base Price</label>
+                <div className={`inputDiv flex items-center border p-2 rounded-xl gap-2 h-[38px] ${formik.touched.basePrice && formik.errors.basePrice ? 'border-red-500' : 'border-gray-300'}`}>
+                  <CiMoneyBill className="text-gray-400" />
+                  <input type="number" id="basePrice" disabled={isPending} {...formik.getFieldProps('basePrice')} placeholder="e.g. 350000" className="w-full text-sm outline-none text-gray-800" />
+                </div>
+                {formik.touched.basePrice && formik.errors.basePrice && <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.basePrice}</span>}
               </div>
             </div>
 

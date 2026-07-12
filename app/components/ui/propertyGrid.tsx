@@ -5,11 +5,9 @@ import Image from 'next/image';
 import { CiLocationOn } from 'react-icons/ci';
 import { IoBedOutline } from 'react-icons/io5';
 import { PiBathtub } from 'react-icons/pi';
-import { FaStar } from 'react-icons/fa';
+import { FaStar, FaInbox } from 'react-icons/fa'; // Added FaInbox for the empty state
 import { SortOption } from '@/types';
 import { PropertyData } from '@/types';
-
-
 
 export type GridColsOption = 3 | 4 | 5;
 
@@ -23,6 +21,7 @@ export default function PropertyGrid({ properties, sortBy, gridSize }: PropertyG
   
   // 1. Process client-side array sorting based on the active selection state 
   const sortedProperties = useMemo(() => {
+    if (!properties || properties.length === 0) return [];
     const listCopy = [...properties];
 
     switch (sortBy) {
@@ -49,6 +48,24 @@ export default function PropertyGrid({ properties, sortBy, gridSize }: PropertyG
     5: 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5',
   };
 
+  // 3. EMPTY STATE RENDER INTERCEPT
+  if (!properties || properties.length === 0) {
+    return (
+      <div className="w-full flex flex-col items-center justify-center min-h-[350px] bg-white border border-slate-100 rounded-2xl p-8 shadow-sm text-center">
+        <div className="w-16 h-16 bg-slate-50 text-slate-300 rounded-2xl flex items-center justify-center text-2xl mb-4 border border-slate-100/50">
+          <FaInbox />
+        </div>
+        <h3 className="text-base font-black text-slate-800 tracking-tight mb-1">
+          No properties found
+        </h3>
+        <p className="text-xs font-semibold text-slate-400 max-w-sm leading-relaxed">
+          There are currently no matching listings available in this category. Check back later or adjust your filters.
+        </p>
+      </div>
+    );
+  }
+
+  // 4. ACTIVE GRID RENDER
   return (
     <div className={`grid gap-5 w-full ${gridClasses[gridSize] || gridClasses[3]}`}>
       {sortedProperties.map((property) => {
@@ -82,7 +99,7 @@ export default function PropertyGrid({ properties, sortBy, gridSize }: PropertyG
                 {/* Title */}
                 <h2 className="text-base font-bold text-gray-800 tracking-tight line-clamp-1">
                   {property.title}
-                </h2>
+                </h2> 
 
                 {/* Location Row */}
                 <div className="flex items-center gap-1 text-gray-600 -ml-0.5">
