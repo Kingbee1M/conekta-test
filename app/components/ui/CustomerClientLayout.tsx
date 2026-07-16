@@ -37,7 +37,7 @@ export default function CustomerClientLayout({ children }: CustomerClientLayoutP
     <>
 
       {/* Main Content Area */}
-      <main className="w-full max-w-360 flex-1 flex-col items-center justify-center mt-16">
+      <main className="w-full max-w-360 flex-1 flex-col items-center justify-center mt-10 md:mt-16">
         {children}
       </main>
 

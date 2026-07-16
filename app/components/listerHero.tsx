@@ -13,7 +13,7 @@ export default function ListerHero () {
     ]
 
     return (
-        <div className="w-full p-5 md:p-6 flex flex-col justify-end gap-5 text-white relative overflow-hidden rounded-2xl bg-linear-to-r from-[#24764a] to-[#01a273]">
+        <div className="w-full h-80 p-5 md:p-6 flex flex-col justify-end gap-5 text-white relative overflow-hidden rounded-2xl bg-linear-to-r from-[#24764a] to-[#01a273]">
             {/* Text Section: full width on mobile, 70% on desktop to prevent image overlap */}
             <div className="w-full md:w-[70%] flex flex-col gap-2 relative z-10">
                 <h1 className="text-white text-2xl md:text-3xl font-semibold">My Lister Workspace</h1>
