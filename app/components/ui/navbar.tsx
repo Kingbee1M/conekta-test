@@ -38,8 +38,8 @@ export default function Navbar() {
             
             <ul className=
             {`${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'} 
-            lg:opacity-100 lg:pointer-events-auto 
-            transition-opacity w-2/3 flex flex-col lg:flex-row justify-start gap-3 px-7 lg:px-0 lg:gap-5 mt-1 lg:mt-0
+            lg:opacity-100 lg:pointer-events-auto
+            transition-opacity w-2/3 flex flex-col lg:flex-row justify-start gap-5 px-7 lg:px-0 lg:gap-10 mt-1 lg:ml-6 lg:mt-0
             `}>
                 {navs.map((nav, index) => (
                     <li key={index} className=''>

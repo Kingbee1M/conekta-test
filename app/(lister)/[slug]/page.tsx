@@ -221,7 +221,7 @@ const mockPropertiesSold = [
         </div>
 
       {/* Analytics Grid Row */}
-      <div className='w-full grid grid-cols-[7fr_3fr] grid-rows-[260px] gap-5 mt-5'>
+      <div className='w-full grid grid-cols-1 md:grid-cols-[7fr_3fr] grid-rows-[260px] gap-5 mt-5'>
         <ListerHero />
         <ListerPieChart 
           title="Commercial Portfolio" 
@@ -235,13 +235,13 @@ const mockPropertiesSold = [
         
         {/* Child Submenu Cluster Section */}
         <div 
-  className={`fixed bottom-6 right-6 flex flex-col items-center gap-3 z-50 transition-all ${
-    isMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'
-  }`}
-  /* pointer-events-none: Allows users to click things BEHIND the menu when closed.
-    pointer-events-auto: Restores interaction safely when open.
-  */
->
+          className={`fixed bottom-6 right-6 flex flex-col items-center gap-3 z-50 transition-all ${
+            isMenuOpen ? 'pointer-events-auto' : 'pointer-events-none'
+          }`}
+          /* pointer-events-none: Allows users to click things BEHIND the menu when closed.
+            pointer-events-auto: Restores interaction safely when open.
+          */
+        >
   
   {/* Child Submenu Cluster Section */}
   <div className="flex flex-col items-center gap-3 w-full">
@@ -300,7 +300,7 @@ const mockPropertiesSold = [
       </section>
 
       
-      <section className='grid grid-cols-3 gap-3 grid-rows-[200px]'>
+      <section className='grid grid-cols-1 md:grid-cols-3 gap-3 grid-rows-[200px]'>
           <LineChartComp data={sampleHousesListed} title='Total Properties' />
           <LineChartComp data={mockPropertiesSold} title='Properties Sold' />
           <RecentActivityComp activities={sampleActivities} />
