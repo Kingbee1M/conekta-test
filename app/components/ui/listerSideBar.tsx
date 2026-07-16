@@ -26,9 +26,9 @@ interface ListerSideBarProps {
 }
 
 export default function ListerSideBar({ onItemClick }: ListerSideBarProps) {
-    const { user } = useSelector((state: RootState) => state.auth);
+    const { profile } = useSelector((state: RootState) => state.auth);
     
-    const typedUser = user as FlatUserData & { user?: FlatUserData } | null;
+    const typedUser = profile as FlatUserData & { user?: FlatUserData } | null;
     const targetUserObj = typedUser?.user || typedUser;
     const firstName = targetUserObj?.profile?.first_name || '';
     const lastName = targetUserObj?.profile?.last_name || '';
@@ -71,7 +71,7 @@ export default function ListerSideBar({ onItemClick }: ListerSideBarProps) {
         { title: 'Log Out', link: '#', icon: logout, isInbox: false },
     ];
 
-    if (!user) {
+    if (!profile) {
         return (
             <div className="py-5 px-3 flex flex-col h-full text-white animate-pulse">
                 <div className="mb-8 flex items-center px-5">

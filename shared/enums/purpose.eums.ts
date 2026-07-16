@@ -1,5 +1,5 @@
 export enum purposeType {
-    sale = 'Sale',
-    rent = 'Rent',
-    lease = 'Lease'
+    sale = 'sale',
+    rent = 'rent',
+    lease = 'lease'
 }

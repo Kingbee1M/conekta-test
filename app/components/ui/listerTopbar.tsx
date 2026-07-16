@@ -8,15 +8,17 @@ import { FlatUserData } from '@/types';
 
 
 export default function ListerTopBar () {
-    const { user } = useSelector((state: RootState) => state.auth);
-    const typedUser = user as FlatUserData & { user?: FlatUserData } | null;
+    const { profile } = useSelector((state: RootState) => state.auth);
+    const { session } = useSelector((state: RootState) => state.auth);
+
+    const typedUser = profile as FlatUserData & { user?: FlatUserData } | null;
     const targetUserObj = typedUser?.user || typedUser;
-    const firstName = targetUserObj?.profile?.first_name || '';
-    const lastName = targetUserObj?.profile?.last_name || '';
+    const firstName = profile?.profile?.first_name;
+    const lastName = profile?.profile?.last_name;
     
     const currentName = firstName || lastName ? `${firstName} ${lastName}`.trim() : '';
     const initial = currentName.trim().charAt(0).toUpperCase() || '?';
-    const role = user?.active_role || '';
+    const role = session?.active_role || 'Lister';
     return (
         <header className='w-full hidden md:flex md:flex-row justify-between'>
             <p className='text-xl'>Good morning, <span className='text-tertiary-green'>{currentName}</span></p>

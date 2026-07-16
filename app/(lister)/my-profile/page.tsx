@@ -10,8 +10,8 @@ import { FaCamera, FaCheckCircle, FaCalendarAlt, FaUser, FaBriefcase } from 'rea
 import { HiMail, HiPhone, HiLocationMarker } from 'react-icons/hi';
 
 export default function MyProfile() {
-    const { user } = useSelector((state: RootState) => state.auth);
-    const typedUser = user as FlatUserData & { user?: FlatUserData } | null;
+    const { profile } = useSelector((state: RootState) => state.auth);
+    const typedUser = profile as FlatUserData & { user?: FlatUserData } | null;
 
     // 1. Edit Mode Toggle State
     const [isEdit, setIsEdit] = useState(false);
@@ -21,11 +21,11 @@ export default function MyProfile() {
     const [lastName, setLastName] = useState(typedUser?.profile?.last_name || '');
     const [email, setEmail] = useState(typedUser?.email || '');
     const [phoneNumber, setPhoneNumber] = useState(typedUser?.profile?.phone_number || '');
-    const [location, setLocation] = useState(user?.store?.address || '');
-    const [companyName, setCompanyName] = useState(user?.store?.name || '');
-    const [bio, setBio] = useState(user?.store?.description || '');
+    const [location, setLocation] = useState(profile?.profile?.store?.address || '');
+    const [companyName, setCompanyName] = useState(profile?.profile?.store?.name || '');
+    const [bio, setBio] = useState(profile?.profile?.store?.description || '');
     console.log('📦 MyProfile Component State:', { firstName, lastName, email, phoneNumber, location, companyName, bio });
-    console.log('📦 User Object:', user);
+    console.log('📦 User Object:', profile);
     // Live sync for sidebar card avatar info
     const fullName = `${firstName} ${lastName}`.trim() || 'Thomas Clinton';
     const userInitials = getNameInitials(fullName) || 'TM';
@@ -100,7 +100,7 @@ export default function MyProfile() {
                         <h3 className="text-xs font-black uppercase tracking-wider text-slate-400">Quick Stats</h3>
                         <div className="space-y-3">
                             {[
-                                { label: 'Properties Listed', count: user?.store?.name ? 12 : 0, color: 'text-slate-700' },
+                                { label: 'Properties Listed', count: profile?.profile?.store?.name ? 12 : 0, color: 'text-slate-700' },
                                 { label: 'Properties Sold', count: 0, color: 'text-emerald-600' },
                                 { label: 'Active Leases', count: 0, color: 'text-blue-600' },
                             ].map((stat, i) => (

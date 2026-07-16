@@ -37,8 +37,8 @@ const locationInsights = [
 ];
 
 export default function AnalyticsPage() {
-    const { user } = useSelector((state: RootState) => state.auth);
-    const typedUser = user as FlatUserData & { user?: FlatUserData } | null;
+    const { profile } = useSelector((state: RootState) => state.auth);
+    const typedUser = profile as FlatUserData & { user?: FlatUserData } | null;
     const targetUserObj = typedUser?.user || typedUser;
     const firstName = targetUserObj?.profile?.first_name || '';
     const lastName = targetUserObj?.profile?.last_name || '';

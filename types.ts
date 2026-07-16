@@ -115,21 +115,48 @@ export interface PropertyLocation {
   country: string;
 }
 
+import { PaymentFrequencyEnum } from './shared/enums/paymentFreqency.enums';
+import { FeeOption } from './shared/service/listing.services';
+import { AmenitiesEnum } from './shared/enums/amenities.enums';
+
+
 // 4. Primary Listing Node Type
 export interface Listing {
   uuid: string;
   title: string;
   ref_no: string;
-  currency: CurrencyEnum; // Strict Enum type enforcement
-  amount: string; // Keep as string for precision decimal representations
-  property_info: PropertyInfo;
-  location: PropertyLocation;
+  currency: string;
+  base_price: string | number;
+  payment_frequency: string;
+  property_info: {
+    bedrooms: number | null;
+    bathrooms: number | null;
+    structure: string;
+  };
+  location: {
+    street: string;
+    city: string;
+    state: string | null;
+    lga: string | null;
+    country: string;
+  };
+  average_rating: number;
+  cover_image: string
+}
+
+
+interface dataTYpes {
+  count: number;
+  next: null;
+  previous: null;
+  results: Listing[]
 }
 
 // 5. Complete Root API Paginated List Wrap response
 export interface PaginatedListingList {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: Listing[];
+  code: number
+  data: dataTYpes;
+  message: string;
+  success: boolean;
+  timestamp: string;
 }

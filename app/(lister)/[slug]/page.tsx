@@ -141,6 +141,10 @@ export default function ListerDashboard() {
     setOpenAdd(!openAdd)
   }
 
+  const routeToSupport = () => {
+  router.push('/support');
+}
+
   const pillNav = [
     { title: 'Discover', icon: descover, link: '/' },
     { title: 'Finance', icon: cash, link: '/' },
@@ -151,7 +155,7 @@ export default function ListerDashboard() {
   const miniMenu = [
     { title: 'Create Listing', icon: <FaHouseMedical />, color: 'bg-emerald-600', func: addPropertyFunc },
     { title: 'Get Verified', icon: <MdVerifiedUser />, color: 'bg-blue-600', func: addPropertyFunc },
-    { title: 'Need Help', icon: <LuCircleHelp />, color: 'bg-zinc-600', func: addPropertyFunc },
+    { title: 'Need Help', icon: <LuCircleHelp />, color: 'bg-zinc-600', func: routeToSupport },
   ];
 
   const sampleHousesListed = [
@@ -192,8 +196,6 @@ const mockPropertiesSold = [
   { id: "s_2405", created_at: "2024-08-19T09:45:00Z", price: 340000 },
   { id: "s_2406", created_at: "2024-11-12T16:20:00Z", price: 410000 },
 ];
-
-
   
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 

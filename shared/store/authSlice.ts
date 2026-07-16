@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, Action } from '@reduxjs/toolkit';
 import { REHYDRATE } from 'redux-persist';
 
-// 1. NESTED SUB-STRUCTURE INTERFACES
+// --- A. TYPES FOR LOGIN RESPONSE DATA ---
 interface Store {
   id: string;
   createdAt: string;
@@ -12,30 +12,42 @@ interface Store {
   status: string;
 }
 
-interface UserProfile {
-  first_name: string
-  last_name: string
-  phone_number: string
-}
-
-
-interface InnerUserData {
+interface InnerLoginUser {
   uuid: string;
   email: string;
+  profile: {
+    full_name: string;
+  };
   other_roles: string[];
-  profile: UserProfile;
 }
 
- export interface UserData {
+export interface LoginSessionData {
   active_role: string;
-  kyc_verified: boolean;
   email_verified: boolean;
-  user: InnerUserData;
-  store: Store | null;
+  kyc_verified: boolean;
+  user: InnerLoginUser;
 }
 
+// --- B. TYPES FOR PERSONAL DATA (/me) ---
+interface PersonalProfile {
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  store?: Store | null;
+}
+
+export interface PersonalData {
+  uuid: string;
+  email: string;
+  profile: PersonalProfile;
+  roles: string[];
+  token?: string | null;
+}
+
+// --- C. AUTH STATE INTERFACE ---
 interface AuthState {
-  user: UserData | null;
+  session: LoginSessionData | null; // Stores login response (guards/roles)
+  profile: PersonalData | null;     // Stores /me response (names/personal info)
   status: 'idle' | 'loading' | 'succeeded' | 'failed';
   isAuthenticated: boolean;
 }
@@ -49,25 +61,30 @@ interface RehydrateAction extends Action {
   payload?: PersistPayload;
 }
 
-// 3. INITIAL STATE
 const initialState: AuthState = {
-  user: null,
+  session: null,
+  profile: null,
   status: 'idle',
   isAuthenticated: false,
 };
 
-// 4. THE SLICE
 export const authSlice = createSlice({
   name: 'auth',
   initialState, 
   reducers: {
-    setUserInfo: (state, action: PayloadAction<UserData>) => {
-      state.user = action.payload;
+    // Stores login response data
+    setLoginSession: (state, action: PayloadAction<LoginSessionData>) => {
+      state.session = action.payload;
       state.status = 'succeeded';
       state.isAuthenticated = true;
     },
+    // Stores /me personal profile data
+    setPersonalProfile: (state, action: PayloadAction<PersonalData>) => {
+      state.profile = action.payload;
+    },
     clearUserInfo: (state) => {
-      state.user = null;
+      state.session = null;
+      state.profile = null;
       state.status = 'idle';
       state.isAuthenticated = false;
     },
@@ -77,8 +94,9 @@ export const authSlice = createSlice({
       const rehydrateAction = action as RehydrateAction;
       const persistedAuth = rehydrateAction.payload?.auth;
       
-      if (persistedAuth?.user) {
-        state.user = persistedAuth.user;
+      if (persistedAuth?.session) {
+        state.session = persistedAuth.session;
+        state.profile = persistedAuth.profile || null;
         state.isAuthenticated = true;
         state.status = 'succeeded';
       }
@@ -86,5 +104,5 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setUserInfo, clearUserInfo } = authSlice.actions;
+export const { setLoginSession, setPersonalProfile, clearUserInfo } = authSlice.actions;
 export default authSlice.reducer;
