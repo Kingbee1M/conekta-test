@@ -63,7 +63,7 @@ export default function Home() {
       <HomeSearch />
       
       {/* Search Filter Strip */}
-      <div className="w-4/5 grid grid-cols-4 gap-4">
+      <div className="w-9/10 md:w-4/5 grid grid-rows-2 grid-cols-2 md:grid-rows-1 md:grid-cols-4 gap-4">
         {/* STATE */}
         <CustomSelect
           options={stateOptions}

@@ -20,7 +20,7 @@ const slides = [
   },
   {
     image: img3,
-    title: "Partner with Top Landlords",
+    title: "Real Estate You Can Trust",
     description: "Experience premium property management and seamless renting systems.",
   },
 ];
