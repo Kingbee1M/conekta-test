@@ -7,9 +7,9 @@ import { FlatUserData } from '@/types';
 import React, { useState, useRef, useEffect } from 'react';
 
 export default function WalletMainDisplay() {
-        const { user } = useSelector((state: RootState) => state.auth);
+        const { profile } = useSelector((state: RootState) => state.auth);
     
-    const typedUser = user as FlatUserData & { user?: FlatUserData } | null;
+    const typedUser = profile as FlatUserData & { user?: FlatUserData } | null;
     const targetUserObj = typedUser?.user || typedUser;
     const firstName = targetUserObj?.profile?.first_name || '';
     const lastName = targetUserObj?.profile?.last_name || '';

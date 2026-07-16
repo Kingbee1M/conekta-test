@@ -4,20 +4,22 @@ import { persistReducer } from 'redux-persist';
 import storage from '@/lib/storage';
 import authReducer from './authSlice';
 import listingReducer from'./listingSlice'
+import viewListingREducer from './viewPropertySlice'
 import cookieReducer from './acceptCookieSlice'; 
 import { apiSlice } from '@/lib/api';
 
 const rootReducer = combineReducers({
   auth: authReducer,
   listing: listingReducer,
+  listingView: viewListingREducer,
   cookieConsent: cookieReducer, 
   [apiSlice.reducerPath]: apiSlice.reducer, 
 });
 
 const persistConfig = {
-  key: 'conketa_root', // Giving it a unique key for your project
-  storage, // 2. This now uses your SSR-safe logic from storage.ts
-  whitelist: ['auth', 'cookieConsent'], 
+  key: 'conketa_root',
+  storage,
+  whitelist: ['auth', 'cookieConsent', 'listing', 'listingView'], 
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

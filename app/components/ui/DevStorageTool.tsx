@@ -7,7 +7,7 @@ import { useAppSelector, useAppDispatch } from "@/lib/hooks";
 import { Database, X, Trash2 } from "lucide-react"; 
 import { resetCookieConsent } from "@/shared/store/acceptCookieSlice";
 import { clearUserInfo } from "@/shared/store/authSlice";
-import { clearDraft, resetFilters, clearSelection } from "@/shared/store/listingSlice"; 
+import { clearProperties } from "@/shared/store/listingSlice"; 
 import { clearAuthCookies } from "@/shared/cookie.action";
 
 const subscribe = () => () => {}; 
@@ -27,9 +27,7 @@ export default function DevStorageTool() {
   const handleFullReset = async (): Promise<void> => {
     await clearAuthCookies();
     dispatch(clearUserInfo());
-    dispatch(clearDraft());       
-    dispatch(resetFilters());     
-    dispatch(clearSelection());   
+    dispatch(clearProperties());  
     dispatch(resetCookieConsent());
     window.location.reload();
   };

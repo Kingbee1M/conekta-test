@@ -2,71 +2,65 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useSelector, useStore } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '@/shared/store/store';
 import { useGetProfileMeQuery } from '@/shared/service/me.services';
-import { FlatUserData } from '@/types';
-
-
 
 export default function LoadingDashboard() {
   const router = useRouter();
-  const store = useStore<RootState>();
   
-  // 1. Fetch profile background data on mount
+  // 1. Fetch profile background data on mount (This automatically stores data inside state.auth.profile)
   const { isLoading, isError, isSuccess } = useGetProfileMeQuery();
 
-  // 2. Extract state matching your properties
-  const { user } = useSelector((state: RootState) => state.auth);
+  // 2. Extract our simplified, dedicated slice parts
+  const { session, profile } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
-    // Cast the potential user layouts safely using a union type reference
-    const typedUser = user as FlatUserData & { user?: FlatUserData } | null;
+    // Wait for the background profile endpoint to finish loading
+    if (isLoading) return;
 
-    // 🔍 Safely read from the flat runtime structure or fallback to the nested structure if it changes
-    const targetUserObj = typedUser?.user || typedUser;
+    // A. FAILURE PATHWAY: If the API failed or there's no active session
+    if (isError || !session) {
+      console.warn("🚨 Network issue, expired token, or session verification rejected.");
+      router.replace('/log-in');
+      return;
+    }
 
-    const firstName = targetUserObj?.profile?.first_name || '';
-    const lastName = targetUserObj?.profile?.last_name || '';
-    
-    const userRoles = typedUser?.roles || targetUserObj?.roles || [];
-    const activeRoleString = typedUser?.active_role || '';
-    
-    const hasListerPrivilege = 
-      (Array.isArray(userRoles) && userRoles.includes('lister')) || 
-      activeRoleString.toLowerCase() === 'lister';
+    // Extract names cleanly from our dedicated profile state
+    const firstName = profile?.profile?.first_name;
+    const lastName = profile?.profile?.last_name;
 
-    // B. SUCCESS PATHWAY
-    if (firstName || lastName) {
-      const computedFullName = `${firstName} ${lastName}`.trim();
+    // B. SUCCESS PATHWAY: Name details exist, route based on role
+    if (isSuccess && (firstName || lastName)) {
+      const computedFullName = `${firstName || ''} ${lastName || ''}`.trim();
       const userSlug = encodeURIComponent(
         computedFullName.toLowerCase().replace(/\s+/g, '-')
       );
 
-      if (hasListerPrivilege) {
+      // We read the definitive role cleanly from our session parameters
+      const activeRole = session.active_role?.toLowerCase();
+
+      if (activeRole === 'lister') {
         console.log(`🚀 Routing to Lister Space: /${userSlug}`);
         router.replace(`/${userSlug}`);
+      } else if (activeRole === 'customer') {
+        console.log(`🚀 Routing to Customer Space: /home`);
+        router.replace(`/home`);
       } else {
-        console.log(`🚀 Routing to Customer Space: /customer/dashboard`);
-        router.replace(`/customer/dashboard`);
+        console.warn(`⚠️ Unknown role "${activeRole}", routing to fallback dashboard.`);
+        router.replace('/unauthorized');
       }
       return;
     } 
 
-    // C. FAILURE PATHWAY
-    if (isError) {
-      console.warn("🚨 Network or session verification rejected.");
-      router.replace('/log-in');
-      return;
-    }
-
-    // D. DATA PATH MISS ESCAPE
+    // C. MISSING PARAMETERS PATHWAY: Success but names aren't filled out yet
     if (isSuccess && !firstName && !lastName) {
-      console.error("🚨 Request status was 200, but name parameters missing from snapshot path mapping.");
+      console.error("🚨 Account exists, but name parameters are empty inside profile schema.");
+      // Redirect to profile-setup, onboarding, or fallback to login
       router.replace('/log-in');
     }
 
-  }, [user, isLoading, isError, isSuccess, router, store]);
+  }, [profile, session, isLoading, isError, isSuccess, router]);
 
   return (
     <div className="w-full min-h-screen flex flex-col items-center justify-center bg-white">

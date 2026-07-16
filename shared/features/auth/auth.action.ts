@@ -3,12 +3,21 @@ import { AppDispatch } from '@/shared/store/store';
 import { executeCoreRequest, ApiResponse } from '@/lib/api'; 
 import { signupTypes, loginTypes } from '@/types';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { setLoginSession } from '@/shared/store/authSlice';
+import { LoginSessionData } from '@/shared/store/authSlice';
 
+
+interface logRes {
+  "success": boolean,
+    "code": number,
+    "message": string,
+    "data": LoginSessionData
+}
 
 interface AuthApiResponse extends ApiResponse {
   success?: boolean;
+  data?: LoginSessionData;
 }
-
 
 function getErrorMessage(error: unknown): string {
   if (error && typeof error === 'object') {
@@ -24,9 +33,9 @@ function getErrorMessage(error: unknown): string {
 }
 
 
-export const loginUser = (credentials: loginTypes) => async () => {
+export const loginUser = (credentials: loginTypes) => async (dispatch: AppDispatch) => {
   try {
-    const result = await executeCoreRequest<AuthApiResponse>({
+    const result = await executeCoreRequest<logRes>({
       url: '/auth/login/',
       headers: { 'Content-Type': 'application/json' },
       method: 'POST',
@@ -35,7 +44,12 @@ export const loginUser = (credentials: loginTypes) => async () => {
 
     console.log("Login Response via Bouncer:", result);
 
-    if (result.code === 200 || result.code === 201) {
+    if (result && result.success === true) {
+      const responseData = result.data;
+      
+      if (responseData) {
+        dispatch(setLoginSession(responseData));
+      }
       return { success: true, message: result.message };
     }
 
