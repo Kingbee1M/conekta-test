@@ -13,19 +13,19 @@ export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const pathname = usePathname();
     const navs = [
+        { title: 'Home', link: '/home' },
         { title: 'Find Property', link: '/find-property' },
         { title: 'Artisans', link: '/artisans' },
-        { title: 'Invest', link: '/invest' },
         { title: 'List Property', link: '/list-property' },
     ]
     return (
-        <nav className=" w-screen fixed top-0 left-0 z-40 flex justify-center">
+        <nav className=" w-screen fixed top-0 left-0 z-90 flex justify-center">
         <section className={`
         w-full max-w-360
         flex flex-col lg:flex-row lg:items-center lg:justify-between
         transition-all duration-300 ease-in-out
         pr-5 bg-white border-y border-gray-200 border-solid lg:py-8
-        ${isOpen ? 'h-64' : 'h-12'} 
+        ${isOpen ? 'h-68' : 'h-12'} 
         overflow-hidden
         `}>
             <div className='w-full lg:w-1/3 flex justify-between items-center'>

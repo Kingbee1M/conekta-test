@@ -211,17 +211,17 @@ const mockPropertiesSold = [
       <ListerTopBar />
 
       {/* Pill Navigation */}
-        <div className='w-full flex gap-3 mt-5 text-sm'>
+        {/* <div className='w-full flex gap-3 mt-5 text-sm'>
           {pillNav.map((pill, index) => (
             <Link href={pill.link} key={index} className='flex gap-2 px-3 py-1 rounded-full hover:bg-primary-green/10 border-[#00000033] border-solid border items-center transition-colors'>
               <Image src={pill.icon} alt={pill.title} width={12} height={12} className='w-3' />
               <span className='text-primary-green font-medium'>{pill.title}</span>
             </Link>
           ))}
-        </div>
+        </div> */}
 
       {/* Analytics Grid Row */}
-      <div className='w-full grid grid-cols-1 md:grid-cols-[7fr_3fr] grid-rows-[260px] gap-5 mt-5'>
+      <div className='w-full grid grid-cols-1 md:grid-cols-[7fr_3fr] grid-rows-[260px] gap-y-20 md:gap-y-5 md:gap-x-5 mt-5'>
         <ListerHero />
         <ListerPieChart 
           title="Commercial Portfolio" 
