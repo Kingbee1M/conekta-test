@@ -221,7 +221,7 @@ const mockPropertiesSold = [
         </div> */}
 
       {/* Analytics Grid Row */}
-      <div className='w-full grid grid-cols-1 md:grid-cols-[7fr_3fr] grid-rows-[260px] gap-y-20 md:gap-y-5 md:gap-x-5 mt-5'>
+      <div className='w-full grid grid-cols-1 md:grid-cols-[7fr_3fr] grid-rows-[260px] gap-y-20 md:gap-y-5 md:gap-x-5 mt-5 mb-16'>
         <ListerHero />
         <ListerPieChart 
           title="Commercial Portfolio" 

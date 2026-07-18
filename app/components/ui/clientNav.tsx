@@ -5,7 +5,7 @@ import Navbar from "./navbar";
 
 export default function NavbarWrapper() {
   const pathname = usePathname();
-  const showNavOn = ['/', '/get-started', '/home', '/find-property',];
+  const showNavOn = ['/', '/get-started', '/home', '/find-property', '/my-housing', ];
 
   const shouldShowNav = showNavOn.some(path => 
     path === '/' ? pathname === '/' : pathname.startsWith(path)

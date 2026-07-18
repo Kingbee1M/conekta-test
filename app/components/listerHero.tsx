@@ -25,7 +25,7 @@ export default function ListerHero () {
             {/* Stats Row: Stacks vertically or wraps on mobile, flex row on desktop */}
             <div className="w-full flex flex-col sm:flex-row flex-wrap md:flex-nowrap gap-3 relative z-10">
                 {herodata.map ((hero, index) => (
-                    <div key={index} className="flex items-center gap-2.5 bg-white/10 p-2 rounded-lg flex-1 min-w-[140px]">
+                    <div key={index} className="flex items-center gap-2.5 bg-white/10 p-2 rounded-lg flex-1 min-w-35">
                         <div className="p-2 bg-white/30 rounded-md text-sm">
                             {hero.icon}
                         </div>
@@ -39,13 +39,13 @@ export default function ListerHero () {
             </div>
             
             {/* Background Image: Scaled down and opacity lowered on mobile so it doesn't collide with text */}
-            <Image 
+            {/* <Image 
                 src={building} 
                 alt="building" 
                 height={10} 
                 width={10} 
-                className="w-[45%] sm:w-[35%] md:w-[40%] lg:w-[30%] absolute -right-10 md:-right-20 -top-5 opacity-20 md:opacity-100 pointer-events-none transition-opacity duration-300" 
-            />
+                className="w-[45%] sm:w-[35%] md:w-[40%] lg:w-[40%] absolute -right-10 md:-right-20 -top-5 opacity-20 md:opacity-100 pointer-events-none transition-opacity duration-300" 
+            /> */}
         </div>
     )
 }

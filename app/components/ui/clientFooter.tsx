@@ -6,7 +6,7 @@ import Footer from './footer';
 
 export default function FooterWrapper() {
   const pathname = usePathname();
-  const showNavOn = ['/', '/get-started', '/home', '/find-property',];
+  const showNavOn = ['/', '/get-started', '/home', '/find-property', '/my-housing', ];
 
   const shouldShowNav = showNavOn.some(path => 
     path === '/' ? pathname === '/' : pathname.startsWith(path)

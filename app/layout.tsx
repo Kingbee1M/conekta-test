@@ -61,7 +61,7 @@ export default function RootLayout({
             <NavbarWrapper />
             <TooltipProvider>
 
-            <main className="w-full max-w-360 flex-1 flex-col items-center justify-center ">
+            <main className="w-full max-w-520 flex-1 flex-col items-center justify-center ">
               {children}
             </main>
 

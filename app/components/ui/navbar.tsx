@@ -16,12 +16,12 @@ export default function Navbar() {
         { title: 'Home', link: '/home' },
         { title: 'Find Property', link: '/find-property' },
         { title: 'Artisans', link: '/artisans' },
-        { title: 'List Property', link: '/list-property' },
+        { title: 'My Housing', link: '/my-housing' },
     ]
     return (
-        <nav className=" w-screen fixed top-0 left-0 z-90 flex justify-center">
+        <nav className="w-screen fixed top-0 left-0 z-90 flex justify-center">
         <section className={`
-        w-full max-w-360
+        w-full max-w-screen
         flex flex-col lg:flex-row lg:items-center lg:justify-between
         transition-all duration-300 ease-in-out
         pr-5 bg-white border-y border-gray-200 border-solid lg:py-8
