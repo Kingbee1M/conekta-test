@@ -1,6 +1,5 @@
 'use client';
 
-import { AmenitiesEnum } from '@/shared/enums/amenities.enums';
 import { LuCheck, LuMapPin, LuUser } from 'react-icons/lu';
 
 interface TabContentProps {
@@ -69,7 +68,7 @@ export default function TabContent({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {amenities.map((amenity, idx) => (
                   <div key={idx} className="flex items-center gap-3 py-1">
-                    <div className="w-5 h-5 bg-[#257448]/10 text-[#257448] rounded-full flex items-center justify-center shrink-0">
+                    <div className="w-5 h-5 bg-primary-green/10 text-primary-green rounded-full flex items-center justify-center shrink-0">
                       <LuCheck className="text-xs stroke-[3px]" />
                     </div>
                     <span className="text-sm font-semibold text-gray-700 capitalize">{amenity}</span>
@@ -106,7 +105,7 @@ export default function TabContent({
       {/* 2. LISTED BY SUB-PANEL (Common on all screenshots) */}
       <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-[#257448]/10 flex items-center justify-center text-[#257448] font-bold text-base border border-[#257448]/20 shrink-0">
+          <div className="w-12 h-12 rounded-full bg-primary-green/10 flex items-center justify-center `text-primary-green font-bold text-base border border-primary-green/20 shrink-0">
             <LuUser className="text-xl" />
           </div>
           <div>

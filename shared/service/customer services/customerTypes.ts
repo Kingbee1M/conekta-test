@@ -49,3 +49,50 @@ export interface GetCustomerListingsParams {
   max_price?: number | string;
   search?: string;
 }
+
+export interface Message {
+  id: string;
+  sender: 'tenant' | 'landlord' | 'neighbor';
+  senderName: string;
+  avatar?: string;
+  text: string;
+  timestamp: string;
+}
+
+import { PaymentFrequencyEnum } from "@/shared/enums/paymentFreqency.enums";
+
+export interface TenantData {
+  address: string;
+  roomNumber: string;
+  landlord: {
+    name: string;
+    avatar: string;
+    status: 'online' | 'offline';
+    lastActive: string;
+  };
+  billing: {
+    rentAmount: number;
+    currency: string;
+    frequency: PaymentFrequencyEnum;
+    dueDate: string;
+    daysRemaining: number;
+    totalTenancyDays: number;
+    elapsedTenancyDays: number;
+  };
+  neighbors: Array<{
+    id: string;
+    name: string;
+    room: string;
+    avatar: string;
+    isRoommate: boolean;
+  }>;
+}
+
+export interface MaintenanceTicket {
+  id: string;
+  service: string;
+  description: string;
+  status: string;
+  date: string;
+  icon: React.ReactNode;
+}
