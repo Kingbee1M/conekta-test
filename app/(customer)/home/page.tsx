@@ -8,8 +8,8 @@ import CustomSelect from "@/app/components/ui/CustomSelect"
 import FeaturedHome from "@/app/components/FeaturedHome"
 import { NigeriaStateEnum, NIGERIA_LGA_MAP } from "@/shared/enums/nigeriaRegions.enums"
 import { StructureEnum } from "@/types"
-
-// Import your query hook!
+import ArtisanAdBanner from "@/app/components/ArtisanBanner"
+import { useRouter } from "next/navigation"
 import { useGetCustomerListingsQuery } from "@/shared/service/customer services/customerListing.services"
 
 export default function Home() {
@@ -19,7 +19,7 @@ export default function Home() {
   const [selectedLga, setSelectedLga] = useState<string>('');
   const [selectedType, setSelectedType] = useState<StructureEnum | ''>('');
   const [selectedMaxPrice, setSelectedMaxPrice] = useState<string>('');
-
+  const router = useRouter()
   // 1. Fetch the listings (the hook returns the transformed 'message' string as data)
   const { data: message, isLoading } = useGetCustomerListingsQuery();
 
@@ -55,6 +55,10 @@ export default function Home() {
   const handleStateChange = (val: string) => {
     setSelectedState(val as NigeriaStateEnum);
     setSelectedLga(''); 
+  };
+
+  const handleArtisanOnboarding = () => {
+    router.push('/sign-up?role=artisan')
   };
 
   return (
@@ -98,10 +102,15 @@ export default function Home() {
         /> 
       </div>
 
-      {/* Note: Passing empty listings for now as we are 
-        only returning the string message from the API.
-      */}
-      <FeaturedHome listings={[]} isLoading={isLoading} />
+
+      <div className="w-9/10 md:w-4/5">
+        <FeaturedHome listings={[]} isLoading={isLoading} />
+      </div>
+
+      {/* Artisan Recruitment Section */}
+      <div className="w-9/10 md:w-4/5">
+        <ArtisanAdBanner onJoinAsArtisan={handleArtisanOnboarding} />
+      </div>
     </main>
   );
 }
