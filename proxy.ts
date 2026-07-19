@@ -17,7 +17,19 @@ export function proxy(request: NextRequest) {
     '/verify-email',
     '/loading-dashboard',
     '/',
+    '/portal',
+
   ];
+
+  // Inside your middleware logic
+  // if (pathname.startsWith('/admin-workspace')) {
+  //   const activeRole = request.cookies.get('userRole')?.value; // Or parsed JWT token segment
+    
+  //   if (activeRole !== 'ADMIN') {
+  //     // Silently render a 404 instead of a 401/Redirect so they think the route doesn't exist
+  //     return NextResponse.rewrite(new URL('/404', request.url));
+  //   }
+  // }
 
   const isPublicPage = PUBLIC_PATHS.some((path) => 
     pathname === path || pathname.startsWith(`${path}/`)

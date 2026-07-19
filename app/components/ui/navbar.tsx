@@ -59,7 +59,7 @@ export default function Navbar() {
                 </Link>
                 
                 <Link href={'/profile'} className="relative w-fit p-2 hover:bg-gray-200 cursor-pointer rounded-md">
-                <div className="bg-red h-1 w-1 rounded-full absolute top-1 right-1 bg-red-500"/>
+                
                     <MdPersonOutline className="text-md cursor-pointer" />
                 </Link>
                 

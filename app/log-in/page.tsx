@@ -11,10 +11,10 @@ import logo from '../../public/svg/logo-enhanced.svg'
 import { CiMail, CiLock } from "react-icons/ci"
 import Link from "next/link"
 import { FaGoogle, FaFacebook } from "react-icons/fa"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { FiEyeOff, FiEye } from "react-icons/fi"
 import { RoleEnum } from "@/shared/enums/roles.enum"
-
+import { motion } from "framer-motion"
 const loginSchema = z.object({
     email: z.string().min(1, "Email is required").email("Invalid email format"),
     password: z.string().min(1, "Password is required").min(6, "Password must be at least 6 characters"),
@@ -26,6 +26,19 @@ export default function Login() {
     const router = useRouter();
     const { addToast } = useToast();
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+
+    useEffect(() => {
+  const handleKeyDown = (e: KeyboardEvent) => {
+    // Example: Trigger on Ctrl + Shift + A
+    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+      e.preventDefault();
+      router.push('/portal/x9_secure_gateway?key=launch-2026-secure');
+    }
+  };
+
+  window.addEventListener('keydown', handleKeyDown);
+  return () => window.removeEventListener('keydown', handleKeyDown);
+}, [router]);
     
     // Extracted target selection roles matching the UI layout options
     const portalOptions = [RoleEnum.CUSTOMER, RoleEnum.LISTER];
@@ -91,26 +104,44 @@ export default function Login() {
                 {/* Styled Portal Selector with RoleEnum configuration */}
                 <div className="w-full mb-6">
                     <label className="text-xs font-semibold mb-2 block text-gray-700">Select Portal</label>
-                    <div className="flex bg-gray-100 p-1 rounded-xl gap-1">
-                        {portalOptions.map((option) => (
+                    <div className="relative flex bg-gray-100 p-1 rounded-xl gap-1 border border-gray-200/40">
+                        {portalOptions.map((option) => {
+                        const isActive = formik.values.portal === option;
+                        
+                        return (
                             <label 
-                                key={option}
-                                className={`flex-1 text-center py-2 rounded-lg cursor-pointer transition-all text-sm font-medium capitalize select-none
-                                    ${formik.values.portal === option ? 'bg-white text-[#00AC72] shadow-sm' : 'text-gray-500'}`}
+                            key={option}
+                            className={`flex-1 text-center py-2 rounded-lg cursor-pointer transition-colors duration-200 text-sm font-medium capitalize select-none relative z-10 ${
+                                isActive ? 'text-[#00AC72]' : 'text-gray-500 hover:text-gray-700'
+                            }`}
                             >
-                                <input 
-                                    type="radio"
-                                    name="portal"
-                                    className="hidden"
-                                    checked={formik.values.portal === option}
-                                    onChange={() => formik.setFieldValue('portal', option)}
+                            <input 
+                                type="radio"
+                                name="portal"
+                                className="hidden"
+                                checked={isActive}
+                                onChange={() => formik.setFieldValue('portal', option)}
+                            />
+                            
+                            {/* Label text indicator */}
+                            <span className="relative z-20">{option}</span>
+                            
+                            {/* Shared Layout Sliding Backdrop Indicator */}
+                            {isActive && (
+                                <motion.div
+                                layoutId="normalLoginPortalSlider"
+                                className="absolute inset-0 bg-white rounded-lg shadow-xs z-0"
+                                transition={{ type: "spring", stiffness: 380, damping: 30 }}
                                 />
-                                {option}
+                            )}
                             </label>
-                        ))}
+                        );
+                        })}
                     </div>
-                    {formik.touched.portal && formik.errors.portal && <span className="text-[10px] text-red-500 mt-1">{formik.errors.portal}</span>}
-                </div>
+                    {formik.touched.portal && formik.errors.portal && (
+                        <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.portal}</span>
+                    )}
+                    </div>
 
                 {/* Email Field */}
                 <div className="outerDiv mb-4 w-full">
