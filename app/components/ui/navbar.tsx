@@ -15,7 +15,7 @@ export default function Navbar() {
     const navs = [
         { title: 'Home', link: '/home' },
         { title: 'Find Property', link: '/find-property' },
-        { title: 'Artisans', link: '/artisans' },
+        { title: 'Artisans', link: '/find-artisan' },
         { title: 'My Housing', link: '/my-housing' },
     ]
     return (

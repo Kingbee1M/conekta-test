@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/shared/store/store';
 import { useGetProfileMeQuery } from '@/shared/service/me.services';
+import { RoleEnum } from '@/shared/enums/roles.enum';
 
 export default function LoadingDashboard() {
   const router = useRouter();
@@ -37,17 +38,18 @@ export default function LoadingDashboard() {
         computedFullName.toLowerCase().replace(/\s+/g, '-')
       );
 
-      // We read the definitive role cleanly from our session parameters
-      const activeRole = session.active_role?.toLowerCase();
+      // Safeguard runtime mapping of string role parameters to typed RoleEnum values
+      const rawRole = session.active_role?.toLowerCase();
+      const activeRole: RoleEnum | null = Object.values(RoleEnum).includes(rawRole as RoleEnum)
+        ? (rawRole as RoleEnum)
+        : null;
 
-      if (activeRole === 'lister') {
-        console.log(`🚀 Routing to Lister Space: /${userSlug}`);
+      if (activeRole === RoleEnum.LISTER) {
         router.replace(`/${userSlug}`);
-      } else if (activeRole === 'customer') {
-        console.log(`🚀 Routing to Customer Space: /home`);
+      } else if (activeRole === RoleEnum.CUSTOMER) {
         router.replace(`/home`);
       } else {
-        console.warn(`⚠️ Unknown role "${activeRole}", routing to fallback dashboard.`);
+        console.warn(`⚠️ Unknown or unhandled role "${rawRole}", routing to fallback dashboard.`);
         router.replace('/unauthorized');
       }
       return;
