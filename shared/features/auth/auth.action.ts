@@ -45,6 +45,7 @@ export const loginUser = (credentials: loginTypes) => async (dispatch: AppDispat
     console.log("Login Response via Bouncer:", result);
 
     if (result && result.success === true) {
+      document.cookie = "isLoggedIn=true; path=/; max-age=86400; SameSite=Lax";
       const responseData = result.data;
       
       if (responseData) {
