@@ -40,7 +40,7 @@ export default function Login() {
   return () => window.removeEventListener('keydown', handleKeyDown);
 }, [router]);
     
-    // Extracted target selection roles matching the UI layout options
+    
     const portalOptions = [RoleEnum.CUSTOMER, RoleEnum.LISTER];
 
     const formik = useFormik({

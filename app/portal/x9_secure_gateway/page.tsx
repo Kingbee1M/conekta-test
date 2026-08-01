@@ -5,8 +5,11 @@ import { useRouter } from 'next/navigation';
 import { notFound } from 'next/navigation';
 import { useFormik } from 'formik';
 import { z } from 'zod';
-import { motion } from 'framer-motion';
 import { LuLock, LuMail, LuEye, LuEyeOff, LuShieldAlert } from 'react-icons/lu';
+
+import { loginUser } from '@/shared/features/auth/auth.action';
+import { useToast } from '@/app/components/ui/ToastProvider';
+import { useAppDispatch } from '@/lib/hooks';
 
 enum RoleEnum {
   ADMIN = 'admin',
@@ -17,7 +20,6 @@ interface Props {
   searchParams: Promise<{ key?: string }>;
 }
 
-// 1. Zod v4 Compatible Schema Definition
 const loginSchema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email format"),
   password: z.string().min(1, "Password is required").min(8, "Password must be at least 8 characters"),
@@ -28,6 +30,9 @@ const loginSchema = z.object({
 
 export default function SecretAdminLoginPage({ searchParams }: Props) {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const { addToast } = useToast();
+  
   const resolvedParams = use(searchParams);
   const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
@@ -36,7 +41,6 @@ export default function SecretAdminLoginPage({ searchParams }: Props) {
     notFound();
   }
 
-  // 2. Formik Initialization Hook with clean v4 Zod mapping (.issues)
   const formik = useFormik({
     initialValues: {
       portal: RoleEnum.SUPER_ADMIN,
@@ -48,8 +52,6 @@ export default function SecretAdminLoginPage({ searchParams }: Props) {
       if (result.success) return {};
 
       const errors: Record<string, string> = {};
-      
-      // Zod v4 standard uses .issues instead of .errors
       result.error.issues.forEach((err) => {
         if (err.path[0]) {
           errors[err.path[0].toString()] = err.message;
@@ -60,26 +62,42 @@ export default function SecretAdminLoginPage({ searchParams }: Props) {
     onSubmit: async (values, { setSubmitting }) => {
       try {
         setAuthError(null);
-        console.log(`Verifying target authority: ${values.portal}`, values.email);
-        
-        const mockSuccess = true; 
-        
-        if (mockSuccess) {
-          document.cookie = "isLoggedIn=true; path=/; max-age=86400; SameSite=Lax";
+
+        // Dispatch the thunk with payload matching your loginTypes
+        const result = await dispatch(
+          loginUser({
+            email: values.email,
+            password: values.password,
+          })
+        );
+
+        if (result?.success) {
+          addToast({
+            title: 'Authentication Successful',
+            description: result.message || 'Redirecting to secure dashboard...',
+            variant: 'success',
+            duration: 3000,
+          });
+
           router.replace('/loading-dashboard');
         } else {
-          setAuthError('Access Denied: Invalid root authority credentials.');
+          const errorMsg = result?.message || 'Access Denied: Invalid root authority credentials.';
+          setAuthError(errorMsg);
+          addToast({
+            title: 'Authentication Failed',
+            description: errorMsg,
+            variant: 'error',
+            duration: 4000,
+          });
         }
       } catch (error: unknown) {
-        // Safe type guarding to satisfy ESLint no-explicit-any rules
-        if (error && typeof error === 'object' && 'data' in error) {
-          const apiErr = error as { data: { message?: string } };
-          setAuthError(apiErr.data.message || 'An unexpected cryptographic exception occurred.');
-        } else if (error instanceof Error) {
-          setAuthError(error.message);
-        } else {
-          setAuthError('An unexpected cryptographic exception occurred.');
-        }
+        const errorMsg = error instanceof Error ? error.message : 'An unexpected cryptographic exception occurred.';
+        setAuthError(errorMsg);
+        addToast({
+          title: 'System Error',
+          description: errorMsg,
+          variant: 'error',
+        });
       } finally {
         setSubmitting(false);
       }
@@ -90,7 +108,7 @@ export default function SecretAdminLoginPage({ searchParams }: Props) {
     <div className="w-full min-h-screen flex items-center justify-center bg-gray-50/50 px-4 select-none selection:bg-emerald-500/10">
       <div className="w-full max-w-md bg-white border border-gray-200 rounded-2xl p-8 shadow-xl shadow-gray-200/50 relative overflow-hidden">
         
-        {/* Subtle professional accent top border strip */}
+        {/* Accent top border strip */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-[#00AC72] to-transparent" />
 
         {/* Brandless Admin Header Context */}
@@ -103,39 +121,6 @@ export default function SecretAdminLoginPage({ searchParams }: Props) {
           <p className="text-xs text-gray-400 mt-1">Authorized operations personnel only. System access actions are strictly monitored.</p>
         </div>
 
-        {/* 3. Slider Selection Toggle Container with Animated Framer Motion Backdrop */}
-        <div className="relative flex p-1 bg-gray-100 rounded-xl mb-6 border border-gray-200/40">
-          <div className="absolute inset-y-1 left-1 right-1 pointer-events-none grid grid-cols-2">
-            <motion.div
-              className="h-full bg-white rounded-lg shadow-xs"
-              initial={false}
-              animate={{
-                x: formik.values.portal === RoleEnum.SUPER_ADMIN ? '100%' : '0%'
-              }}
-              transition={{ type: "spring", stiffness: 380, damping: 30 }}
-            />
-          </div>
-
-          <button
-            type="button"
-            onClick={() => formik.setFieldValue('portal', RoleEnum.ADMIN)}
-            className={`w-full relative z-10 text-center py-2 text-xs font-bold transition-colors duration-200 cursor-pointer ${
-              formik.values.portal === RoleEnum.ADMIN ? 'text-gray-800' : 'text-gray-400'
-            }`}
-          >
-            Standard Admin
-          </button>
-          <button
-            type="button"
-            onClick={() => formik.setFieldValue('portal', RoleEnum.SUPER_ADMIN)}
-            className={`w-full relative z-10 text-center py-2 text-xs font-bold transition-colors duration-200 cursor-pointer ${
-              formik.values.portal === RoleEnum.SUPER_ADMIN ? 'text-gray-800' : 'text-gray-400'
-            }`}
-          >
-            Super Admin
-          </button>
-        </div>
-
         {/* Error Feedback Strip */}
         {authError && (
           <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 p-3 rounded-xl mb-5 text-left text-xs font-semibold text-red-600">
@@ -145,68 +130,52 @@ export default function SecretAdminLoginPage({ searchParams }: Props) {
         )}
 
         {/* Input Interactive Form Stack */}
-        <form onSubmit={formik.handleSubmit} className="flex flex-col gap-4 text-left">
+        <form onSubmit={formik.handleSubmit} className="flex flex-col text-left">
           
-          {/* Email Row Area */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Root Identifier</label>
-            <div className="relative flex items-center">
-              <LuMail className="absolute left-3.5 text-gray-400 text-sm" />
-              <input
-                type="email"
-                name="email"
-                placeholder="root@system.io"
-                value={formik.values.email}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={`w-full text-xs text-gray-700 bg-white border pl-10 pr-4 py-3 rounded-xl outline-none transition-all ${
-                  formik.touched.email && formik.errors.email
-                    ? 'border-red-300 focus:border-red-500'
-                    : 'border-gray-200 focus:border-[#00AC72] focus:ring-1 focus:ring-[#00AC72]/20'
-                }`}
+          {/* Email Field */}
+          <div className="outerDiv mb-4 w-full">
+            <label className="text-xs font-semibold" htmlFor="email">Email</label>
+            <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.email && formik.errors.email ? 'border-red-500' : 'border-gray-300'}`}>
+              <LuMail />
+              <input 
+                type="email" 
+                id="email" 
+                {...formik.getFieldProps('email')} 
+                placeholder="companyemail@conekta.com" 
+                className="w-full outline-none" 
               />
             </div>
             {formik.touched.email && formik.errors.email && (
-              <span className="text-[10px] font-bold text-red-500 mt-0.5">{formik.errors.email}</span>
+              <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.email}</span>
             )}
           </div>
 
-          {/* Password Row Area */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Security Access Token</label>
-            <div className="relative flex items-center">
-              <LuLock className="absolute left-3.5 text-gray-400 text-sm" />
-              <input
-                type={showPassword ? 'text' : 'password'}
-                name="password"
-                placeholder="••••••••••••"
-                value={formik.values.password}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                className={`w-full text-xs text-gray-700 bg-white border pl-10 pr-10 py-3 rounded-xl outline-none transition-all ${
-                  formik.touched.password && formik.errors.password
-                    ? 'border-red-300 focus:border-red-500'
-                    : 'border-gray-200 focus:border-[#00AC72] focus:ring-1 focus:ring-[#00AC72]/20'
-                }`}
+          {/* Password Field */}
+          <div className="outerDiv mb-4 w-full">
+            <label className="text-xs font-semibold" htmlFor="password">Password</label>
+            <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.password && formik.errors.password ? 'border-red-500' : 'border-gray-300'}`}>
+              <LuLock />
+              <input 
+                type={showPassword ? "text" : "password"} 
+                id="password" 
+                {...formik.getFieldProps('password')} 
+                placeholder="••••••••" 
+                className="w-full outline-none" 
               />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 text-gray-400 hover:text-gray-600 transition-colors cursor-pointer text-sm"
-              >
+              <button type="button" onClick={() => setShowPassword(!showPassword)}>
                 {showPassword ? <LuEyeOff /> : <LuEye />}
               </button>
             </div>
             {formik.touched.password && formik.errors.password && (
-              <span className="text-[10px] font-bold text-red-500 mt-0.5">{formik.errors.password}</span>
+              <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.password}</span>
             )}
           </div>
 
-          {/* Core Action Submit Button */}
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={formik.isSubmitting}
-            className="w-full bg-[#00AC72] hover:bg-[#009663] text-white font-bold text-xs py-3 rounded-xl transition-colors mt-4 shadow-md shadow-emerald-700/10 flex justify-center items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-[#00AC72] hover:bg-[#009663] text-white font-bold text-xs py-3 rounded-xl transition-colors mt-2 shadow-md shadow-emerald-700/10 flex justify-center items-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {formik.isSubmitting ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -216,7 +185,7 @@ export default function SecretAdminLoginPage({ searchParams }: Props) {
           </button>
         </form>
 
-        {/* Minimal Footer Signature Note */}
+        {/* Footer Note */}
         <div className="text-center text-[10px] text-gray-400 mt-8 select-none">
           SECURE LOGISTICS ID: V1.0-LEKKI
         </div>

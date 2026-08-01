@@ -1,6 +1,8 @@
 'use client';
 
 import { LuCalendar, LuTrendingUp } from 'react-icons/lu';
+import ScheduleVisitPortal from './ScheduleVisit';
+import { useState } from 'react';
 
 interface SidebarWidgetProps {
   basePrice: string;
@@ -9,7 +11,7 @@ interface SidebarWidgetProps {
 
 export default function SidebarWidget({ basePrice, paymentFrequency }: SidebarWidgetProps) {
   const parsedPrice = parseFloat(basePrice) || 0;
-
+  const [isOpen, setIsOpen] = useState(false)
   // Format price into millions easily (e.g. 4500000 -> ₦4.5M)
   const formattedPriceInM = parsedPrice >= 1000000 
     ? `₦${(parsedPrice / 1000000).toFixed(1)}M` 
@@ -21,7 +23,7 @@ export default function SidebarWidget({ basePrice, paymentFrequency }: SidebarWi
       {/* CARD 1: MAIN PRICING & PAYMENT OPTIONS */}
       <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm flex flex-col gap-6">
         <div>
-          <h2 className="text-3xl font-black text-[#257448] tracking-tight">
+          <h2 className="text-3xl font-black text-primary tracking-tight">
             {formattedPriceInM}
           </h2>
           <p className="text-gray-400 text-xs font-medium mt-1">
@@ -31,20 +33,25 @@ export default function SidebarWidget({ basePrice, paymentFrequency }: SidebarWi
 
         {/* Call to Actions */}
         <div className="flex flex-col gap-3">
-          <button
+          {/* <button
             type="button"
             className="w-full py-4 bg-[#257448] hover:bg-[#1d5d39] text-white font-bold rounded-2xl shadow-sm hover:shadow-md transition active:scale-[0.98] text-sm"
           >
             View Payment Plans
-          </button>
+          </button> */}
           
           <button
             type="button"
-            className="w-full py-4 bg-white hover:bg-gray-50 text-gray-800 font-bold rounded-2xl border border-gray-200 shadow-sm transition active:scale-[0.98] text-sm flex items-center justify-center gap-2"
+            onClick={()=>setIsOpen(true)}
+            className="w-full py-4 bg-primary-green text-white hover:bg-primary-green-hover font-bold rounded-2xl border border-gray-200 shadow-sm transition active:scale-[0.98] text-sm flex items-center justify-center gap-2"
           >
-            <LuCalendar className="text-lg text-gray-500 shrink-0" />
+            <LuCalendar className="text-lg text-white shrink-0" />
             Schedule Visit
           </button>
+
+         {isOpen && (
+          <ScheduleVisitPortal onClose={() => setIsOpen(false)} />
+        )}
         </div>
 
         {/* Payment Methods Checklists */}
@@ -59,8 +66,8 @@ export default function SidebarWidget({ basePrice, paymentFrequency }: SidebarWi
               'Rent Small Small'
             ].map((option, idx) => (
               <div key={idx} className="flex items-center gap-3">
-                <div className="w-5 h-5 rounded-full border-2 border-[#257448] flex items-center justify-center shrink-0">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#257448]" />
+                <div className="w-5 h-5 rounded-full border-2 border-primary-green flex items-center justify-center shrink-0">
+                  <div className="w-2.5 h-2.5 rounded-full bg-primary-green" />
                 </div>
                 <span className="text-sm font-semibold text-gray-700">{option}</span>
               </div>

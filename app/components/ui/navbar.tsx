@@ -19,7 +19,7 @@ export default function Navbar() {
         { title: 'My Housing', link: '/my-housing' },
     ]
     return (
-        <nav className="w-screen fixed top-0 left-0 z-90 flex justify-center">
+        <nav className="w-screen fixed top-0 left-0 z-40 flex justify-center">
         <section className={`
         w-full max-w-screen
         flex flex-col lg:flex-row lg:items-center lg:justify-between

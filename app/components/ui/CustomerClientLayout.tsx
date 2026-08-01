@@ -7,6 +7,7 @@ import { RootState } from '@/shared/store/store';
 import { motion, useAnimation, PanInfo } from 'framer-motion';
 import { IoBriefcase } from 'react-icons/io5'; // Clean professional suitcase icon for investments
 import { RoleEnum } from '@/shared/enums/roles.enum';
+import CustomSelect from './CustomSelect';
 
 interface CustomerClientLayoutProps {
   children: ReactNode;
@@ -118,8 +119,8 @@ interface InvestorModalProps {
 }
 
 function InvestorModal({ isOpen, onClose }: InvestorModalProps) {
+  const [targetBracket, setTargetBracket] = useState('')
   if (!isOpen) return null;
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-fade-in">
       {/* Outer Dismiss Click Wrapper */}
@@ -128,40 +129,53 @@ function InvestorModal({ isOpen, onClose }: InvestorModalProps) {
       {/* Modal Surface Box */}
       <div className="relative bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl border border-gray-100 flex flex-col gap-4 z-10">
         <div>
-          <h2 className="text-xl font-bold text-gray-900 tracking-tight">Become a Corporate Partner</h2>
-          <p className="text-xs text-gray-500 mt-1">
-            Grow your real estate and infrastructure holdings. Apply below to view premium, pre-vetted asset tranches.
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200/60 text-[10px] font-bold text-[#00AC72] uppercase tracking-wider mb-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00AC72] animate-pulse" />
+            Exclusive Early Access
+          </div>
+          <h2 className="text-xl font-black text-gray-900 tracking-tight">
+            Build Your Private Real Estate Portfolio
+          </h2>
+          <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+            Are you looking to invest in high-yield private property and premium real estate development? We are launching our institutional-grade property investment platform soon. Join our priority waitlist to secure allocations in pre-vetted asset tranches before public release.
           </p>
         </div>
 
-        <form onSubmit={(e) => { e.preventDefault(); console.log("Investor workspace application pipeline launched."); onClose(); }} className="flex flex-col gap-3">
-          <div className="flex flex-col gap-1">
-            <label className="text-xs font-semibold text-gray-700">Company / Fund Name</label>
-            <input type="text" required placeholder="e.g. Acme Capital Ltd" className="w-full text-sm p-2 border border-gray-300 rounded-lg outline-emerald-500" />
+        <form onSubmit={(e) => { e.preventDefault(); console.log("Investor waitlist registered."); onClose(); }} className="flex flex-col gap-3 mt-1">
+          <div className="flex flex-col gap-1 text-left">
+            <label className="text-xs font-semibold text-gray-700">Company / Investor Name</label>
+            <input 
+              type="text" 
+              required 
+              placeholder="e.g. Acme Capital or Habib Idris" 
+              className="w-full text-xs p-3 border border-gray-200 rounded-xl outline-none focus:border-[#00AC72] focus:ring-1 focus:ring-[#00AC72]/20 transition-all text-gray-800" 
+            />
           </div>
 
-          <div className="flex flex-col gap-1">
+          <div className="flex flex-col gap-1 text-left">
             <label className="text-xs font-semibold text-gray-700">Target Investment Bracket (NGN)</label>
-            <select className="w-full text-sm p-2 border border-gray-300 rounded-lg outline-emerald-500 bg-white">
-              <option>Under ₦50,000,000</option>
-              <option>₦50,000,000 - ₦250,000,000</option>
-              <option>₦250,000,000+</option>
-            </select>
+            <CustomSelect
+              options={["Under ₦50,000,000", "₦50,000,000 - ₦250,000,000", "₦250,000,000+"]}
+              selected={targetBracket}
+              onChange={(val) => setTargetBracket(val)}
+              defaultValue="Select Investment Capacity"
+              className="w-full text-xs"
+            />
           </div>
 
-          <div className="flex gap-3 justify-end mt-4">
+          <div className="flex gap-2.5 justify-end mt-4">
             <button 
               type="button" 
               onClick={onClose} 
-              className="px-4 py-2 border border-gray-200 hover:bg-gray-50 text-xs font-bold rounded-lg transition-colors text-gray-600"
+              className="px-4 py-2.5 border border-gray-200 hover:bg-gray-50 text-xs font-bold rounded-xl transition-colors text-gray-600 cursor-pointer"
             >
-              Cancel
+              Maybe Later
             </button>
             <button 
               type="submit" 
-              className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg transition-colors shadow-sm"
+              className="px-4 py-2.5 bg-[#00AC72] hover:bg-[#009663] text-white text-xs font-bold rounded-xl transition-colors shadow-md shadow-emerald-700/10 cursor-pointer"
             >
-              Submit Pitch Profile
+              Request Priority Access
             </button>
           </div>
         </form>
