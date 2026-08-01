@@ -17,7 +17,7 @@ export function proxy(request: NextRequest) {
     '/verify-email',
     '/loading-dashboard',
     '/',
-    '/portal',
+    '/admin-login',
 
   ];
 
