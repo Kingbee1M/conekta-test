@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, use } from 'react';
-import { useRouter, notFound } from 'next/navigation';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import { z } from 'zod';
 import { LuLock, LuMail, LuEye, LuEyeOff, LuShieldAlert } from 'react-icons/lu';
@@ -10,16 +10,9 @@ import { loginUser } from '@/shared/features/auth/auth.action';
 import { useToast } from '@/app/components/ui/ToastProvider';
 import { useAppDispatch } from '@/lib/hooks';
 
-// 🛑 FORCE DYNAMIC RENDERING FOR PRODUCTION 🛑
-export const dynamic = 'force-dynamic';
-
 enum RoleEnum {
   ADMIN = 'admin',
   SUPER_ADMIN = 'super_admin',
-}
-
-interface Props {
-  searchParams: Promise<{ key?: string }>;
 }
 
 const loginSchema = z.object({
@@ -30,21 +23,13 @@ const loginSchema = z.object({
   }),
 });
 
-export default function SecretAdminLoginPage({ searchParams }: Props) {
+export default function AdminLoginPage() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { addToast } = useToast();
 
-  const resolvedParams = use(searchParams);
   const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
-
-  // Validate Secret Key
-  if (resolvedParams?.key !== 'launch-2026-secure') {
-    notFound();
-  }
-
-  // ... rest of your formik and component code remains unchanged
 
   const formik = useFormik({
     initialValues: {
@@ -72,21 +57,21 @@ export default function SecretAdminLoginPage({ searchParams }: Props) {
           loginUser({
             email: values.email,
             password: values.password,
-            portal: RoleEnum.ADMIN, // Explicitly guaranteed
+            portal: RoleEnum.ADMIN,
           })
         );
 
         if (result?.success) {
           addToast({
             title: 'Authentication Successful',
-            description: result.message || 'Redirecting to secure dashboard...',
+            description: result.message || 'Redirecting to admin dashboard...',
             variant: 'success',
             duration: 3000,
           });
 
           router.replace('/loading-dashboard');
         } else {
-          const errorMsg = result?.message || 'Access Denied: Invalid root authority credentials.';
+          const errorMsg = result?.message || 'Access Denied: Invalid admin credentials.';
           setAuthError(errorMsg);
           addToast({
             title: 'Authentication Failed',
@@ -96,7 +81,7 @@ export default function SecretAdminLoginPage({ searchParams }: Props) {
           });
         }
       } catch (error: unknown) {
-        const errorMsg = error instanceof Error ? error.message : 'An unexpected cryptographic exception occurred.';
+        const errorMsg = error instanceof Error ? error.message : 'An unexpected authentication error occurred.';
         setAuthError(errorMsg);
         addToast({
           title: 'System Error',
@@ -116,14 +101,14 @@ export default function SecretAdminLoginPage({ searchParams }: Props) {
         {/* Accent top border strip */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-transparent via-[#00AC72] to-transparent" />
 
-        {/* Brandless Admin Header Context */}
+        {/* Admin Header Context */}
         <div className="flex flex-col text-left mb-6">
           <div className="flex items-center gap-2 text-[#00AC72] text-xs tracking-widest uppercase mb-1 font-bold">
             <span className="w-1.5 h-1.5 rounded-full bg-[#00AC72] animate-pulse" />
-            Root Gateway System
+            Admin Portal
           </div>
-          <h1 className="text-xl font-black text-gray-800 tracking-tight">Admin Authority</h1>
-          <p className="text-xs text-gray-400 mt-1">Authorized operations personnel only. System access actions are strictly monitored.</p>
+          <h1 className="text-xl font-black text-gray-800 tracking-tight">Admin Sign In</h1>
+          <p className="text-xs text-gray-400 mt-1">Authorized personnel only. Enter your credentials to access the console.</p>
         </div>
 
         {/* Error Feedback Strip */}
@@ -134,20 +119,20 @@ export default function SecretAdminLoginPage({ searchParams }: Props) {
           </div>
         )}
 
-        {/* Input Interactive Form Stack */}
+        {/* Form Stack */}
         <form onSubmit={formik.handleSubmit} className="flex flex-col text-left">
 
           {/* Email Field */}
           <div className="outerDiv mb-4 w-full">
             <label className="text-xs font-semibold" htmlFor="email">Email</label>
-            <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.email && formik.errors.email ? 'border-red-500' : 'border-gray-300'}`}>
-              <LuMail />
+            <div className={`inputDiv flex items-center border p-2 rounded gap-2 mt-1 ${formik.touched.email && formik.errors.email ? 'border-red-500' : 'border-gray-300'}`}>
+              <LuMail className="text-gray-400" />
               <input 
                 type="email" 
                 id="email" 
                 {...formik.getFieldProps('email')} 
-                placeholder="companyemail@conekta.com" 
-                className="w-full outline-none" 
+                placeholder="admin@conekta.com" 
+                className="w-full outline-none text-xs" 
               />
             </div>
             {formik.touched.email && formik.errors.email && (
@@ -158,17 +143,17 @@ export default function SecretAdminLoginPage({ searchParams }: Props) {
           {/* Password Field */}
           <div className="outerDiv mb-4 w-full">
             <label className="text-xs font-semibold" htmlFor="password">Password</label>
-            <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.password && formik.errors.password ? 'border-red-500' : 'border-gray-300'}`}>
-              <LuLock />
+            <div className={`inputDiv flex items-center border p-2 rounded gap-2 mt-1 ${formik.touched.password && formik.errors.password ? 'border-red-500' : 'border-gray-300'}`}>
+              <LuLock className="text-gray-400" />
               <input 
                 type={showPassword ? "text" : "password"} 
                 id="password" 
                 {...formik.getFieldProps('password')} 
                 placeholder="••••••••" 
-                className="w-full outline-none" 
+                className="w-full outline-none text-xs" 
               />
               <button type="button" onClick={() => setShowPassword(!showPassword)}>
-                {showPassword ? <LuEyeOff /> : <LuEye />}
+                {showPassword ? <LuEyeOff className="text-gray-400" /> : <LuEye className="text-gray-400" />}
               </button>
             </div>
             {formik.touched.password && formik.errors.password && (
@@ -185,14 +170,14 @@ export default function SecretAdminLoginPage({ searchParams }: Props) {
             {formik.isSubmitting ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
-              'Authenticate Access'
+              'Sign In to Admin Portal'
             )}
           </button>
         </form>
 
         {/* Footer Note */}
         <div className="text-center text-[10px] text-gray-400 mt-8 select-none">
-          SECURE LOGISTICS ID: V1.0-LEKKI
+          CONEKTA ADMIN SYSTEM V1.0
         </div>
       </div>
     </div>

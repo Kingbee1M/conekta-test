@@ -11,7 +11,7 @@ import logo from '../../public/svg/logo-enhanced.svg'
 import { CiMail, CiLock } from "react-icons/ci"
 import Link from "next/link"
 import { FaGoogle, FaFacebook } from "react-icons/fa"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { FiEyeOff, FiEye } from "react-icons/fi"
 import { RoleEnum } from "@/shared/enums/roles.enum"
 import { motion } from "framer-motion"
@@ -26,21 +26,6 @@ export default function Login() {
     const router = useRouter();
     const { addToast } = useToast();
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
-
-    useEffect(() => {
-  const handleKeyDown = (e: KeyboardEvent) => {
-    // Check key combination (Ctrl + Shift + A or Cmd + Shift + A on macOS)
-    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'a') {
-      e.preventDefault();
-      router.push('/portal/x9_secure_gateway?key=launch-2026-secure');
-    }
-  };
-
-  window.addEventListener('keydown', handleKeyDown);
-  return () => window.removeEventListener('keydown', handleKeyDown);
-}, [router]);
-    
-    
     const portalOptions = [RoleEnum.CUSTOMER, RoleEnum.LISTER];
 
     const formik = useFormik({
@@ -99,9 +84,6 @@ export default function Login() {
             <form onSubmit={formik.handleSubmit} className="py-5 px-7 w-full max-w-95 items-center border-gray-300 rounded-lg border-2 border-solid bg-white flex flex-col gap-1">
                 <Image src={logo} width={100} height={100} alt="logo" className="w-30" />
                 <h1 className="font-bold text-xl mt-2">Welcome Back</h1>
-                <h1 className="font-bold text-xl mt-2">Testing production
-
-                </h1>
                 <p className="mb-5 text-gray-500 text-sm text-center">Sign in to your Conekta account</p>
 
                 {/* Styled Portal Selector with RoleEnum configuration */}
