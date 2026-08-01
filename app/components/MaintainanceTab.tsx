@@ -1,7 +1,7 @@
 'use client';
 
 import { MaintenanceTicket } from '@/shared/service/customer services/customerTypes';
-
+import CustomSelect from './ui/CustomSelect';
 interface MaintenanceTabProps {
   tickets: MaintenanceTicket[];
   newTicketService: string;
@@ -64,15 +64,13 @@ export default function MaintenanceTab({
         <form onSubmit={onAddTicket} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
             <label className="text-[10px] font-bold text-gray-400 uppercase">Service Category</label>
-            <select
-              value={newTicketService}
-              onChange={(e) => setNewTicketService(e.target.value)}
-              className="border border-gray-200 rounded-xl px-3.5 py-3 text-xs bg-white text-gray-800 font-semibold outline-none"
-            >
-              <option value="Plumbing">Plumbing Services</option>
-              <option value="Electrical">Electrical Works</option>
-              <option value="Structural">Structural & Masonry</option>
-            </select>
+            <CustomSelect
+              options={["Plumbing Services", "Electrical Works", "Structural & Masonry"]}
+              selected={newTicketService}
+              onChange={(value) => setNewTicketService(value)}
+              defaultValue="Select Service Type"
+              className="w-full"
+            />
           </div>
 
           <div className="flex flex-col gap-1.5">

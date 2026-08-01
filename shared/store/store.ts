@@ -5,21 +5,27 @@ import storage from '@/lib/storage';
 import authReducer from './authSlice';
 import listingReducer from'./listingSlice'
 import viewListingREducer from './viewPropertySlice'
+import adminCustomerReducer from './admincustomerSlice'
 import cookieReducer from './acceptCookieSlice'; 
+import listerReducer from './adminListerSlice';
+import adminListingReducer from './adminListingSlice'
 import { apiSlice } from '@/lib/api';
 
 const rootReducer = combineReducers({
   auth: authReducer,
   listing: listingReducer,
   listingView: viewListingREducer,
-  cookieConsent: cookieReducer, 
+  cookieConsent: cookieReducer,
+  adminCustomer: adminCustomerReducer,
+  adminLister: listerReducer,
+  adminListing: adminListingReducer,
   [apiSlice.reducerPath]: apiSlice.reducer, 
 });
 
 const persistConfig = {
   key: 'conketa_root',
   storage,
-  whitelist: ['auth', 'cookieConsent', 'listing', 'listingView'], 
+  whitelist: ['auth', 'cookieConsent', 'listing', 'listingView', 'adminCustomer', 'adminLister', 'adminListing',], 
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

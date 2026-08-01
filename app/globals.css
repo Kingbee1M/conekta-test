@@ -11,13 +11,12 @@
   --font-poppins: var(--font-poppins);
   --font-inter: var(--font-inter);
 
-
   /* --------COLORS-------- */
   --color-primary-green: #257448;
   --color-primary-green-hover: #3fa56d;
   --color-secondary-green: #DBFCE7;
+  --color-smooth-green: #1B4D3E;
   --color-text-primary: #262626;
-  --color-tertiary-green: #009966;
   --color-tertiary-green: #00B075;
   --color-active-link: #DBFCE7CC;
   --color-artisan-orange: #ff5500;
@@ -124,7 +123,7 @@
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
+  --chart-4: oklch(0.439 0 0);
   --chart-5: oklch(0.269 0 0);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
@@ -147,18 +146,18 @@
     @apply font-sans;
   }
   h1, h2, h3, h4, h5 {
-    font-family:  var(--font-inter);
-    color: #101828 ;
+    font-family: var(--font-inter);
+    color: #101828;
   }
   h1 {
     font-weight: 800;
   }
 
-  h2,h3,h4,h5 {
-     font-weight: 700;
+  h2, h3, h4, h5 {
+    font-weight: 700;
   }
 
-  p, input, button, span, a, textArea, label {
+  p, input, button, span, a, textarea, label {
     font-family: var(--font-inter);
     color: #4a5565;
   }
@@ -186,6 +185,39 @@
   button {
     cursor: pointer;
   }
+
+  /* --- CUSTOM SCROLLBAR UTILITY --- */
+  /* --- CUSTOM INSET SCROLLBAR UTILITY --- */
+.custom-scrollbar {
+  /* Firefox standard */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+/* WebKit (Chrome, Safari, Edge) */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px; /* Slightly wider so thumb fits with padding */
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 8px 0;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary-green);
+  border-radius: 9999px;
+  /* Pulls thumb inside by creating transparent border inset */
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-secondary-green);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
 }
 
 .inputDiv {
@@ -195,7 +227,7 @@
   padding: 8px 10px;
   background-color: #F3F3F5;
   border-radius: 7px;
-  border: 2px solid transparent; /* Add a transparent border to prevent "jumping" */
+  border: 2px solid transparent;
   transition: border-color 0.2s ease;
 }
 
@@ -229,12 +261,12 @@
 .chat-bubble-tail::after {
   content: '';
   position: absolute;
-  bottom: -5px; /* Adjust to move tail up/down */
-  right: 15px;  /* Adjust to move tail left/right */
+  bottom: -5px;
+  right: 15px;
   width: 20px;
   height: 20px;
-  background: inherit; /* Matches the button's gradient/color */
-  clip-path: polygon(0 0, 100% 0, 100% 100%); /* Creates the triangle shape */
+  background: inherit;
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
   transform: rotate(45deg);
-  z-index: -1; /* Keeps it behind the button border if needed */
+  z-index: -1;
 }
