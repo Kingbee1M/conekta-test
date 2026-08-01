@@ -1,8 +1,7 @@
 'use client';
 
 import { useState, use } from 'react';
-import { useRouter } from 'next/navigation';
-import { notFound } from 'next/navigation';
+import { useRouter, notFound } from 'next/navigation';
 import { useFormik } from 'formik';
 import { z } from 'zod';
 import { LuLock, LuMail, LuEye, LuEyeOff, LuShieldAlert } from 'react-icons/lu';
@@ -11,9 +10,12 @@ import { loginUser } from '@/shared/features/auth/auth.action';
 import { useToast } from '@/app/components/ui/ToastProvider';
 import { useAppDispatch } from '@/lib/hooks';
 
+// 🛑 FORCE DYNAMIC RENDERING FOR PRODUCTION 🛑
+export const dynamic = 'force-dynamic';
+
 enum RoleEnum {
   ADMIN = 'admin',
-  SUPER_ADMIN = 'super_admin'
+  SUPER_ADMIN = 'super_admin',
 }
 
 interface Props {
@@ -21,25 +23,28 @@ interface Props {
 }
 
 const loginSchema = z.object({
-  email: z.string().min(1, "Email is required").email("Invalid email format"),
-  password: z.string().min(1, "Password is required").min(8, "Password must be at least 8 characters"),
+  email: z.string().min(1, 'Email is required').email('Invalid email format'),
+  password: z.string().min(1, 'Password is required').min(8, 'Password must be at least 8 characters'),
   portal: z.nativeEnum(RoleEnum, {
-    error: "Please select a valid portal"
-  })
+    error: 'Please select a valid portal',
+  }),
 });
 
 export default function SecretAdminLoginPage({ searchParams }: Props) {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { addToast } = useToast();
-  
+
   const resolvedParams = use(searchParams);
   const [showPassword, setShowPassword] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
 
-  if (resolvedParams.key !== 'launch-2026-secure') {
+  // Validate Secret Key
+  if (resolvedParams?.key !== 'launch-2026-secure') {
     notFound();
   }
+
+  // ... rest of your formik and component code remains unchanged
 
   const formik = useFormik({
     initialValues: {
