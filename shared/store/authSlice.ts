@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction, Action } from '@reduxjs/toolkit';
 import { REHYDRATE } from 'redux-persist';
+import { RoleEnum } from '../enums/roles.enum';
 
 // --- A. TYPES FOR LOGIN RESPONSE DATA ---
 interface Store {
@@ -18,11 +19,11 @@ interface InnerLoginUser {
   profile: {
     full_name: string;
   };
-  other_roles: string[];
+  other_roles: RoleEnum[];
 }
 
 export interface LoginSessionData {
-  active_role: string;
+  active_role: RoleEnum;
   email_verified: boolean;
   kyc_verified: boolean;
   user: InnerLoginUser;
@@ -39,8 +40,11 @@ interface PersonalProfile {
 export interface PersonalData {
   uuid: string;
   email: string;
-  profile: PersonalProfile;
-  roles: string[];
+  first_name?: string;
+  last_name?: string;
+  middle_name?: string;
+  profile?: PersonalProfile;
+  roles: RoleEnum[];
   token?: string | null;
 }
 

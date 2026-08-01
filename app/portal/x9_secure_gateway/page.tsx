@@ -13,7 +13,7 @@ import { useAppDispatch } from '@/lib/hooks';
 
 enum RoleEnum {
   ADMIN = 'admin',
-  SUPER_ADMIN = 'superAdmin'
+  SUPER_ADMIN = 'super_admin'
 }
 
 interface Props {
@@ -43,7 +43,7 @@ export default function SecretAdminLoginPage({ searchParams }: Props) {
 
   const formik = useFormik({
     initialValues: {
-      portal: RoleEnum.SUPER_ADMIN,
+      portal: RoleEnum.ADMIN,
       email: '',
       password: '',
     },
@@ -63,11 +63,11 @@ export default function SecretAdminLoginPage({ searchParams }: Props) {
       try {
         setAuthError(null);
 
-        // Dispatch the thunk with payload matching your loginTypes
         const result = await dispatch(
           loginUser({
             email: values.email,
             password: values.password,
+            portal: RoleEnum.ADMIN, // Explicitly guaranteed
           })
         );
 
@@ -131,7 +131,7 @@ export default function SecretAdminLoginPage({ searchParams }: Props) {
 
         {/* Input Interactive Form Stack */}
         <form onSubmit={formik.handleSubmit} className="flex flex-col text-left">
-          
+
           {/* Email Field */}
           <div className="outerDiv mb-4 w-full">
             <label className="text-xs font-semibold" htmlFor="email">Email</label>

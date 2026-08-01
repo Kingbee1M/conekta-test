@@ -76,7 +76,6 @@ export const signupUser = (userData: signupTypes) => async () => {
       method: 'POST',
       body: userData,
     });
-
     console.log("Signup Response via Bouncer:", result);
 
     if (result.success === true || result.status_code === 201) {

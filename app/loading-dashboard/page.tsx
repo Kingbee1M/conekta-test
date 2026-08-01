@@ -10,30 +10,37 @@ import { RoleEnum } from '@/shared/enums/roles.enum';
 export default function LoadingDashboard() {
   const router = useRouter();
   
-  // 1. Fetch profile background data on mount (This automatically stores data inside state.auth.profile)
+  // 1. Fetch profile background data on mount (This automatically updates state.auth.profile)
   const { isLoading, isError, isSuccess } = useGetProfileMeQuery();
 
-  // 2. Extract our simplified, dedicated slice parts
+  // 2. Extract slice state
   const { session, profile } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
     // Wait for the background profile endpoint to finish loading
     if (isLoading) return;
 
-    // A. FAILURE PATHWAY: If the API failed or there's no active session
+    // A. FAILURE PATHWAY: Network issue or missing session
     if (isError || !session) {
       console.warn("🚨 Network issue, expired token, or session verification rejected.");
       router.replace('/log-in');
       return;
     }
 
-    // Extract names cleanly from our dedicated profile state
+    // Extract names cleanly from root OR nested profile object OR session full_name
+    // ✅ SAFE: Optional chaining on both levels
     const firstName = profile?.profile?.first_name;
     const lastName = profile?.profile?.last_name;
+    const fullName = session?.user?.profile?.full_name;
 
-    // B. SUCCESS PATHWAY: Name details exist, route based on role
-    if (isSuccess && (firstName || lastName)) {
-      const computedFullName = `${firstName || ''} ${lastName || ''}`.trim();
+    const hasName = Boolean(firstName || lastName || fullName);
+
+    // B. SUCCESS PATHWAY: Route based on active role
+    if (isSuccess && hasName) {
+      const computedFullName = (firstName || lastName)
+        ? `${firstName || ''} ${lastName || ''}`.trim()
+        : fullName || 'user';
+
       const userSlug = encodeURIComponent(
         computedFullName.toLowerCase().replace(/\s+/g, '-')
       );
@@ -44,10 +51,12 @@ export default function LoadingDashboard() {
         ? (rawRole as RoleEnum)
         : null;
 
-      if (activeRole === RoleEnum.LISTER) {
+      if (activeRole === RoleEnum.ADMIN || activeRole === RoleEnum.SUPER_ADMIN) {
+        router.replace('/overview');
+      } else if (activeRole === RoleEnum.LISTER) {
         router.replace(`/${userSlug}`);
       } else if (activeRole === RoleEnum.CUSTOMER) {
-        router.replace(`/home`);
+        router.replace('/home');
       } else {
         console.warn(`⚠️ Unknown or unhandled role "${rawRole}", routing to fallback dashboard.`);
         router.replace('/unauthorized');
@@ -55,10 +64,9 @@ export default function LoadingDashboard() {
       return;
     } 
 
-    // C. MISSING PARAMETERS PATHWAY: Success but names aren't filled out yet
-    if (isSuccess && !firstName && !lastName) {
+    // C. MISSING PARAMETERS PATHWAY: Success response but no name fields found anywhere
+    if (isSuccess && !hasName) {
       console.error("🚨 Account exists, but name parameters are empty inside profile schema.");
-      // Redirect to profile-setup, onboarding, or fallback to login
       router.replace('/log-in');
     }
 

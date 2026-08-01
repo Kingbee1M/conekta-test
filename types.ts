@@ -12,6 +12,7 @@ export interface signupTypes {
 export type loginTypes = {
     email: string;
     password: string;
+    portal: string
 }
 
 export type errorType = {

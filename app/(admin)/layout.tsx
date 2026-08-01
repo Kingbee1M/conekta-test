@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import NoSSR from "../components/noSSR";
 import AdminClientLayout from "../components/ui/adminClientLayout";
 import { useAppSelector } from '@/lib/hooks';
+import {RoleEnum} from "@/shared/enums/roles.enum"
 
 interface LayoutProps {
   children: ReactNode;
@@ -14,10 +15,8 @@ export default function AdminDashboardLayout({ children }: LayoutProps) {
   const router = useRouter();
   const { session, isAuthenticated } = useAppSelector((state) => state.auth);
 
-  const allowedRoles = useMemo(() => ['admin', 'superAdmin'], []);
-//   const hasAccess = isAuthenticated && session && allowedRoles.includes(session.active_role);
-    const placeholder = 'customer'
-  const hasAccess = isAuthenticated && session && placeholder === 'customer'
+  const allowedRoles = useMemo(() => [RoleEnum.ADMIN, RoleEnum.SUPER_ADMIN], []);
+  const hasAccess = isAuthenticated && session && allowedRoles.includes(session.active_role);
 
   useEffect(() => {
     if (!isAuthenticated || !session) {
