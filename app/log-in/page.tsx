@@ -29,8 +29,8 @@ export default function Login() {
 
     useEffect(() => {
   const handleKeyDown = (e: KeyboardEvent) => {
-    // Example: Trigger on Ctrl + Shift + A
-    if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+    // Check key combination (Ctrl + Shift + A or Cmd + Shift + A on macOS)
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'a') {
       e.preventDefault();
       router.push('/portal/x9_secure_gateway?key=launch-2026-secure');
     }
@@ -100,7 +100,7 @@ export default function Login() {
                 <Image src={logo} width={100} height={100} alt="logo" className="w-30" />
                 <h1 className="font-bold text-xl mt-2">Welcome Back</h1>
                 <h1 className="font-bold text-xl mt-2">Testing production
-                    
+
                 </h1>
                 <p className="mb-5 text-gray-500 text-sm text-center">Sign in to your Conekta account</p>
 
