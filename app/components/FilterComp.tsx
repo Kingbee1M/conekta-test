@@ -20,15 +20,33 @@ interface PropertyFilterProps {
   values: FilterValues;
   onChange: (updatedValues: FilterValues) => void;
   onApply: () => void;
-  onClose?: () => void; // For mobile close button
+  onClear?: () => void;
+  onClose?: () => void;
 }
 
-export default function PropertyFilter({ values, onChange, onApply, onClose }: PropertyFilterProps) {
+const DEFAULT_FILTER_VALUES: FilterValues = {
+  state: '',
+  lga: '',
+  propertyType: 'All Types',
+  minPrice: 0,
+  maxPrice: 150,
+  bedrooms: 'Any',
+  amenities: [],
+};
+
+export default function PropertyFilter({ values, onChange, onApply, onClear, onClose }: PropertyFilterProps) {
   
   const handleValueChange = (key: keyof FilterValues, value: string | number | string[]) => {
     const newValues = { ...values, [key]: value };
     if (key === 'state') newValues.lga = '';
     onChange(newValues);
+  };
+
+  const handleClearFilters = () => {
+    onChange(DEFAULT_FILTER_VALUES);
+    if (onClear) {
+      onClear();
+    }
   };
 
   const toggleAmenity = (amenity: string) => {
@@ -54,13 +72,24 @@ export default function PropertyFilter({ values, onChange, onApply, onClose }: P
   const maxPercent = (values.maxPrice / 150) * 100;
   const bedroomOptions = ['Any', '1', '2', '3', '4+'];
 
+  const isFiltered = 
+    values.state !== '' || 
+    values.lga !== '' || 
+    values.propertyType !== 'All Types' || 
+    values.minPrice > 0 || 
+    values.maxPrice < 150 || 
+    values.bedrooms !== 'Any' || 
+    values.amenities.length > 0;
+
   return (
-    <div className="w-full bg-white border border-gray-100 rounded-3xl p-6 shadow-sm flex flex-col gap-7 h-fit">
-      <div className="flex justify-between items-center">
+    <div className=" w-full bg-white border border-gray-100 rounded-3xl p-6 shadow-sm flex flex-col gap-7 max-h-[calc(100vh-7rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200">
+      {/* Header & Actions */}
+      <div className="flex justify-between items-center sticky top-0 bg-white z-30 pb-2 border-b border-gray-50">
         <h2 className="text-xl font-bold text-gray-900">Filters</h2>
+
         {/* Mobile Close Button */}
         {onClose && (
-          <button onClick={onClose} className="lg:hidden p-2 bg-gray-50 rounded-full text-gray-500">
+          <button onClick={onClose} className="lg:hidden p-2 bg-gray-50 rounded-full text-gray-500 hover:bg-gray-100">
             <LuX size={20} />
           </button>
         )}
@@ -112,9 +141,22 @@ export default function PropertyFilter({ values, onChange, onApply, onClose }: P
         </div>
       </div>
 
-      <button onClick={onApply} className="w-full py-4 bg-primary-green hover:bg-[#1d5d39] text-white font-bold rounded-2xl shadow-md transition-all active:scale-[0.98]">
-        {onClose ? 'Show Listings' : 'Apply Filters'}
-      </button>
+      {/* Action Buttons */}
+      <div className="flex flex-col gap-3 sticky bottom-0 bg-white z-30 pt-2 border-t border-gray-50">
+        <button onClick={onApply} className="w-full py-4 bg-primary-green hover:bg-[#1d5d39] text-white font-bold rounded-2xl shadow-md transition-all active:scale-[0.98]">
+          {onClose ? 'Show Listings' : 'Apply Filters'}
+        </button>
+
+        {isFiltered && (
+          <button 
+            type="button" 
+            onClick={handleClearFilters} 
+            className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-rose-600 font-bold rounded-2xl transition-all active:scale-[0.98] text-sm"
+          >
+            Clear All Filters
+          </button>
+        )}
+      </div>
 
       <style jsx>{`
         .slider-input::-webkit-slider-thumb { pointer-events: auto; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #ffffff; border: 2px solid #0a0a14; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }

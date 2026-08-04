@@ -21,6 +21,10 @@ export const listingApiSlice = apiSlice.injectEndpoints({
           ...(params?.verification_status && { verification_status: params.verification_status }),
         },
       }),
+      transformResponse: (response: AdminListingsResponse) => {
+        console.log("service data: ", response);
+        return response;
+      },
       providesTags: ['adminListing'],
     }),
   }),
