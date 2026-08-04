@@ -9,6 +9,8 @@ import adminCustomerReducer from './admincustomerSlice'
 import cookieReducer from './acceptCookieSlice'; 
 import listerReducer from './adminListerSlice';
 import adminListingReducer from './adminListingSlice'
+import adminUserReducer from './adminUsersSlice'
+import customerListingReducer from './customerListingSlice'
 import { apiSlice } from '@/lib/api';
 
 const rootReducer = combineReducers({
@@ -19,13 +21,15 @@ const rootReducer = combineReducers({
   adminCustomer: adminCustomerReducer,
   adminLister: listerReducer,
   adminListing: adminListingReducer,
+  adminUsers: adminUserReducer,
+  customerListing: customerListingReducer,
   [apiSlice.reducerPath]: apiSlice.reducer, 
 });
 
 const persistConfig = {
   key: 'conketa_root',
   storage,
-  whitelist: ['auth', 'cookieConsent', 'listing', 'listingView', 'adminCustomer', 'adminLister', 'adminListing',], 
+  whitelist: ['auth', 'cookieConsent', 'listing', 'listingView', 'adminCustomer', 'adminLister', 'adminListing', 'adminUsers', 'customerListing'], 
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

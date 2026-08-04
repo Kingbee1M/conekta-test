@@ -39,15 +39,24 @@ export const fetchCustomers = createAsyncThunk<
   'customers/fetchCustomers',
   async (params, { rejectWithValue, dispatch }) => {
     try {
-      const resultAction = await dispatch(customerApiSlice.endpoints.getCustomers.initiate(params));
+      // Pass forceRefetch: true if you want to ensure the API is called even if cached
+      const promise = dispatch(
+        customerApiSlice.endpoints.getCustomers.initiate(params, { forceRefetch: true })
+      );
 
-      if ('error' in resultAction) {
+      const resultAction = await promise;
+
+      // Unsubscribe to prevent memory leaks from manual endpoint subscriptions
+      promise.unsubscribe();
+
+      if ('error' in resultAction && resultAction.error) {
         const error = resultAction.error as FetchBaseQueryError | undefined;
         const customData = error?.data as CustomServerError | undefined;
         return rejectWithValue(customData?.message || 'Failed to fetch customers');
       }
 
       if (resultAction.data) {
+        console.log('Customer API Response:', resultAction.data);
         return resultAction.data;
       }
 
@@ -70,7 +79,7 @@ const customerSlice = createSlice({
     },
     setPageSize: (state, action: PayloadAction<number>) => {
       state.pageSize = action.payload;
-      state.currentPage = 1; // Reset to page 1 when size changes
+      state.currentPage = 1;
     },
     clearCustomerState: (state) => {
       state.customers = [];
@@ -85,10 +94,34 @@ const customerSlice = createSlice({
       })
       .addCase(fetchCustomers.fulfilled, (state, action) => {
         state.loading = false;
-        state.customers = action.payload.results;
-        state.count = action.payload.count;
-        state.next = action.payload.next;
-        state.previous = action.payload.previous;
+
+        const payload = action.payload as unknown as Record<string, unknown>;
+
+        // Robust extraction depending on how the backend formats the response:
+        // Case A: { results: [...], count: 10 }
+        // Case B: { data: { results: [...], count: 10 } }
+        // Case C: Raw array directly returned [...]
+        if (Array.isArray(action.payload?.results)) {
+          state.customers = action.payload.results;
+          state.count = action.payload.count ?? action.payload.results.length;
+          state.next = action.payload.next ?? null;
+          state.previous = action.payload.previous ?? null;
+        } else if (payload?.data && typeof payload.data === 'object' && Array.isArray((payload.data as Record<string, unknown>).results)) {
+          const nested = payload.data as PaginatedCustomerResponse;
+          state.customers = nested.results;
+          state.count = nested.count ?? nested.results.length;
+          state.next = nested.next ?? null;
+          state.previous = nested.previous ?? null;
+        } else if (Array.isArray(payload?.data)) {
+          state.customers = payload.data as CustomerProfile[];
+          state.count = (payload.count as number) ?? state.customers.length;
+        } else if (Array.isArray(action.payload)) {
+          state.customers = action.payload as unknown as CustomerProfile[];
+          state.count = state.customers.length;
+        } else {
+          state.customers = [];
+          state.count = 0;
+        }
       })
       .addCase(fetchCustomers.rejected, (state, action) => {
         state.loading = false;
