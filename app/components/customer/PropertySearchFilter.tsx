@@ -83,7 +83,7 @@ export default function PropertySearchFilter() {
   const results = data?.data?.results || [];
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-5xl mr-auto px-4 z-30">
+    <div ref={containerRef} className="relative w-full max-w-5xl mx-auto px-4 z-30">
       <form
         onSubmit={(e) => e.preventDefault()}
         className="bg-stone-50/95 backdrop-blur-md rounded-2xl md:rounded-3xl p-3 md:p-3.5 shadow-xl border border-stone-200/60 flex flex-col md:flex-row items-stretch md:items-center divide-y md:divide-y-0 md:divide-x divide-stone-200 gap-3 md:gap-0"

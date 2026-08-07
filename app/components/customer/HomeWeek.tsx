@@ -78,12 +78,12 @@ export default function HomeOfTheWeek() {
     'Location unavailable';
 
   return (
-    <section className="w-full max-w-6xl mx-auto px-4 py-12 font-sans">
+    <section className="w-full max-w-6xl mx-auto px-4 py-12">
       {/* Header Tag */}
       <span className="text-[11px] font-bold tracking-[0.2em] text-tertiary-green uppercase mb-1 block">
         Editor&apos;s Pick
       </span>
-      <h2 className="text-3xl md:text-4xl font-extrabold text-stone-900 mb-8 font-serif">
+      <h2 className="text-3xl md:text-4xl font-extrabold text-stone-900 mb-8">
         Home of the Week
       </h2>
 
@@ -103,8 +103,8 @@ export default function HomeOfTheWeek() {
 
           {/* Top Badge */}
           <div className="absolute top-5 left-5 z-10 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-tertiary-green text-white text-[11px] font-bold tracking-wider uppercase shadow-md">
-            <span>★</span>
-            <span>Home of the Week</span>
+            <span className='text-white'>★</span>
+            <span className='text-white'>Home of the Week</span>
           </div>
         </div>
 
@@ -113,12 +113,12 @@ export default function HomeOfTheWeek() {
           <div>
             {/* Location */}
             <div className="inline-flex items-center gap-1.5 text-xs text-emerald-100 font-medium mb-3">
-              <MapPin className="w-3.5 h-3.5 text-white fill-white/20" />
-              <span>{locationText}</span>
+              <MapPin className="w-3.5 h-3.5 fill-white/20" />
+              <span className='text-white'>{locationText}</span>
             </div>
 
             {/* Title */}
-            <h3 className="text-2xl md:text-4xl font-bold font-serif leading-tight text-white mb-6">
+            <h3 className="text-2xl md:text-4xl font-bold leading-tight text-white mb-6">
               {homeOfTheWeek.title}
             </h3>
 
@@ -154,7 +154,7 @@ export default function HomeOfTheWeek() {
 
             {/* Price */}
             <div className="flex items-baseline gap-2 mb-8">
-              <span className="text-2xl md:text-4xl font-bold font-serif text-white">
+              <span className="text-2xl md:text-4xl font-bold text-white">
                 {formattedPrice}
               </span>
               {homeOfTheWeek.payment_frequency && (

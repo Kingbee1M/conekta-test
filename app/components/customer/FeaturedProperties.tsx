@@ -72,7 +72,7 @@ export default function FeaturedProperties() {
   };
 
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 py-12 font-sans">
+    <section className="w-full max-w-7xl mx-auto px-4 py-12">
       <div className="flex items-end justify-between mb-8 gap-4">
         <div>
           <span className="text-[11px] font-bold tracking-[0.2em] text-[#00AC72] uppercase mb-1 block">
@@ -81,7 +81,7 @@ export default function FeaturedProperties() {
               : 'VERIFIED LISTINGS'}
           </span>
 
-          <h2 className="text-3xl md:text-4xl font-extrabold text-stone-900 font-serif mb-2">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-stone-900 mb-2">
             Featured properties
           </h2>
 
