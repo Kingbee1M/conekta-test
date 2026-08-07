@@ -31,7 +31,6 @@ export const listingApiSlice = apiSlice.injectEndpoints({
         },
       }),
       transformResponse: (response: AdminListingsResponse) => {
-        console.log("service data: ", response);
         return response;
       },
       providesTags: ['adminListing'],

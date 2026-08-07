@@ -263,7 +263,6 @@ export default function AdminViewListerPortal({ uuid, isOpen, onClose }: AdminVi
 
   const handleSaveSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log('Submitting updated lister data:', formData);
     setIsEditing(false);
   };
 

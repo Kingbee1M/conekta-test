@@ -128,7 +128,6 @@ export default function EmployeePortal({ uuid, isOpen, onClose }: EmployeePortal
 
   const handleSaveSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log('Submitting updated admin data:', formData);
     setIsEditing(false);
   };
 

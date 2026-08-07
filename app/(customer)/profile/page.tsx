@@ -71,7 +71,6 @@ export default function TenantProfileContainer() {
 
   // 2. Paystack Transaction Gateway Callback Mock Hook
   const handleMockPaymentInitiation = (homeDetails: HomeOverviewData) => {
-    console.log("⚡ Paystack SDK Pipeline Hook Event triggered.");
     
     // Mock Paystack Transaction Receipt Record payload mapping format
     const mockReceipt = {
@@ -89,7 +88,7 @@ export default function TenantProfileContainer() {
     };
 
     alert(`[MOCK PAYSTACK GATEWAY SUCCESS]\nReference: ${mockReceipt.reference}\nAmount: ₦${homeDetails.rentAmountNumeric.toLocaleString()}`);
-    console.log("Receipt payload ready for dispatch: ", mockReceipt);
+    
   };
 
   return (

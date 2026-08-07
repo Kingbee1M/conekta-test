@@ -17,7 +17,6 @@ export const profileApiSlice = apiSlice.injectEndpoints({
           const personalData = responseBody.data; 
 
           if (personalData) {
-            console.log("Storing raw personal profile data:", personalData);
             
             // Put it cleanly in its own home!
             dispatch(setPersonalProfile(personalData));

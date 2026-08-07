@@ -9,7 +9,6 @@ const createNoopStorage = (): WebStorage => {
     },
     // Changed return type from Promise<string> to Promise<void>
     setItem(_key: string, value: string): Promise<void> {
-      console.log(`SSR Storage: setting ${_key} (noop)`);
       return Promise.resolve(); 
     },
     removeItem(_key: string): Promise<void> {

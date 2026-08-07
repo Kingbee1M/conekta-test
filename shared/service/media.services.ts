@@ -19,7 +19,6 @@ export const mediaApi = apiSlice.injectEndpoints({
         body: payload,
       }),
       transformResponse: (response: ApiResponse<MediaUploadResponse>) => {
-        console.log('[Media Service API Response]:', response);
         return response;
       },
     }),

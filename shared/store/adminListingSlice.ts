@@ -49,7 +49,6 @@ export const fetchListings = createAsyncThunk<
   AdminListingsQueryParams | undefined,
   { rejectValue: string }
 >('adminListing/fetchListings', async (params, { dispatch, rejectWithValue }) => {
-  console.log('[fetchListings Thunk] Initiated with params:', params);
 
   const querySubscription = dispatch(
     listingApiSlice.endpoints.getListings.initiate(params, { forceRefetch: true })
@@ -57,7 +56,6 @@ export const fetchListings = createAsyncThunk<
 
   try {
     const data = await querySubscription.unwrap();
-    console.log('[fetchListings Thunk] Successfully retrieved data:', data);
 
     if (data) {
       return data as AdminListingsResponse;
@@ -89,15 +87,12 @@ export const fetchAdminPropertyByUuid = createAsyncThunk<
   string,
   { rejectValue: string }
 >('adminListing/fetchAdminPropertyByUuid', async (uuid, { dispatch, rejectWithValue }) => {
-  console.log('[fetchAdminPropertyByUuid Thunk] Initiated for UUID:', uuid);
-
   const querySubscription = dispatch(
     listingApiSlice.endpoints.getListingByUuid.initiate(uuid, { forceRefetch: true })
   );
 
   try {
     const response = await querySubscription.unwrap();
-    console.log('[fetchAdminPropertyByUuid Thunk] Successfully retrieved property:', response);
 
     if (response?.data) {
       return response.data;
