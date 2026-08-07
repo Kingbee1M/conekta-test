@@ -74,7 +74,7 @@ export default function FeaturedProperties() {
   return (
     <section className="w-full max-w-7xl mx-auto px-4 py-12">
       <div className="flex items-end justify-between mb-8 gap-4">
-        <div>
+        <div className='mx-0 lg:mx-16'>
           <span className="text-[11px] font-bold tracking-[0.2em] text-[#00AC72] uppercase mb-1 block">
             {featuredListings.length > 0
               ? `${featuredListings.length} VERIFIED LISTINGS`
