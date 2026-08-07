@@ -1,4 +1,3 @@
-// 1. Clean, lightweight State Enum for strict typing
 export enum NigeriaStateEnum {
   ABIA = "Abia",
   ADAMAWA = "Adamawa",

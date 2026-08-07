@@ -3,9 +3,18 @@ import {
   AdminListingsResponse,
   AdminListingsQueryParams,
 } from './types/listingTypes';
+import { AdminSingleListingResponse } from './types/listingTypes';
+
+// --- Single Listing Detail Interfaces ---
+
+
+
+// Interface representing the wrapped API response
+
 
 export const listingApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    // Get all admin listings
     getListings: builder.query<AdminListingsResponse, AdminListingsQueryParams | void>({
       query: (params) => ({
         url: '/admin/listings/',
@@ -27,8 +36,22 @@ export const listingApiSlice = apiSlice.injectEndpoints({
       },
       providesTags: ['adminListing'],
     }),
+
+    // Get single listing by UUID (Typed with AdminSingleListingResponse & EmployeeListingDetail)
+    getListingByUuid: builder.query<AdminSingleListingResponse, string>({
+      query: (uuid) => ({
+        url: `/admin/listings/${uuid}/`,
+        method: 'GET',
+      }),
+      providesTags: (result, error, uuid) => [{ type: 'adminListing', id: uuid }],
+    }),
   }),
   overrideExisting: true,
 });
 
-export const { useGetListingsQuery, useLazyGetListingsQuery } = listingApiSlice;
+export const { 
+  useGetListingsQuery, 
+  useLazyGetListingsQuery,
+  useGetListingByUuidQuery,
+  useLazyGetListingByUuidQuery,
+} = listingApiSlice;

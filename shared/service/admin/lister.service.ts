@@ -1,5 +1,5 @@
 import { apiSlice } from '@/lib/api';
-import { PaginatedListerResponse, FetchListersQueryParams } from './types/listerTypes';
+import { PaginatedListerResponse, FetchListersQueryParams, ListerProfile } from './types/listerTypes';
 
 export const listerApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -14,8 +14,20 @@ export const listerApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ['adminListers'],
     }),
+    getListerByUuid: builder.query<ListerProfile, string>({
+      query: (uuid) => ({
+        url: `/admin/listers/${uuid}/`,
+        method: 'GET',
+      }),
+      providesTags: (_result, _error, uuid) => [{ type: 'adminListers', id: uuid }],
+    }),
   }),
   overrideExisting: true,
 });
 
-export const { useGetListersQuery, useLazyGetListersQuery } = listerApiSlice;
+export const { 
+  useGetListersQuery, 
+  useLazyGetListersQuery, 
+  useGetListerByUuidQuery, 
+  useLazyGetListerByUuidQuery 
+} = listerApiSlice;

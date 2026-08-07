@@ -51,3 +51,70 @@ export interface AdminListingsResponse {
   previous: string | null;
   results: PropertyListing[];
 }
+
+
+// --single listing --
+
+import { purposeType } from '@/shared/enums/purpose.eums';
+import { PaymentFrequencyEnum } from '@/shared/enums/paymentFreqency.enums';
+import { VerificationStatusEnum } from '@/shared/enums/verification.enums';
+import { ListingStatusEnum } from '@/shared/enums/listingStatus.enums';
+import { AmenitiesEnum } from '@/shared/enums/amenities.enums';
+
+export interface ListingFee {
+  fee: string;
+  frequency: string;
+  fee_type: string;
+}
+
+export interface ListingMedia {
+  name: string;
+  media_type: string;
+  url: string;
+  is_primary: boolean;
+  sort_order: number;
+}
+
+export interface EmployeeListingDetail {
+  uuid: string;
+  title: string;
+  description: string;
+  published_at?: string;
+  ref_no: string;
+  purpose: purposeType;
+  property_info: {
+    bedrooms: number;
+    bathrooms: number;
+    structure: string;
+  };
+  location: {
+    street: string;
+    city: string;
+    state: string;
+    lga: string;
+    country: string;
+  };
+  fees: ListingFee[];
+  base_price: string;
+  payment_frequency: PaymentFrequencyEnum;
+  verification_status: VerificationStatusEnum;
+  listing_status: ListingStatusEnum;
+  media: ListingMedia[];
+  amenities: AmenitiesEnum[];
+  average_rating: number;
+  ratings_count: number;
+  comments_count: number;
+  user_rating: number;
+  lister: {
+    uuid: string;
+    email: string;
+    full_name: string;
+  };
+}
+
+export interface AdminSingleListingResponse {
+  success?: boolean;
+  code?: number;
+  message?: string;
+  data: EmployeeListingDetail;
+}

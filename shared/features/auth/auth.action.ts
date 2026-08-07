@@ -5,6 +5,7 @@ import { signupTypes, loginTypes } from '@/types';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { setLoginSession } from '@/shared/store/authSlice';
 import { LoginSessionData } from '@/shared/store/authSlice';
+import { resetStore } from '@/shared/store/actions';
 
 
 interface logRes {
@@ -107,14 +108,16 @@ export const logoutUser = () => async (dispatch: AppDispatch) => {
       method: 'POST',
     });
     console.log("Logout Response via Bouncer:", result);
-    
   } catch (error) {
     console.error("Backend logout failed, forcing frontend state cleanup:", error);
   } finally {
-    dispatch(clearUserInfo());
+    document.cookie = "isLoggedIn=; path=/; max-age=0; SameSite=Lax";
+    dispatch(resetStore());
 
     if (typeof window !== 'undefined') {
-      localStorage.removeItem('persist:root'); 
+      localStorage.clear();
+      sessionStorage.clear();
+      
       window.location.href = '/log-in'; 
     }
   }

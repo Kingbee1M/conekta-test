@@ -1,5 +1,9 @@
 import { apiSlice } from '@/lib/api';
-import { PaginatedCustomerResponse, FetchCustomersQueryParams } from './types/customerTypes';
+import { 
+  PaginatedCustomerResponse, 
+  FetchCustomersQueryParams, 
+  CustomerProfile 
+} from './types/customerTypes';
 
 export const customerApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
@@ -14,8 +18,20 @@ export const customerApiSlice = apiSlice.injectEndpoints({
       }),
       providesTags: ['adminCustomer'],
     }),
+    getCustomerByUuid: builder.query<CustomerProfile, string>({
+      query: (uuid) => ({
+        url: `/admin/customers/${uuid}/`,
+        method: 'GET',
+      }),
+      providesTags: (result, error, uuid) => [{ type: 'adminCustomer', id: uuid }],
+    }),
   }),
   overrideExisting: true,
 });
 
-export const { useGetCustomersQuery, useLazyGetCustomersQuery } = customerApiSlice;
+export const { 
+  useGetCustomersQuery, 
+  useLazyGetCustomersQuery,
+  useGetCustomerByUuidQuery,
+  useLazyGetCustomerByUuidQuery,
+} = customerApiSlice;
