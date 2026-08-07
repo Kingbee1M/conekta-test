@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { listingApiSlice } from '@/shared/service/admin/adminlisting.services';
+import { EmployeeListingDetail } from '@/shared/service/admin/types/listingTypes';
 import {
   PropertyListing,
   AdminListingsQueryParams,
@@ -16,6 +17,11 @@ interface AdminListingState {
   error: string | null;
   activeTab: string;
   searchQuery: string;
+
+  // Single Property View State (Typed with EmployeeListingDetail)
+  selectedProperty: EmployeeListingDetail | null;
+  singleLoading: boolean;
+  singleError: string | null;
 }
 
 interface CustomServerError {
@@ -32,6 +38,10 @@ const initialState: AdminListingState = {
   error: null,
   activeTab: 'All Listings',
   searchQuery: '',
+
+  selectedProperty: null,
+  singleLoading: false,
+  singleError: null,
 };
 
 export const fetchListings = createAsyncThunk<
@@ -46,7 +56,6 @@ export const fetchListings = createAsyncThunk<
   );
 
   try {
-    // Calling .unwrap() unwraps the RTK Query payload directly or throws if fetch fails
     const data = await querySubscription.unwrap();
     console.log('[fetchListings Thunk] Successfully retrieved data:', data);
 
@@ -70,7 +79,46 @@ export const fetchListings = createAsyncThunk<
 
     return rejectWithValue('An unexpected error occurred');
   } finally {
-    // Guarantee unsubscription ONLY after promise resolution completes
+    querySubscription.unsubscribe();
+  }
+});
+
+// Thunk to fetch a single property record by UUID returning EmployeeListingDetail
+export const fetchAdminPropertyByUuid = createAsyncThunk<
+  EmployeeListingDetail,
+  string,
+  { rejectValue: string }
+>('adminListing/fetchAdminPropertyByUuid', async (uuid, { dispatch, rejectWithValue }) => {
+  console.log('[fetchAdminPropertyByUuid Thunk] Initiated for UUID:', uuid);
+
+  const querySubscription = dispatch(
+    listingApiSlice.endpoints.getListingByUuid.initiate(uuid, { forceRefetch: true })
+  );
+
+  try {
+    const response = await querySubscription.unwrap();
+    console.log('[fetchAdminPropertyByUuid Thunk] Successfully retrieved property:', response);
+
+    if (response?.data) {
+      return response.data;
+    }
+
+    return rejectWithValue('Property record not found');
+  } catch (err: unknown) {
+    console.error('[fetchAdminPropertyByUuid Thunk] Error encountered:', err);
+
+    if (err && typeof err === 'object' && 'status' in err) {
+      const error = err as FetchBaseQueryError;
+      const customData = error.data as CustomServerError | undefined;
+      return rejectWithValue(customData?.message || 'Failed to fetch property details');
+    }
+
+    if (err instanceof Error) {
+      return rejectWithValue(err.message);
+    }
+
+    return rejectWithValue('An unexpected error occurred');
+  } finally {
     querySubscription.unsubscribe();
   }
 });
@@ -99,9 +147,15 @@ const adminListingSlice = createSlice({
       state.activeTab = 'All Listings';
       state.searchQuery = '';
     },
+    clearSelectedAdminProperty: (state) => {
+      state.selectedProperty = null;
+      state.singleError = null;
+      state.singleLoading = false;
+    },
   },
   extraReducers: (builder) => {
     builder
+      // Fetch List Cases
       .addCase(fetchListings.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -135,6 +189,20 @@ const adminListingSlice = createSlice({
       .addCase(fetchListings.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'An error occurred';
+      })
+
+      // Fetch Single Property Cases
+      .addCase(fetchAdminPropertyByUuid.pending, (state) => {
+        state.singleLoading = true;
+        state.singleError = null;
+      })
+      .addCase(fetchAdminPropertyByUuid.fulfilled, (state, action) => {
+        state.singleLoading = false;
+        state.selectedProperty = action.payload;
+      })
+      .addCase(fetchAdminPropertyByUuid.rejected, (state, action) => {
+        state.singleLoading = false;
+        state.singleError = action.payload || 'Failed to retrieve property details';
       });
   },
 });
@@ -145,6 +213,7 @@ export const {
   setActiveTab,
   setSearchQuery,
   resetFilters,
+  clearSelectedAdminProperty,
 } = adminListingSlice.actions;
 
 export default adminListingSlice.reducer;

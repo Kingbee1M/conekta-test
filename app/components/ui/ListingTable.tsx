@@ -1,6 +1,8 @@
 'use client';
 
-import React from 'react';
+import AdminViewPropertyPortal from "../admin/adminViewProperty";
+import { useState } from "react";
+import Image from "next/image";
 
 export interface PropertyListing {
   uuid: string;
@@ -37,6 +39,9 @@ interface ListingTableProps {
 }
 
 export default function ListingTable({ listings }: ListingTableProps) {
+  // Store the active UUID instead of a boolean flag
+  const [selectedUuid, setSelectedUuid] = useState<string | null>(null);
+
   const formatPrice = (priceStr: string, currency: string) => {
     const num = parseFloat(priceStr);
     if (isNaN(num)) return `${currency} ${priceStr}`;
@@ -70,86 +75,100 @@ export default function ListingTable({ listings }: ListingTableProps) {
   }
 
   return (
-    <table className="w-full text-left border-collapse text-xs">
-      <thead>
-        <tr className="bg-gray-50/80 border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
-          <th className="py-3 px-4">Property</th>
-          <th className="py-3 px-4">Ref No</th>
-          <th className="py-3 px-4">Price</th>
-          <th className="py-3 px-4">Location</th>
-          <th className="py-3 px-4">Lister</th>
-          <th className="py-3 px-4">Verification</th>
-          <th className="py-3 px-4 text-right">Actions</th>
-        </tr>
-      </thead>
-      <tbody className="divide-y divide-gray-100">
-        {listings.map((item) => {
-          const locStr = [item.location?.city, item.location?.state].filter(Boolean).join(', ') || 'N/A';
+    <>
+      <table className="w-full text-left border-collapse text-xs">
+        <thead>
+          <tr className="bg-gray-50/80 border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
+            <th className="py-3 px-4">Property</th>
+            <th className="py-3 px-4">Ref No</th>
+            <th className="py-3 px-4">Price</th>
+            <th className="py-3 px-4">Location</th>
+            <th className="py-3 px-4">Lister</th>
+            <th className="py-3 px-4">Verification</th>
+            <th className="py-3 px-4 text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-100">
+          {listings.map((item) => {
+            const locStr = [item.location?.city, item.location?.state].filter(Boolean).join(', ') || 'N/A';
 
-          return (
-            <tr key={item.uuid} className="hover:bg-gray-50/60 transition-colors">
-              {/* Property Title & Image */}
-              <td className="py-3.5 px-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-200">
-                    {item.cover_image ? (
-                      <img src={item.cover_image} alt={item.title} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-400">
-                        No Img
-                      </div>
-                    )}
+            return (
+              <tr key={item.uuid} className="hover:bg-gray-50/60 transition-colors">
+                {/* Property Title & Image */}
+                <td className="py-3.5 px-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-200">
+                      {item.cover_image ? (
+                        <Image src={item.cover_image} alt={item.title} width={100} height={100} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-[10px] text-gray-400">
+                          No Img
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-bold text-gray-900 line-clamp-1">{item.title || 'Untitled Property'}</span>
+                      <span className="text-[10px] text-gray-400 capitalize">
+                        {item.property_info?.structure} • {item.property_info?.bedrooms} Bed
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex flex-col">
-                    <span className="font-bold text-gray-900 line-clamp-1">{item.title || 'Untitled Property'}</span>
-                    <span className="text-[10px] text-gray-400 capitalize">
-                      {item.property_info?.structure} • {item.property_info?.bedrooms} Bed
-                    </span>
-                  </div>
-                </div>
-              </td>
+                </td>
 
-              {/* Ref No */}
-              <td className="py-3.5 px-4 font-mono text-[11px] text-gray-500">{item.ref_no || 'N/A'}</td>
+                {/* Ref No */}
+                <td className="py-3.5 px-4 font-mono text-[11px] text-gray-500">{item.ref_no || 'N/A'}</td>
 
-              {/* Price */}
-              <td className="py-3.5 px-4 font-bold text-gray-900">
-                {formatPrice(item.base_price, item.currency)}
-                <span className="text-[10px] font-normal text-gray-400 block capitalize">
-                  {item.payment_frequency?.replace('_', ' ')}
-                </span>
-              </td>
+                {/* Price */}
+                <td className="py-3.5 px-4 font-bold text-gray-900">
+                  {formatPrice(item.base_price, item.currency)}
+                  <span className="text-[10px] font-normal text-gray-400 block capitalize">
+                    {item.payment_frequency?.replace('_', ' ')}
+                  </span>
+                </td>
 
-              {/* Location */}
-              <td className="py-3.5 px-4 text-gray-600">{locStr}</td>
+                {/* Location */}
+                <td className="py-3.5 px-4 text-gray-600">{locStr}</td>
 
-              {/* Lister */}
-              <td className="py-3.5 px-4">
-                <span className="font-medium text-gray-800 block">{item.lister?.full_name || 'N/A'}</span>
-                <span className="text-[10px] text-gray-400 block">{item.lister?.email}</span>
-              </td>
+                {/* Lister */}
+                <td className="py-3.5 px-4">
+                  <span className="font-medium text-gray-800 block">{item.lister?.full_name || 'N/A'}</span>
+                  <span className="text-[10px] text-gray-400 block">{item.lister?.email}</span>
+                </td>
 
-              {/* Verification Status */}
-              <td className="py-3.5 px-4">
-                <span
-                  className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold capitalize ${getVerificationBadge(
-                    item.verification_status
-                  )}`}
-                >
-                  {item.verification_status || 'Draft'}
-                </span>
-              </td>
+                {/* Verification Status */}
+                <td className="py-3.5 px-4">
+                  <span
+                    className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold capitalize ${getVerificationBadge(
+                      item.verification_status
+                    )}`}
+                  >
+                    {item.verification_status || 'Draft'}
+                  </span>
+                </td>
 
-              {/* Actions */}
-              <td className="py-3.5 px-4 text-right">
-                <button className="text-xs font-semibold text-[#00AC72] hover:underline cursor-pointer">
-                  Review
-                </button>
-              </td>
-            </tr>
-          );
-        })}
-      </tbody>
-    </table>
+                {/* Actions */}
+                <td className="py-3.5 px-4 text-right">
+                  <button 
+                    className="text-xs font-semibold text-primary-green hover:underline cursor-pointer" 
+                    onClick={() => setSelectedUuid(item.uuid)}
+                  >
+                    Review
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      {/* Render single portal outside the loop */}
+      {selectedUuid && (
+        <AdminViewPropertyPortal 
+          uuid={selectedUuid} 
+          isOpen={Boolean(selectedUuid)} 
+          onClose={() => setSelectedUuid(null)} 
+        />
+      )}
+    </>
   );
 }

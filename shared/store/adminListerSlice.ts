@@ -5,13 +5,16 @@ import { ListerProfile, PaginatedListerResponse, FetchListersQueryParams } from 
 
 interface ListerState {
   listers: ListerProfile[];
+  selectedLister: ListerProfile | null;
   count: number;
   next: string | null;
   previous: string | null;
   currentPage: number;
   pageSize: number;
   loading: boolean;
+  singleLoading: boolean;
   error: string | null;
+  singleError: string | null;
 }
 
 interface CustomServerError {
@@ -21,13 +24,16 @@ interface CustomServerError {
 
 const initialState: ListerState = {
   listers: [],
+  selectedLister: null,
   count: 0,
   next: null,
   previous: null,
   currentPage: 1,
   pageSize: 10,
   loading: false,
+  singleLoading: false,
   error: null,
+  singleError: null,
 };
 
 export const fetchListers = createAsyncThunk<
@@ -65,6 +71,41 @@ export const fetchListers = createAsyncThunk<
   }
 );
 
+export const fetchListerByUuid = createAsyncThunk<
+  ListerProfile,
+  string,
+  { rejectValue: string }
+>(
+  'listers/fetchListerByUuid',
+  async (uuid, { rejectWithValue, dispatch }) => {
+    try {
+      const promise = dispatch(
+        listerApiSlice.endpoints.getListerByUuid.initiate(uuid, { forceRefetch: true })
+      );
+
+      const resultAction = await promise;
+      promise.unsubscribe();
+
+      if ('error' in resultAction && resultAction.error) {
+        const error = resultAction.error as FetchBaseQueryError | undefined;
+        const customData = error?.data as CustomServerError | undefined;
+        return rejectWithValue(customData?.message || 'Failed to fetch lister details');
+      }
+
+      if (resultAction.data) {
+        return resultAction.data as ListerProfile;
+      }
+
+      return rejectWithValue('No lister data returned');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      }
+      return rejectWithValue('An unexpected error occurred');
+    }
+  }
+);
+
 const listerSlice = createSlice({
   name: 'listers',
   initialState,
@@ -76,13 +117,20 @@ const listerSlice = createSlice({
       state.pageSize = action.payload;
       state.currentPage = 1;
     },
+    clearSelectedLister: (state) => {
+      state.selectedLister = null;
+      state.singleError = null;
+    },
     clearListerState: (state) => {
       state.listers = [];
+      state.selectedLister = null;
       state.error = null;
+      state.singleError = null;
     },
   },
   extraReducers: (builder) => {
     builder
+      // Fetch Listers List
       .addCase(fetchListers.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -116,9 +164,28 @@ const listerSlice = createSlice({
       .addCase(fetchListers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? 'Failed to fetch listers';
+      })
+      // Fetch Single Lister
+      .addCase(fetchListerByUuid.pending, (state) => {
+        state.singleLoading = true;
+        state.singleError = null;
+      })
+      .addCase(fetchListerByUuid.fulfilled, (state, action) => {
+        state.singleLoading = false;
+        state.selectedLister = action.payload;
+      })
+      .addCase(fetchListerByUuid.rejected, (state, action) => {
+        state.singleLoading = false;
+        state.singleError = action.payload ?? 'Failed to fetch lister details';
       });
   },
 });
 
-export const { setListerPage, setListerPageSize, clearListerState } = listerSlice.actions;
+export const { 
+  setListerPage, 
+  setListerPageSize, 
+  clearSelectedLister, 
+  clearListerState 
+} = listerSlice.actions;
+
 export default listerSlice.reducer;

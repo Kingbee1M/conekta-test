@@ -1,19 +1,20 @@
-import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import { configureStore, combineReducers, UnknownAction } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
 // 1. Swap the old import for your custom SSR-safe storage
 import storage from '@/lib/storage';
 import authReducer from './authSlice';
-import listingReducer from'./listingSlice'
-import viewListingREducer from './viewPropertySlice'
-import adminCustomerReducer from './admincustomerSlice'
+import listingReducer from './listingSlice';
+import viewListingREducer from './viewPropertySlice';
+import adminCustomerReducer from './admincustomerSlice';
 import cookieReducer from './acceptCookieSlice'; 
 import listerReducer from './adminListerSlice';
-import adminListingReducer from './adminListingSlice'
-import adminUserReducer from './adminUsersSlice'
-import customerListingReducer from './customerListingSlice'
+import adminListingReducer from './adminListingSlice';
+import adminUserReducer from './adminUsersSlice';
+import customerListingReducer from './customerListingSlice';
 import { apiSlice } from '@/lib/api';
+import { resetStore } from './actions';
 
-const rootReducer = combineReducers({
+const appReducer = combineReducers({
   auth: authReducer,
   listing: listingReducer,
   listingView: viewListingREducer,
@@ -25,6 +26,15 @@ const rootReducer = combineReducers({
   customerListing: customerListingReducer,
   [apiSlice.reducerPath]: apiSlice.reducer, 
 });
+
+// Master reducer to handle store resets across all slices & redux-persist
+const rootReducer = (state: ReturnType<typeof appReducer> | undefined, action: UnknownAction) => {
+  if (action.type === resetStore.type) {
+    // Setting state to undefined resets all slice states and purges redux-persist state
+    state = undefined;
+  }
+  return appReducer(state, action);
+};
 
 const persistConfig = {
   key: 'conketa_root',
