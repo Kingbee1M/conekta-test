@@ -11,7 +11,7 @@ import RecentMessages from '@/app/components/RecentMessages';
 
 export default function OverviewPage() {
   return (
-    <div className="min-h-screen bg-[#F8F9FA] p-6 lg:p-8 flex flex-col gap-6 font-sans">
+    <div className="min-h-screen bg-[#F8F9FA] p-6 lg:p-8 flex flex-col gap-6">
       {/* Top Header */}
       <Header />
 

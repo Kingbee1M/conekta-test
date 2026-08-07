@@ -5,7 +5,7 @@ import { ArrowRight, Check } from 'lucide-react';
 
 export default function RoleCards() {
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 py-4 font-sans">
+    <section className="w-full max-w-7xl mx-auto px-4 py-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Card 1: Lister / Realtor */}
@@ -17,7 +17,7 @@ export default function RoleCards() {
               GROW YOUR BUSINESS
             </span>
 
-            <h3 className="text-3xl sm:text-4xl font-extrabold text-stone-900 font-serif leading-[1.15] mb-4">
+            <h3 className="text-3xl sm:text-4xl font-extrabold text-stone-900 leading-[1.15] mb-4">
               List with the realtors buyers actually trust.
             </h3>
 
@@ -51,7 +51,7 @@ export default function RoleCards() {
           </div>
 
           {/* Background Decorative Letter Watermark */}
-          <span className="absolute -bottom-8 -right-2 text-[200px] font-serif font-black text-stone-200/50 pointer-events-none select-none leading-none z-0">
+          <span className="absolute -bottom-8 -right-2 text-[200px] font-black text-stone-200/50 pointer-events-none select-none leading-none z-0">
             R
           </span>
         </div>
@@ -65,7 +65,7 @@ export default function RoleCards() {
               SKILLED TRADES WANTED
             </span>
 
-            <h3 className="text-3xl sm:text-4xl font-extrabold text-stone-900 font-serif leading-[1.15] mb-4">
+            <h3 className="text-3xl sm:text-4xl font-extrabold text-stone-900 leading-[1.15] mb-4">
               Are you a skilled artisan? Build your book here.
             </h3>
 
@@ -99,7 +99,7 @@ export default function RoleCards() {
           </div>
 
           {/* Background Decorative Letter Watermark */}
-          <span className="absolute -bottom-8 -right-2 text-[200px] font-serif font-black text-stone-200/50 pointer-events-none select-none leading-none z-0">
+          <span className="absolute -bottom-8 -right-2 text-[200px] font-black text-stone-200/50 pointer-events-none select-none leading-none z-0">
             A
           </span>
         </div>

@@ -102,7 +102,7 @@ export default function PropertyCard({ listing }: PropertyCardProps) {
           </p>
 
           {/* Property Title */}
-          <h3 className="text-xl font-bold font-serif text-stone-900 leading-snug line-clamp-1 mb-1.5">
+          <h3 className="text-xl font-bold text-stone-900 leading-snug line-clamp-1 mb-1.5">
             {listing.title}
           </h3>
 

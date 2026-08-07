@@ -98,13 +98,13 @@ export default function TrendingNeighborhoods() {
   const carouselItems = [...MOCK_NEIGHBORHOODS, ...MOCK_NEIGHBORHOODS];
 
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 py-12 font-sans">
+    <section className="w-full max-w-7xl mx-auto px-4 py-12">
       <div className="flex items-end justify-between mb-8">
         <div>
           <span className="text-[11px] font-bold tracking-[0.2em] text-[#C59333] uppercase mb-2 block">
             WHERE PEOPLE ARE MOVING
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#0A3022] font-serif tracking-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#0A3022]  tracking-tight">
             Trending neighborhoods
           </h2>
         </div>
@@ -152,7 +152,7 @@ export default function TrendingNeighborhoods() {
             <div className="absolute inset-0 bg-linear-to-t from-[#0A3022]/90 via-[#0A3022]/30 to-transparent z-10" />
 
             <div className="absolute bottom-0 left-0 right-0 p-6 z-20 flex flex-col justify-end text-left">
-              <h3 className="text-xl sm:text-2xl font-bold font-serif text-white leading-snug mb-1 group-hover:text-amber-200 transition-colors">
+              <h3 className="text-xl sm:text-2xl font-bold text-white leading-snug mb-1 group-hover:text-amber-200 transition-colors">
                 {item.name}
               </h3>
               <p className="text-xs sm:text-sm font-mono font-medium text-amber-300/90 tracking-wide">

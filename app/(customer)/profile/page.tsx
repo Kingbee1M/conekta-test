@@ -92,7 +92,7 @@ export default function TenantProfileContainer() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gray-50/50 px-4 md:px-10 py-8 font-sans">
+    <div className="w-full min-h-screen bg-gray-50/50 px-4 md:px-10 py-8 ">
       {/* Top Banner Context heading lines */}
       <div className="mb-6 text-left">
         <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Welcome back, {firstName}!</h1>
