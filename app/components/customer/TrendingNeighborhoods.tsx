@@ -100,7 +100,7 @@ export default function TrendingNeighborhoods() {
   return (
     <section className="w-full max-w-7xl mx-auto px-4 py-12">
       <div className="flex items-end justify-between mb-8">
-        <div>
+        <div className='mx-0 lg:mx-16'>
           <span className="text-[11px] font-bold tracking-[0.2em] text-[#C59333] uppercase mb-2 block">
             WHERE PEOPLE ARE MOVING
           </span>

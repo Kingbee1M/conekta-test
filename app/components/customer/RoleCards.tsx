@@ -5,7 +5,7 @@ import { ArrowRight, Check } from 'lucide-react';
 
 export default function RoleCards() {
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 py-4">
+    <section className="w-full max-w-7xl mx-auto px-20 py-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Card 1: Lister / Realtor */}
