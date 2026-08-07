@@ -43,7 +43,6 @@ export const loginUser = (credentials: loginTypes) => async (dispatch: AppDispat
       body: credentials,
     });
 
-    console.log("Login Response via Bouncer:", result);
 
     if (result && result.success === true) {
       document.cookie = "isLoggedIn=true; path=/; max-age=86400; SameSite=Lax";
@@ -77,7 +76,6 @@ export const signupUser = (userData: signupTypes) => async () => {
       method: 'POST',
       body: userData,
     });
-    console.log("Signup Response via Bouncer:", result);
 
     if (result.success === true || result.status_code === 201) {
       return {
@@ -107,7 +105,6 @@ export const logoutUser = () => async (dispatch: AppDispatch) => {
       url: '/auth/logout/',
       method: 'POST',
     });
-    console.log("Logout Response via Bouncer:", result);
   } catch (error) {
     console.error("Backend logout failed, forcing frontend state cleanup:", error);
   } finally {

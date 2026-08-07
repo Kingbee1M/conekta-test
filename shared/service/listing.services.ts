@@ -53,8 +53,6 @@ export const listingApi = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          console.log('Fetched listing list data successfully:', data);
-          console.log('Fetched results:', data.data.results);
           if (data.data.results && data.data.results.length > 0) {
             dispatch(setProperties(data.data.results));
           }

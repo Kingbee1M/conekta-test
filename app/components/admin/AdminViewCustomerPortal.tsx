@@ -191,7 +191,6 @@ export default function AdminViewCustomerPortal({ uuid, isOpen, onClose }: Admin
 
   const handleSaveSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log('Submitting updated customer data:', formData);
     setIsEditing(false);
   };
 

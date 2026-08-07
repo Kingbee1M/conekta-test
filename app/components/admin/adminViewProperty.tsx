@@ -150,7 +150,6 @@ export default function AdminViewPropertyPortal({ uuid, isOpen, onClose }: Admin
 
   const handleSaveSubmit = (e: FormEvent) => {
     e.preventDefault();
-    console.log('Submitting updated property data:', formData);
     setIsEditing(false);
   };
 

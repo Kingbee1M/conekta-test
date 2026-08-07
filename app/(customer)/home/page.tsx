@@ -1,116 +1,75 @@
-'use client'
+import type { Metadata } from 'next';
+import HomeCarousel from '@/app/components/HomeCarousel';
+import FeaturedProperties from '@/app/components/customer/FeaturedProperties';
+import RoleCards from '@/app/components/customer/RoleCards';
+import TrendingNeighborhoods from '@/app/components/customer/TrendingNeighborhoods';
+import EditorsPick from '@/app/components/customer/editorsPick';
 
-import { useMemo, useState, useEffect } from "react"
-import { useDispatch } from "react-redux" // Or your app's dispatch hook
-import HomeCarousel from "@/app/components/HomeCarousel"
-import HomeSearch from "@/app/components/HomeSearch"
-import CustomSelect from "@/app/components/ui/CustomSelect"
-import FeaturedHome from "@/app/components/FeaturedHome"
-import { NigeriaStateEnum, NIGERIA_LGA_MAP } from "@/shared/enums/nigeriaRegions.enums"
-import { StructureEnum } from "@/types"
-import ArtisanAdBanner from "@/app/components/ArtisanBanner"
-import { useRouter } from "next/navigation"
-import { useGetCustomerListingsQuery } from "@/shared/service/customer services/customerListing.services"
+export const metadata: Metadata = {
+  title: 'Conekta | Find Verified Homes & Real Estate in Nigeria',
+  description:
+    'Discover curated, team-verified properties, apartments, and houses for rent or buy across Lekki, Ikoyi, Victoria Island, Abuja, and more.',
+  keywords: [
+    'Real Estate Nigeria',
+    'Apartments for rent Lagos',
+    'Houses for sale Abuja',
+    'Lekki Phase 1 rentals',
+    'Verified property listings Nigeria',
+  ],
+  openGraph: {
+    title: 'Conekta | Find Verified Homes & Real Estate in Nigeria',
+    description:
+      'Discover curated, team-verified properties across Nigeria.',
+    url: 'https://conekta.ng', // Replace with your actual domain
+    siteName: 'Conekta',
+    locale: 'en_NG',
+    type: 'website',
+    images: [
+      {
+        url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1200&q=80',
+        width: 1200,
+        height: 630,
+        alt: 'Conekta Featured Real Estate',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Conekta | Find Verified Homes & Real Estate in Nigeria',
+    description:
+      'Discover curated, team-verified properties across Nigeria.',
+  },
+  alternates: {
+    canonical: 'https://conekta.ng',
+  },
+};
 
 export default function Home() {
-  const dispatch = useDispatch();
-
-  const [selectedState, setSelectedState] = useState<NigeriaStateEnum | ''>('');
-  const [selectedLga, setSelectedLga] = useState<string>('');
-  const [selectedType, setSelectedType] = useState<StructureEnum | ''>('');
-  const [selectedMaxPrice, setSelectedMaxPrice] = useState<string>('');
-  const router = useRouter()
-  // 1. Fetch the listings (the hook returns the transformed 'message' string as data)
-  const { data: message, isLoading } = useGetCustomerListingsQuery();
-
-  // 2. useEffect to dispatch the message when it loads successfully
-  useEffect(() => {
-    if (message) {
-      // Replace this with your exact dispatch action
-      dispatch({
-        type: 'ui/showNotification', 
-        payload: message 
-      });
-    }
-  }, [message, dispatch]);
-
-  // Options configuration
-  const stateOptions = useMemo(() => Object.values(NigeriaStateEnum), []);
-
-  const lgaOptions = useMemo(() => {
-    if (!selectedState) return [];
-    return NIGERIA_LGA_MAP[selectedState] || [];
-  }, [selectedState]);
-
-  const propertyTypeOptions = useMemo(() => Object.values(StructureEnum), []);
-
-  const budgetOptions = [
-    'Under ₦1,000,000 / yr',
-    'Under ₦2,500,000 / yr',
-    'Under ₦5,000,000 / yr',
-    'Under ₦10,000,000 / yr',
-    '₦10,000,000+ / yr'
-  ];
-
-  const handleStateChange = (val: string) => {
-    setSelectedState(val as NigeriaStateEnum);
-    setSelectedLga(''); 
-  };
-
-  const handleArtisanOnboarding = () => {
-    router.push('/sign-up?role=artisan')
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'RealEstateAgent',
+    name: 'Conekta',
+    url: 'https://conekta.ng',
+    description:
+      'Curated homes, verified by Conekta’s on-ground team before they ever get listed.',
+    areaServed: 'Nigeria',
   };
 
   return (
-    <main className="w-full flex flex-col items-center mb-5 gap-7">
-      <HomeCarousel />
-      <HomeSearch />
-      
-      {/* Search Filter Strip */}
-      <div className="w-9/10 md:w-4/5 grid grid-rows-2 grid-cols-2 md:grid-rows-1 md:grid-cols-4 gap-4">
-        {/* STATE */}
-        <CustomSelect
-          options={stateOptions}
-          selected={selectedState}
-          onChange={handleStateChange}
-          defaultValue="State"
-        /> 
+    <>
+      {/* Schema Injection */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
-        {/* LGA */}
-        <CustomSelect
-          options={lgaOptions}
-          selected={selectedLga}
-          onChange={(val) => setSelectedLga(val)}
-          defaultValue={selectedState ? "LGA" : "Select State First"}
-          className={!selectedState ? "opacity-60 cursor-not-allowed pointer-events-none" : ""}
-        /> 
-
-        {/* PROPERTY TYPE */}
-        <CustomSelect
-          options={propertyTypeOptions}
-          selected={selectedType}
-          onChange={(val) => setSelectedType(val as StructureEnum)}
-          defaultValue="Structure Type"
-        /> 
-
-        {/* BUDGET */}
-        <CustomSelect
-          options={budgetOptions}
-          selected={selectedMaxPrice}
-          onChange={(val) => setSelectedMaxPrice(val)}
-          defaultValue="Budget"
-        /> 
-      </div>
-
-
-      <div className="w-9/10 md:w-4/5">
-        <FeaturedHome listings={[]} isLoading={isLoading} />
-      </div>
-
-      {/* Artisan Recruitment Section */}
-      <div className="w-9/10 md:w-4/5">
-        <ArtisanAdBanner onJoinAsArtisan={handleArtisanOnboarding} />
-      </div>
-    </main>
+      <main className="w-full flex flex-col items-center mb-5 gap-7">
+        <HomeCarousel />
+        <EditorsPick />
+        <FeaturedProperties />
+        <RoleCards />
+        <TrendingNeighborhoods />
+      </main>
+    </>
   );
 }

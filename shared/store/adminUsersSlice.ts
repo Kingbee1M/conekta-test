@@ -108,7 +108,6 @@ export const fetchAdminUserByUuid = createAsyncThunk<
       if (resultAction.data) {
         const rawData = resultAction.data as unknown as Record<string, unknown>;
         if (rawData.data && typeof rawData.data === 'object') {
-          console.log(rawData)
           return rawData.data as AdminUser;
         }
         return resultAction.data as unknown as AdminUser;

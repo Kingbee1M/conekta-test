@@ -24,8 +24,6 @@ export default function VerifyEmail() {
     }),
     onSubmit: async (values) => {
       const otpCode = values.otp.join("");
-      console.log("Submitting OTP Code:", otpCode);
-      // Add your dispatch action / verification API call here
     },
   });
 

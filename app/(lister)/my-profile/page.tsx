@@ -24,8 +24,6 @@ export default function MyProfile() {
     const [location, setLocation] = useState(profile?.profile?.store?.address || '');
     const [companyName, setCompanyName] = useState(profile?.profile?.store?.name || '');
     const [bio, setBio] = useState(profile?.profile?.store?.description || '');
-    console.log('📦 MyProfile Component State:', { firstName, lastName, email, phoneNumber, location, companyName, bio });
-    console.log('📦 User Object:', profile);
     // Live sync for sidebar card avatar info
     const fullName = `${firstName} ${lastName}`.trim() || 'Thomas Clinton';
     const userInitials = getNameInitials(fullName) || 'TM';

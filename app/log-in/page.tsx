@@ -59,9 +59,7 @@ export default function Login() {
                     });
                     
                     setTimeout(() => {
-                        console.log('beginning routing......')
                         router.replace('/loading-dashboard');
-                        console.log('beginning routing......')
                     }, 2000);
                 } else {
                     addToast({ 

@@ -46,8 +46,6 @@ export default function ScheduleVisitPortal({ onClose }: { onClose?: () => void 
       date: selectedDate.toISOString(),
       time: selectedTime,
     };
-
-    console.log('Schedule visit booked:', bookingPayload);
     setIsSubmitted(true);
   };
 

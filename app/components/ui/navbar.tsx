@@ -14,8 +14,9 @@ export default function Navbar() {
     const pathname = usePathname();
     const navs = [
         { title: 'Home', link: '/home' },
-        { title: 'Find Property', link: '/find-property' },
-        { title: 'Artisans', link: '/find-artisan' },
+        { title: 'Buy', link: '/find-property' },
+        { title: 'Rent', link: '/find-property' },
+        { title: 'Find Artisans', link: '/find-artisan' },
         { title: 'My Housing', link: '/my-housing' },
     ]
     return (
@@ -24,7 +25,7 @@ export default function Navbar() {
         w-full max-w-screen
         flex flex-col lg:flex-row lg:items-center lg:justify-between
         transition-all duration-300 ease-in-out
-        pr-5 bg-white border-y border-gray-200 border-solid lg:py-8
+        pr-5 border-yborder-solid lg:py-8  bg-white/50 backdrop-blur-[2px]
         ${isOpen ? 'h-68' : 'h-12'} 
         overflow-hidden
         `}>

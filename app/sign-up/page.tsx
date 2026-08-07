@@ -115,7 +115,6 @@ export default function SignUp() {
             return errors;
         },
         onSubmit: async (values) => {
-            console.log("button clicked")
             const { first_name, last_name } = splitFullName(values.name);
             
             const payload = {

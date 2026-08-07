@@ -69,7 +69,6 @@ export default function FindArtisansPage() {
 
   const handleBookNow = (id: string) => {
     setSelectedCardId(id);
-    console.log(`Booking request generated for Artisan Reference ID: ${id}`);
   };
 
   // Filter Logic: Mapping Custom Select UI label to data types
