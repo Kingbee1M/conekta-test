@@ -14,8 +14,7 @@ export default function Navbar() {
     const pathname = usePathname();
     const navs = [
         { title: 'Home', link: '/home' },
-        { title: 'Buy', link: '/find-property' },
-        { title: 'Rent', link: '/find-property' },
+        { title: 'Find a Property', link: '/find-property' },
         { title: 'Find Artisans', link: '/find-artisan' },
         { title: 'My Housing', link: '/my-housing' },
     ]

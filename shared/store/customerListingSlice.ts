@@ -4,10 +4,11 @@ import {
   customerListingApiSlice,
   FetchCustomerListingsQueryParams,
 } from '@/shared/service/customer services/customerListing.services';
-import { PaginatedListingList, Listing } from '@/shared/service/customer services/types/customerTypes';
+import { PaginatedListingList } from '@/shared/service/customer services/types/customerTypes';
+import { ListingResult } from '../service/customer services/customerTypes';
 
 interface CustomerListingState {
-  listings: Listing[];
+  listings: ListingResult[];
   count: number;
   next: string | null;
   previous: string | null;
@@ -173,7 +174,7 @@ const customerListingSlice = createSlice({
         const payload = action.payload as unknown as Record<string, unknown>;
 
         if (Array.isArray(action.payload?.results)) {
-          state.listings = action.payload.results;
+          state.listings = action.payload.results as unknown as ListingResult[];
           state.count = action.payload.count ?? action.payload.results.length;
           state.next = action.payload.next ?? null;
           state.previous = action.payload.previous ?? null;
@@ -183,15 +184,15 @@ const customerListingSlice = createSlice({
           Array.isArray((payload.data as Record<string, unknown>).results)
         ) {
           const nested = payload.data as PaginatedListingList;
-          state.listings = nested.results;
+          state.listings = nested.results as unknown as ListingResult[];
           state.count = nested.count ?? nested.results.length;
           state.next = nested.next ?? null;
           state.previous = nested.previous ?? null;
         } else if (Array.isArray(payload?.data)) {
-          state.listings = payload.data as Listing[];
+          state.listings = payload.data as unknown as ListingResult[];
           state.count = (payload.count as number) ?? state.listings.length;
         } else if (Array.isArray(action.payload)) {
-          state.listings = action.payload as unknown as Listing[];
+          state.listings = action.payload as unknown as ListingResult[];
           state.count = state.listings.length;
         } else {
           state.listings = [];

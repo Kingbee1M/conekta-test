@@ -15,14 +15,29 @@ export interface ListingLocation {
 export interface ListingResult {
   uuid: string;
   title: string;
-  ref_no: string;
-  currency: string;
+  ref_no?: string;
+  currency?: string;
   base_price: string;
   payment_frequency: string;
   property_info: ListingPropertyInfo;
   location: ListingLocation;
-  average_rating: number;
+  average_rating?: number;
   cover_image: string;
+  id?: string;
+  description?: string;
+  category?: string;
+  state?: string;
+  lga?: string;
+  address?: string;
+  bedrooms?: number;
+  bathrooms?: number;
+  amenities?: string[];
+  images?: string[];
+  is_active?: boolean;
+  created_at?: string;
+  updated_at?: string;
+  
+  [key: string]: unknown;
 }
 
 export interface ListingPaginationData {
