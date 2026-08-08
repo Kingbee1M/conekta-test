@@ -4,6 +4,7 @@ import Image from 'next/image';
 import { LuCalendar, LuShield, LuSparkles } from "react-icons/lu";
 import { TenantData } from '@/shared/service/customer services/customerTypes';
 import { PaymentFrequencyEnum } from '@/shared/enums/paymentFreqency.enums';
+import ArtisanSosCarousel from './customer/ArtisanSOS';
 
 interface OverviewTabProps {
   tenantData: TenantData;
@@ -161,24 +162,7 @@ export default function OverviewTab({ tenantData, onNavigateToChat, onNavigateTo
           </button>
         </div>
 
-        <div className="bg-emerald-950 text-white rounded-3xl p-6 shadow-sm flex flex-col gap-4 justify-between min-h-48 relative overflow-hidden">
-          <div className="absolute -right-6 -bottom-6 opacity-10">
-            <LuSparkles className="text-9xl" />
-          </div>
-          <div>
-            <span className="text-[10px] text-[#deff9a] font-bold uppercase tracking-wider">Need Maintenance?</span>
-            <h3 className="text-base font-black tracking-tight mt-1">Conekta Instant Artisan SOS</h3>
-            <p className="text-xs text-emerald-200/80 font-medium leading-relaxed mt-2">
-              Need a plumber, painter, or AC inspection immediately? Post an Artisan request directly to get certified help.
-            </p>
-          </div>
-          <Link
-            href="/find-artisan"
-            className="w-full py-3.5 bg-[#deff9a] hover:bg-[#cbe68e] text-emerald-950 text-xs font-bold rounded-2xl transition text-center relative z-10 shadow-sm"
-          >
-            Request Artisan Help
-          </Link>
-        </div>
+        <ArtisanSosCarousel/>
       </div>
     </>
   );

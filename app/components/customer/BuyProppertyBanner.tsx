@@ -5,7 +5,7 @@ import bannerImg from '@/public/jpg/buy-banner.jpeg';
 
 export default function BuyPropertyHero() {
   return (
-    <section className="relative w-screen h-[calc(100vh-80px)] min-h-[650px] left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-4 md:-mt-10 mb-24 md:mb-32 flex flex-col justify-between">
+    <section className="relative w-screen h-[calc(100vh-80px)] min-h-162.5 left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] -mt-4 md:-mt-10 mb-24 md:mb-32 flex flex-col justify-between">
       {/* Background Image Container with rounded/clipped background */}
       <div className="absolute inset-0 overflow-hidden">
         <Image
@@ -19,12 +19,12 @@ export default function BuyPropertyHero() {
 
         {/* 1. Emerald Green & Dark Gradient Overlays */}
         <div className="absolute inset-0 bg-black/40 z-10" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#032b1e]/90 via-[#053d2b]/70 to-transparent mix-blend-multiply z-10" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 z-10" />
+        <div className="absolute inset-0 bg-linear-to-r from-[#032b1e]/90 via-[#053d2b]/70 to-transparent mix-blend-multiply z-10" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-black/30 z-10" />
       </div>
 
       {/* Main Text Content */}
-      <div className="relative z-20 w-full max-w-[1440px] mx-auto px-6 sm:px-12 md:px-16 pt-24 md:pt-32 flex flex-col items-start gap-5 text-white">
+      <div className="relative z-20 w-full max-w-360 mx-auto px-6 sm:px-12 md:px-16 pt-24 md:pt-32 flex flex-col items-start gap-5 text-white">
         {/* Verification Pill */}
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-semibold tracking-wide text-white">
           <span className="w-2.5 h-2.5 rounded-full bg-[#00AC72] animate-pulse" />
@@ -44,7 +44,7 @@ export default function BuyPropertyHero() {
       </div>
 
       {/* 2. Floating Stats Tab Bar (Hangs 50% outside the bottom boundary) */}
-      <div className="relative z-30 w-full max-w-[1320px] mx-auto px-4 sm:px-8 translate-y-1/2">
+      <div className="relative z-30 w-full max-w-330 mx-auto px-4 sm:px-8 translate-y-1/2">
         <div className="w-full bg-[#FAF8F5] rounded-3xl shadow-2xl border border-stone-200/60 p-6 md:p-8 grid grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-0 divide-y lg:divide-y-0 lg:divide-x divide-stone-200/80">
           
           {/* Active Listings */}
