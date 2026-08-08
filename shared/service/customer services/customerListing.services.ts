@@ -1,5 +1,5 @@
 import { apiSlice } from '@/lib/api';
-import { PaginatedListingList } from './customerTypes';
+import { ListingResult, PaginatedListingList } from './customerTypes';
 
 export interface FetchCustomerListingsQueryParams {
   amenities?: string;
@@ -47,9 +47,21 @@ export const customerListingApiSlice = apiSlice.injectEndpoints({
       },
       providesTags: ['CustomerListings'],
     }),
+
+    getSingleListing: builder.query<ListingResult, string>({
+      query: (uuid) => ({
+        url: `/listings/${uuid}/`,
+        method: 'GET',
+      }),
+      providesTags: (_result, _error, uuid) => [{ type: 'CustomerListings', id: uuid }],
+    }),
   }),
   overrideExisting: true,
 });
 
-export const { useGetCustomerListingsQuery, useLazyGetCustomerListingsQuery } =
-  customerListingApiSlice;
+export const {
+  useGetCustomerListingsQuery,
+  useLazyGetCustomerListingsQuery,
+  useGetSingleListingQuery,
+  useLazyGetSingleListingQuery,
+} = customerListingApiSlice;

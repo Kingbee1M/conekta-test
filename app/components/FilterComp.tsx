@@ -4,7 +4,7 @@ import CustomSelect from './ui/CustomSelect';
 import { NigeriaStateEnum, NIGERIA_LGA_MAP } from '@/shared/enums/nigeriaRegions.enums';
 import { propertyType } from '@/shared/enums/propertytype';
 import { AmenitiesEnum } from '@/shared/enums/amenities.enums';
-import { LuX } from "react-icons/lu";
+import { LuX, LuRotateCcw } from "react-icons/lu";
 
 interface FilterValues {
   state: string;
@@ -82,85 +82,179 @@ export default function PropertyFilter({ values, onChange, onApply, onClear, onC
     values.amenities.length > 0;
 
   return (
-    <div className=" w-full bg-white border border-gray-100 rounded-3xl p-6 shadow-sm flex flex-col gap-7 max-h-[calc(100vh-7rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200">
-      {/* Header & Actions */}
-      <div className="flex justify-between items-center sticky top-0 bg-white z-30 pb-2 border-b border-gray-50">
-        <h2 className="text-xl font-bold text-gray-900">Filters</h2>
-
-        {/* Mobile Close Button */}
-        {onClose && (
-          <button onClick={onClose} className="lg:hidden p-2 bg-gray-50 rounded-full text-gray-500 hover:bg-gray-100">
-            <LuX size={20} />
-          </button>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <label className="text-sm font-semibold text-gray-700">Location</label>
-        <div className="flex flex-col gap-3">
-          <CustomSelect options={Object.values(NigeriaStateEnum)} selected={values.state} onChange={(val) => handleValueChange('state', val)} defaultValue="Select State" />
-          <CustomSelect options={values.state ? NIGERIA_LGA_MAP[values.state as NigeriaStateEnum] || [] : []} selected={values.lga} onChange={(val) => handleValueChange('lga', val)} defaultValue={values.state ? "Select LGA" : "Choose state"} />
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <label className="text-sm font-semibold text-gray-700">Property Type</label>
-        <CustomSelect options={Object.values(propertyType)} selected={values.propertyType} onChange={(val) => handleValueChange('propertyType', val)} defaultValue="All Types" />
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <label className="text-sm font-semibold text-gray-700">
-          Price Range: ₦{values.minPrice.toFixed(1)}M - ₦{values.maxPrice.toFixed(1)}M
-        </label>
-        <div className="relative w-full h-6 flex items-center select-none">
-          <div className="absolute left-0 right-0 h-1.5 bg-gray-100 rounded-full" />
-          <div className="absolute h-1.5 bg-[#0a0a14] rounded-full z-10" style={{ left: `${minPercent}%`, width: `${maxPercent - minPercent}%` }} />
-          <input type="range" min="0" max="150" value={values.minPrice} onChange={handleMinPriceChange} className="slider-input absolute w-full pointer-events-none appearance-none bg-transparent h-1.5 outline-none z-20" />
-          <input type="range" min="0" max="150" value={values.maxPrice} onChange={handleMaxPriceChange} className="slider-input absolute w-full pointer-events-none appearance-none bg-transparent h-1.5 outline-none z-20" />
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <label className="text-sm font-semibold text-gray-700">Bedrooms</label>
+    <div className="w-full bg-white border border-stone-200/80 rounded-3xl p-5 shadow-sm flex flex-col justify-between gap-5 h-auto">
+      {/* Header */}
+      <div className="flex justify-between items-center pb-3 border-b border-stone-100">
         <div className="flex items-center gap-2">
+          <h2 className="text-lg font-bold text-primary-green">Filters</h2>
+          {isFiltered && (
+            <span className="w-2 h-2 rounded-full bg-primary-green" />
+          )}
+        </div>
+
+        <div className="flex items-center gap-2">
+          {isFiltered && (
+            <button
+              type="button"
+              onClick={handleClearFilters}
+              className="text-xs font-semibold text-stone-500 hover:text-rose-600 transition-colors flex items-center gap-1"
+            >
+              <LuRotateCcw size={12} />
+              Reset
+            </button>
+          )}
+
+          {/* Mobile Close Button */}
+          {onClose && (
+            <button onClick={onClose} className="lg:hidden p-1.5 bg-stone-100 rounded-full text-stone-500 hover:bg-stone-200 transition-colors">
+              <LuX size={18} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Location */}
+      <div className="flex flex-col gap-2">
+        <label className="text-xs font-bold uppercase tracking-wider text-stone-500">Location</label>
+        <div className="grid grid-cols-2 gap-2">
+          <CustomSelect 
+            options={Object.values(NigeriaStateEnum)} 
+            selected={values.state} 
+            onChange={(val) => handleValueChange('state', val)} 
+            defaultValue="State" 
+          />
+          <CustomSelect 
+            options={values.state ? NIGERIA_LGA_MAP[values.state as NigeriaStateEnum] || [] : []} 
+            selected={values.lga} 
+            onChange={(val) => handleValueChange('lga', val)} 
+            defaultValue={values.state ? "LGA" : "Choose state"} 
+          />
+        </div>
+      </div>
+
+      {/* Property Type */}
+      <div className="flex flex-col gap-2">
+        <label className="text-xs font-bold uppercase tracking-wider text-stone-500">Property Type</label>
+        <CustomSelect 
+          options={Object.values(propertyType)} 
+          selected={values.propertyType} 
+          onChange={(val) => handleValueChange('propertyType', val)} 
+          defaultValue="All Types" 
+        />
+      </div>
+
+      {/* Price Range */}
+      <div className="flex flex-col gap-2">
+        <div className="flex justify-between items-center text-xs font-bold tracking-wide">
+          <span className="uppercase text-stone-500">Price Range</span>
+          <span className="text-primary-green font-semibold">₦{values.minPrice.toFixed(0)}M - ₦{values.maxPrice.toFixed(0)}M</span>
+        </div>
+        <div className="relative w-full h-5 flex items-center select-none py-1">
+          <div className="absolute left-0 right-0 h-1.5 bg-stone-100 rounded-full" />
+          <div 
+            className="absolute h-1.5 bg-primary-green rounded-full z-10" 
+            style={{ left: `${minPercent}%`, width: `${maxPercent - minPercent}%` }} 
+          />
+          <input 
+            type="range" 
+            min="0" 
+            max="150" 
+            value={values.minPrice} 
+            onChange={handleMinPriceChange} 
+            className="slider-input absolute w-full pointer-events-none appearance-none bg-transparent h-1.5 outline-none z-20" 
+          />
+          <input 
+            type="range" 
+            min="0" 
+            max="150" 
+            value={values.maxPrice} 
+            onChange={handleMaxPriceChange} 
+            className="slider-input absolute w-full pointer-events-none appearance-none bg-transparent h-1.5 outline-none z-20" 
+          />
+        </div>
+      </div>
+
+      {/* Bedrooms */}
+      <div className="flex flex-col gap-2">
+        <label className="text-xs font-bold uppercase tracking-wider text-stone-500">Bedrooms</label>
+        <div className="flex items-center gap-1.5">
           {bedroomOptions.map((opt) => (
-            <button key={opt} type="button" onClick={() => handleValueChange('bedrooms', opt)} className={`flex-1 py-2 text-sm font-medium rounded-xl border transition-all ${values.bedrooms === opt ? 'bg-primary-green text-white border-primary-green' : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'}`}>{opt}</button>
+            <button 
+              key={opt} 
+              type="button" 
+              onClick={() => handleValueChange('bedrooms', opt)} 
+              className={`flex-1 py-1.5 text-xs font-semibold rounded-xl border transition-all ${
+                values.bedrooms === opt 
+                  ? 'bg-primary-green text-white border-primary-green shadow-sm' 
+                  : 'bg-stone-50 text-stone-700 border-stone-200 hover:bg-stone-100'
+              }`}
+            >
+              {opt}
+            </button>
           ))}
         </div>
       </div>
 
-      <div className="flex flex-col gap-4">
-        <label className="text-sm font-semibold text-gray-700">Amenities</label>
-        <div className="flex flex-col gap-3">
-          {Object.values(AmenitiesEnum).map((amenity) => (
-            <label key={amenity} className="flex items-center gap-3 cursor-pointer group">
-              <input type="checkbox" checked={values.amenities.includes(amenity)} onChange={() => toggleAmenity(amenity)} className="w-5 h-5 rounded-md border-gray-300 text-primary-green focus:ring-primary-green transition cursor-pointer" />
-              <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition">{amenity}</span>
-            </label>
-          ))}
+      {/* Amenities Grid */}
+      <div className="flex flex-col gap-2">
+        <label className="text-xs font-bold uppercase tracking-wider text-stone-500">Amenities</label>
+        <div className="grid grid-cols-2 gap-2">
+          {Object.values(AmenitiesEnum).map((amenity) => {
+            const isChecked = values.amenities.includes(amenity);
+            return (
+              <label 
+                key={amenity} 
+                className={`flex items-center gap-2 p-2 rounded-xl border cursor-pointer transition-all ${
+                  isChecked 
+                    ? 'bg-primary-green/5 border-primary-green/40 text-primary-green font-medium' 
+                    : 'bg-stone-50/50 border-stone-200/80 text-stone-600 hover:bg-stone-100/60'
+                }`}
+              >
+                <input 
+                  type="checkbox" 
+                  checked={isChecked} 
+                  onChange={() => toggleAmenity(amenity)} 
+                  className="w-3.5 h-3.5 rounded border-stone-300 text-primary-green focus:ring-primary-green transition cursor-pointer" 
+                />
+                <span className="text-xs truncate">{amenity}</span>
+              </label>
+            );
+          })}
         </div>
       </div>
 
-      {/* Action Buttons */}
-      <div className="flex flex-col gap-3 sticky bottom-0 bg-white z-30 pt-2 border-t border-gray-50">
-        <button onClick={onApply} className="w-full py-4 bg-primary-green hover:bg-[#1d5d39] text-white font-bold rounded-2xl shadow-md transition-all active:scale-[0.98]">
+      {/* Submit Action Button */}
+      <div className="pt-2 border-t border-stone-100">
+        <button 
+          onClick={onApply} 
+          className="w-full py-3.5 bg-primary-green hover:bg-[#1d5d39] text-white text-sm font-bold rounded-2xl shadow-md transition-all active:scale-[0.98]"
+        >
           {onClose ? 'Show Listings' : 'Apply Filters'}
         </button>
-
-        {isFiltered && (
-          <button 
-            type="button" 
-            onClick={handleClearFilters} 
-            className="w-full py-3 bg-gray-100 hover:bg-gray-200 text-rose-600 font-bold rounded-2xl transition-all active:scale-[0.98] text-sm"
-          >
-            Clear All Filters
-          </button>
-        )}
       </div>
 
       <style jsx>{`
-        .slider-input::-webkit-slider-thumb { pointer-events: auto; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #ffffff; border: 2px solid #0a0a14; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .slider-input::-moz-range-thumb { pointer-events: auto; appearance: none; width: 20px; height: 20px; border-radius: 50%; background: #ffffff; border: 2px solid #0a0a14; cursor: pointer; }
+        .slider-input::-webkit-slider-thumb { 
+          pointer-events: auto; 
+          appearance: none; 
+          width: 16px; 
+          height: 16px; 
+          border-radius: 50%; 
+          background: #ffffff; 
+          border: 2px solid #00AC72; 
+          cursor: pointer; 
+          box-shadow: 0 1px 3px rgba(0,0,0,0.15); 
+        }
+        .slider-input::-moz-range-thumb { 
+          pointer-events: auto; 
+          appearance: none; 
+          width: 16px; 
+          height: 16px; 
+          border-radius: 50%; 
+          background: #ffffff; 
+          border: 2px solid #00AC72; 
+          cursor: pointer; 
+        }
       `}</style>
     </div>
   );
