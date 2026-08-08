@@ -3,9 +3,10 @@
 import { useState, use } from 'react';
 import Link from 'next/link';
 import { LuBed, LuBath, LuChevronLeft, LuHeart, LuShare2, LuLoader } from 'react-icons/lu';
-import { IoAlertCircleOutline } from "react-icons/io5";
+import { IoAlertCircleOutline } from 'react-icons/io5';
 import { PiResizeBold } from 'react-icons/pi';
 import { useGetSingleListingQuery } from '@/shared/service/customer services/customerListing.services';
+import { ListingResult } from '@/shared/service/customer services/customerTypes';
 
 // Modular Child Components
 import MediaGallery from '@/app/components/MediaGallery';
@@ -26,8 +27,11 @@ export default function PropertyDetailsPage({ params }: PageProps) {
   // Fetch listing directly using RTK Query service
   const { data: listingResponse, isLoading, isError } = useGetSingleListingQuery(activeUuid);
 
-  // Extract payload (handles response wrapper if API returns { data: ListingResult } or raw object)
-  const listing = (listingResponse as { data?: any })?.data || listingResponse;
+  // Safely narrow listingResponse type
+  const listing: ListingResult | undefined =
+    listingResponse && typeof listingResponse === 'object' && 'data' in listingResponse
+      ? (listingResponse as unknown as { data: ListingResult }).data
+      : (listingResponse as ListingResult | undefined);
 
   if (isLoading) {
     return (
@@ -50,7 +54,7 @@ export default function PropertyDetailsPage({ params }: PageProps) {
         </p>
         <Link
           href="/find-property"
-          className="px-4 py-2 bg-[#257448] text-white text-xs font-bold rounded-xl hover:bg-[#1e5d39] transition"
+          className="px-4 py-2 bg-primary-green text-white text-xs font-bold rounded-xl hover:bg-[#1e5d39] transition"
         >
           Return to Listings
         </Link>
@@ -69,12 +73,14 @@ export default function PropertyDetailsPage({ params }: PageProps) {
     amenities = [],
   } = listing;
 
-  // Map media objects from API response to image URLs array
-  const galleryImages = media?.map((item: { url: string }) => item.url) || [];
+  // Explicitly type mapped media item
+  const galleryImages: string[] = Array.isArray(media)
+    ? media.map((item: { url: string }) => item.url)
+    : [];
 
   return (
     <main className="min-h-screen bg-[#FBFCFB] py-6 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-[1440px] mx-auto flex flex-col gap-6">
+      <div className="max-w-360 mx-auto flex flex-col gap-6">
 
         {/* Navigation Breadcrumb Action */}
         <div className="flex items-center">
@@ -155,7 +161,7 @@ export default function PropertyDetailsPage({ params }: PageProps) {
               {/* Structured Badge Pills */}
               <div className="flex flex-wrap gap-2 mt-1">
                 {property_info?.structure && (
-                  <span className="bg-[#257448] text-white text-[10px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider">
+                  <span className="bg-primary-green text-white text-[10px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider">
                     {property_info.structure}
                   </span>
                 )}

@@ -1,5 +1,21 @@
+'use client';
+
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '@/shared/store/store';
+import { logoutUser } from '@/shared/features/auth/auth.action';
+import { useToast } from './ui/ToastProvider';
 import { TenantProfileData } from '../(customer)/profile/page';
-import { LuLayoutDashboard, LuReceipt, LuHeart, LuBell, LuCircleHelp, LuSettings } from 'react-icons/lu';
+import { 
+  LuLayoutDashboard, 
+  LuReceipt, 
+  LuHeart, 
+  LuBell, 
+  LuCircleHelp, 
+  LuSettings,
+  LuLogOut,
+  LuLoader 
+} from 'react-icons/lu';
 
 type SidebarTab = 'dashboard' | 'transactions' | 'saved' | 'notifications' | 'support' | 'settings';
 
@@ -10,6 +26,10 @@ interface SidebarCardProps {
 }
 
 export default function SidebarCard({ tenant, activeTab, setActiveTab }: SidebarCardProps) {
+  const dispatch = useDispatch<AppDispatch>();
+  const { addToast } = useToast();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
   const menus: { id: SidebarTab; name: string; icon: typeof LuLayoutDashboard }[] = [
     { id: 'dashboard', name: 'Dashboard', icon: LuLayoutDashboard },
     { id: 'transactions', name: 'Transactions', icon: LuReceipt },
@@ -18,6 +38,25 @@ export default function SidebarCard({ tenant, activeTab, setActiveTab }: Sidebar
     { id: 'support', name: 'Support', icon: LuCircleHelp },
     { id: 'settings', name: 'Settings', icon: LuSettings },
   ];
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+
+    addToast({
+      title: 'Logging out...',
+      description: 'See you again soon! Have a fantastic day ahead.',
+      variant: 'success',
+      duration: 3000,
+    });
+
+    try {
+      await dispatch(logoutUser());
+    } catch (error) {
+      console.error('Logout failed:', error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-xs flex flex-col items-center text-center">
@@ -54,6 +93,26 @@ export default function SidebarCard({ tenant, activeTab, setActiveTab }: Sidebar
           );
         })}
       </nav>
+
+      {/* Log out Button */}
+      <button
+        type="button"
+        onClick={handleLogout}
+        disabled={isLoggingOut}
+        className="w-full mt-4 py-2.5 px-4 bg-red-50 hover:bg-red-100 text-red-600 font-semibold text-xs rounded-xl transition-colors duration-200 flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+      >
+        {isLoggingOut ? (
+          <>
+            <LuLoader className="w-4 h-4 animate-spin text-red-600" />
+            <span>Logging out...</span>
+          </>
+        ) : (
+          <>
+            <LuLogOut className="w-4 h-4 text-red-500" />
+            <span>Log out</span>
+          </>
+        )}
+      </button>
     </div>
   );
 }

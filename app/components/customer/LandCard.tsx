@@ -47,7 +47,7 @@ export default function LandCard({ property, priority = false }: LandCardProps) 
     return (
       <div 
         ref={cardRef} 
-        className="h-[380px] w-full bg-gray-100 rounded-[28px] animate-pulse border border-gray-100" 
+        className="h-95 w-full bg-gray-100 rounded-[28px] animate-pulse border border-gray-100" 
       />
     );
   }
