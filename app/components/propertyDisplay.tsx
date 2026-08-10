@@ -1,13 +1,12 @@
 'use client';
 
-import Image, { StaticImageData } from 'next/image';
+import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { CiLocationOn } from 'react-icons/ci';
 import { IoBedOutline } from 'react-icons/io5';
 import { PiBathtub } from 'react-icons/pi';
 import { FaStar } from 'react-icons/fa';
 import { PropertyData } from '@/types';
-
-
 
 interface PropertyCardProps {
   property: PropertyData;
@@ -23,58 +22,73 @@ export function PropertyCard({ property }: PropertyCardProps) {
   }).format(property.price);
 
   return (
-    <article className="w-full bg-[#f4f4f4] rounded-2xl overflow-hidden border border-gray-100 shadow-sm transition-all hover:shadow-md flex flex-col">
-      {/* Aspect Ratio container for the image */}
-      <div className="relative w-full aspect-4/3 bg-gray-200">
-        <Image
-          src={property.imageUrl}
-          alt={property.title}
-          fill
-          sizes="(max-w-7xl) 33vw, 50vw"
-          className="object-cover"
-          priority
-        />
+    <motion.article 
+      initial="rest"
+      whileHover="hover"
+      animate="rest"
+      className="w-full max-w-sm bg-[#f4f4f4] rounded-xl overflow-hidden border border-gray-200/80 shadow-sm transition-shadow hover:shadow-md flex flex-col cursor-pointer"
+    >
+      {/* Scaled-down aspect ratio (16:9) & slight top lift on hover */}
+      <div className="relative w-full aspect-video bg-gray-200 overflow-hidden">
+        <motion.div
+          variants={{
+            rest: { y: 0, scale: 1 },
+            hover: { y: -6, scale: 1.04 },
+          }}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="relative w-full h-full"
+        >
+          <Image
+            src={property.imageUrl}
+            alt={property.title}
+            fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover"
+            priority
+          />
+        </motion.div>
       </div>
 
-      {/* Content Space */}
-      <div className="p-5 flex flex-col gap-2.5">
-        {/* Title */}
-        <h2 className="text-base font-bold text-gray-800 tracking-tight line-clamp-1">
-          {property.title}
-        </h2>
+      {/* Slimmed-down content space (p-3 flex gap-1.5) */}
+      <div className="p-3.5 flex flex-col gap-2">
+        {/* Title & Address Row (Address pushed right) */}
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-sm font-bold text-gray-800 tracking-tight truncate flex-1">
+            {property.title}
+          </h2>
 
-        {/* Location Row */}
-        <div className="flex items-center gap-1 text-gray-600 -ml-0.5">
-          <CiLocationOn className="text-lg shrink-0" />
-          <span className="text-sm font-medium line-clamp-1">{property.location}</span>
-        </div>
-
-        {/* Specs & Rating Grid Row */}
-        <div className="flex items-center justify-between text-sm text-gray-700 font-medium mt-0.5">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-1.5">
-              <IoBedOutline className="text-lg text-gray-500" />
-              <span>{property.beds} {property.beds === 1 ? 'bed' : 'beds'}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <PiBathtub className="text-lg text-gray-500" />
-              <span>{property.baths} {property.baths === 1 ? 'bath' : 'baths'}</span>
-            </div>
-          </div>
-
-          {/* Rating Block */}
-          <div className="flex items-center gap-1">
-            <FaStar className="text-orange-500 text-sm" />
-            <span className="font-semibold text-gray-800">{property.rating}/10</span>
+          <div className="flex items-center gap-0.5 text-gray-500 shrink-0 text-xs">
+            <CiLocationOn className="text-sm shrink-0 text-gray-600" />
+            <span className="font-medium truncate max-w-[110px] text-right">
+              {property.location}
+            </span>
           </div>
         </div>
 
-        {/* Pricing Segment */}
-        <div className="mt-1 text-base font-bold text-gray-900">
-          {formattedPrice}
-          <span className="text-xs text-gray-500 font-normal">/day</span>
+        {/* Specs, Rating & Price Bottom Row */}
+        <div className="flex items-center justify-between text-xs text-gray-700 font-medium pt-1 border-t border-gray-200/60">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1">
+              <IoBedOutline className="text-sm text-gray-500" />
+              <span>{property.beds}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <PiBathtub className="text-sm text-gray-500" />
+              <span>{property.baths}</span>
+            </div>
+            <div className="flex items-center gap-1 ml-1">
+              <FaStar className="text-amber-500 text-xs" />
+              <span className="font-semibold text-gray-800">{property.rating}</span>
+            </div>
+          </div>
+
+          {/* Pricing */}
+          <div className="text-xs font-bold text-gray-900">
+            {formattedPrice}
+            <span className="text-[10px] text-gray-500 font-normal">/day</span>
+          </div>
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 }

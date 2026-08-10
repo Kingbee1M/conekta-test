@@ -13,8 +13,10 @@ import Link from "next/link"
 import { FaGoogle, FaFacebook } from "react-icons/fa"
 import { useState } from "react"
 import { FiEyeOff, FiEye } from "react-icons/fi"
+import { LuLoader } from "react-icons/lu"
 import { RoleEnum } from "@/shared/enums/roles.enum"
 import { motion } from "framer-motion"
+import { Loader } from "lucide-react"
 const loginSchema = z.object({
     email: z.string().min(1, "Email is required").email("Invalid email format"),
     password: z.string().min(1, "Password is required").min(6, "Password must be at least 6 characters"),
@@ -153,7 +155,7 @@ export default function Login() {
                     type="submit"
                     disabled={formik.isSubmitting}
                     className="w-full my-3 bg-[#00AC72] text-white px-3 py-2 rounded-lg font-semibold hover:bg-white hover:text-[#008f5d] border border-transparent hover:border-[#008f5d] transition-all disabled:opacity-50"
-                >
+                ><Loader />
                     {formik.isSubmitting ? "Signing in..." : "Sign in"}
                 </button>
 

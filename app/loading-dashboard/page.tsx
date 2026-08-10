@@ -27,10 +27,8 @@ export default function LoadingDashboard() {
       return;
     }
 
-    // Extract names cleanly from root OR nested profile object OR session full_name
-    // ✅ SAFE: Optional chaining on both levels
-    const firstName = profile?.profile?.first_name;
-    const lastName = profile?.profile?.last_name;
+    const firstName = profile?.first_name;
+    const lastName = profile?.last_name;
     const fullName = session?.user?.profile?.full_name;
 
     const hasName = Boolean(firstName || lastName || fullName);

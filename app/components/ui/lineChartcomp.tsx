@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import CustomSelect from './CustomSelect';
 
 interface TimeDataEntry {
   created_at: string; // ISO timestamp string or valid date string
@@ -78,24 +79,24 @@ export default function LineChartComp({
   return (
     <div className="w-full h-full bg-white border border-gray-100 rounded-2xl p-5 shadow-sm flex flex-col justify-between box-border">
       
-      {/* Header text container with Selector Dropdown */}
+      {/* Header text container with CustomSelect Dropdown */}
       <div className="w-full flex justify-between items-center mb-3">
         <div>
           <h3 className="font-bold text-gray-800 text-xs tracking-wide">{title}</h3>
           <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider block mt-0.5">Volume Tracking</span>
         </div>
 
-        {/* Render dropdown selector if data spans across multiple years */}
+        {/* Render CustomSelect dropdown if data spans across multiple years */}
         {availableYears.length > 1 && (
-          <select 
-            value={selectedYear}
-            onChange={(e) => setSelectedYear(e.target.value)}
-            className="text-xs bg-gray-50 border border-gray-200 text-gray-700 rounded-lg px-2 py-1 font-semibold outline-none cursor-pointer hover:bg-gray-100 transition-colors"
-          >
-            {availableYears.map(year => (
-              <option key={year} value={year}>{year}</option>
-            ))}
-          </select>
+          <div className="w-28 relative">
+            <CustomSelect
+              options={availableYears}
+              selected={selectedYear}
+              onChange={(value) => setSelectedYear(value)}
+              variant="boxed"
+              className="[&>ul]:right-0 [&>ul]:left-auto"
+            />
+          </div>
         )}
       </div>
 
