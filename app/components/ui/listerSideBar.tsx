@@ -144,7 +144,7 @@ export default function ListerSideBar({ onItemClick }: ListerSideBarProps) {
                             const normalizedPath = pathname.replace(/\/$/, '');
                             const normalizedLink = link.link.replace(/\/$/, '');
                             const isActive = normalizedPath === normalizedLink;
-                            const isLogoutButton = index === 2;
+                            const isLogoutButton = index === 1;
 
                             return isLogoutButton ? (
                                 <button
