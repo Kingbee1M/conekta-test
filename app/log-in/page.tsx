@@ -151,12 +151,19 @@ export default function Login() {
                     {formik.touched.password && formik.errors.password && <span className="text-[10px] text-red-500 mt-1">{formik.errors.password}</span>}
                 </div>
 
-                <button 
-                    type="submit"
-                    disabled={formik.isSubmitting}
-                    className="w-full my-3 bg-[#00AC72] text-white px-3 py-2 rounded-lg font-semibold hover:bg-white hover:text-[#008f5d] border border-transparent hover:border-[#008f5d] transition-all disabled:opacity-50"
-                ><Loader />
-                    {formik.isSubmitting ? "Signing in..." : "Sign in"}
+               <button 
+                type="submit"
+                disabled={formik.isSubmitting}
+                className="w-full my-3 bg-[#00AC72] text-white px-3 py-2 rounded-lg font-semibold hover:bg-white hover:text-[#008f5d] border border-transparent hover:border-[#008f5d] transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                {formik.isSubmitting ? (
+                    <>
+                    <Loader className="w-4 h-4 animate-spin" />
+                    <span className="text-white">Signing in...</span>
+                    </>
+                ) : (
+                    "Sign in"
+                )}
                 </button>
 
                 <div className="w-full flex items-center gap-2 my-2">
