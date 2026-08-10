@@ -43,7 +43,7 @@ export default function ListerClientLayout({ children }: ListerClientLayoutProps
   }
 
   return (
-    <div className="block md:grid md:grid-cols-[200px_1fr] h-screen w-full overflow-x-hidden overflow-y-auto">
+    <div className="block md:grid md:grid-cols-[200px_1fr] h-screen w-full overflow-x-hidden overflow-y-auto bg-lister-background">
       
       {/* DESKTOP SIDEBAR */}
       <aside className="hidden md:block bg-primary-green w-full h-full max-h-screen sticky top-0 overflow-y-auto">
@@ -82,9 +82,9 @@ export default function ListerClientLayout({ children }: ListerClientLayoutProps
       </div>
 
       {/* MAIN VIEW CONTENT AREA */}
-      <div className="flex flex-col h-auto w-full bg-gray-50">
+      <div className="flex flex-col h-auto w-full bg-lister-background">
         
-        <header className="flex md:hidden items-center justify-between px-4 h-14 bg-white border-b border-gray-200 sticky top-0 z-40 w-full">
+        <header className="flex md:hidden items-center justify-between px-4 h-14 bg-lister-background border-b border-gray-200 sticky top-0 z-40 w-full">
           <button
             onClick={toggleSidebar}
             className="p-2 -ml-2 rounded-lg text-gray-600 hover:bg-gray-100 transition focus:outline-none"

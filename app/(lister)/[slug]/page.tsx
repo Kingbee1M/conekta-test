@@ -1,15 +1,10 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/shared/store/store';
 import { useEffect, useState } from 'react';
 import ListerTopBar from '@/app/components/ui/listerTopbar';
-import descover from '@/public/svg/discover.svg'
-import cash from '@/public/svg/cash.svg'
-import bag from '@/public/svg/suitcase.svg'
-import shake from '@/public/svg/shake.svg'
-import Image from 'next/image';
 import Link from 'next/link';
 import ListerHero from '@/app/components/listerHero';
 import ListerPieChart from '@/app/components/listerPieChart';
@@ -132,7 +127,6 @@ const sampleActivities: RecentActivityItem[] = [
   }
 ];
 export default function ListerDashboard() {
-  const params = useParams();
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openAdd, setOpenAdd] = useState(false)
@@ -145,12 +139,6 @@ export default function ListerDashboard() {
   router.push('/support');
 }
 
-  const pillNav = [
-    { title: 'Discover', icon: descover, link: '/' },
-    { title: 'Finance', icon: cash, link: '/' },
-    { title: 'Manage', icon: bag, link: '/' },
-    { title: 'Impact', icon: shake, link: '/' },
-  ];
 
   const miniMenu = [
     { title: 'Create Listing', icon: <FaHouseMedical />, color: 'bg-emerald-600', func: addPropertyFunc },
@@ -207,7 +195,7 @@ const mockPropertiesSold = [
 
 
   return (
-    <div className="w-full min-h-full max-w-7xl gap-7 mx-auto flex flex-col relative pb-20">
+    <div className="w-full min-h-full max-w-7xl gap-7 mx-auto flex flex-col relative pb-20 ">
       <ListerTopBar />
 
       {/* Pill Navigation */}

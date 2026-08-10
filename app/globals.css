@@ -21,6 +21,8 @@
   --color-active-link: #DBFCE7CC;
   --color-artisan-orange: #ff5500;
   --color-lister-blue: #2476FF;
+  --color-app-background: #F5F2EB;
+  --color-lister-background: #EEF1EC;
 }
 
 @theme inline {
@@ -161,6 +163,8 @@
   p, input, button, span, a, textarea, label {
     font-family: var(--font-inter);
     color: #4a5565;
+    user-select: text;
+   -webkit-user-select: text;
   }
 
   label {

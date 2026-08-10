@@ -42,8 +42,8 @@ export default function TenantProfileContainer() {
   const [activeTab, setActiveTab] = useState<'dashboard' | 'transactions' | 'saved' | 'notifications' | 'support' | 'settings'>('dashboard');
 
   // 1. Fallback presentation schemas populated dynamically or via mock metrics
-  const firstName = profile?.profile?.first_name || "Chioma";
-  const lastName = profile?.profile?.last_name || "Okafor";
+  const firstName = profile?.first_name || "Chioma";
+  const lastName = profile?.last_name || "Okafor";
   const tenantEmail = profile?.email || "chioma.okafor@email.com";
   
   const tenantUser: TenantProfileData = {

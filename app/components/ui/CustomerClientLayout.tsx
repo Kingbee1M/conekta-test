@@ -53,14 +53,14 @@ export default function CustomerClientLayout({ children }: CustomerClientLayoutP
 
   if (!isAuthorized) {
     return (
-      <div className="w-full h-screen flex justify-center items-center bg-[#F5F2EB]">
+      <div className="w-full h-screen flex justify-center items-center bg-app-background">
         <div className="w-8 h-8 border-4 border-[#00AC72] border-t-transparent rounded-full animate-spin"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F2EB] text-stone-900 flex flex-col items-center">
+    <div className="min-h-screen bg-app-background text-stone-900 flex flex-col items-center">
       {/* Main Content Area */}
       <main className="w-full max-w-520 flex-1 flex-col items-center justify-center mt-10 md:mt-16 relative">
         {children}

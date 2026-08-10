@@ -13,8 +13,8 @@ export default function ListerTopBar () {
 
     const typedUser = profile as FlatUserData & { user?: FlatUserData } | null;
     const targetUserObj = typedUser?.user || typedUser;
-    const firstName = profile?.profile?.first_name;
-    const lastName = profile?.profile?.last_name;
+    const firstName = profile?.first_name;
+    const lastName = profile?.last_name;
     
     const currentName = firstName || lastName ? `${firstName} ${lastName}`.trim() : '';
     const initial = currentName.trim().charAt(0).toUpperCase() || '?';

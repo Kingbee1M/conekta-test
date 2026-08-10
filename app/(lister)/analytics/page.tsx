@@ -46,7 +46,7 @@ export default function AnalyticsPage() {
     const currentName = firstName || lastName ? `${firstName} ${lastName}`.trim() : '';
     const initial = currentName.trim().charAt(0).toUpperCase() || '?';
   return (
-    <section className="w-full flex flex-col gap-6 p-1 h-full min-h-screen bg-[#F8FAFC]">
+    <section className="w-full flex flex-col gap-6 p-1 h-full min-h-screen ">
       
       {/* HEADER BAR */}
       <div className="w-full flex justify-between items-center">
@@ -63,17 +63,6 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* FILTER TABS SUBHEADER */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-        {['Discover', 'Finance', 'Manage'].map((tab) => (
-          <button key={tab} className="bg-white border border-slate-200 text-slate-600 font-bold text-xs px-4 py-2 rounded-xl hover:border-slate-300 transition-all cursor-pointer">
-            {tab}
-          </button>
-        ))}
-        <button className="bg-primary-green text-white font-bold text-xs px-4 py-2 rounded-xl shadow-sm hover:bg-opacity-95 transition-all cursor-pointer">
-          Impact
-        </button>
-      </div>
 
       {/* MAIN VISUALIZATION GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 w-full items-stretch">

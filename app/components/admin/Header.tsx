@@ -34,13 +34,13 @@ export default function Header({
   // 1. Resolve First & Last Names
   const firstName =
     profile?.first_name ||
-    profile?.profile?.first_name ||
+    profile?.first_name ||
     session?.user?.profile?.full_name?.split(' ')[0] ||
     '';
 
   const lastName =
     profile?.last_name ||
-    profile?.profile?.last_name ||
+    profile?.last_name ||
     session?.user?.profile?.full_name?.split(' ').slice(1).join(' ') ||
     '';
 
