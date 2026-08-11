@@ -13,10 +13,10 @@ export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
     const pathname = usePathname();
     const navs = [
-        { title: 'Home', link: '/home' },
-        { title: 'Find a Property', link: '/find-property' },
+        { title: 'Discover', link: '/find-property' },
         { title: 'Find Artisans', link: '/find-artisan' },
-        { title: 'My Housing', link: '/my-housing' },
+        { title: 'Manage', link: '/my-housing' },
+        { title: 'Invest', link: '/my-housing' },
     ]
     return (
         <nav className="w-screen fixed top-0 left-0 z-40 flex justify-center">
@@ -29,7 +29,7 @@ export default function Navbar() {
         overflow-hidden
         `}>
             <div className='w-full lg:w-1/3 flex justify-between items-center'>
-                <Link href='/'>
+                <Link href='/home'>
                     <Image src={logo} alt='logo' width={20} height={20} className='w-20 lg:w-20' priority />
                 </Link>
                 <button onClick={()=>setIsOpen(!isOpen)} className={`inline lg:hidden text-2xl  transition-transform duration-500 ease-in-out

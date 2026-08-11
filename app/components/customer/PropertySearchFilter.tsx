@@ -1,16 +1,53 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { Search, Loader2, MapPin, Building, X } from 'lucide-react';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { Search, Loader2, MapPin, Building, X, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import CustomSelect from '../ui/CustomSelect';
 import { structureType } from '@/shared/enums/structure.enum';
 import { NigeriaStateEnum, NIGERIA_LGA_MAP } from '@/shared/enums/nigeriaRegions.enums';
 import { useLazyGetCustomerListingsQuery } from '@/shared/service/customer services/customerListing.services';
 
-const STATE_OPTIONS = Object.values(NigeriaStateEnum);
-const TYPE_OPTIONS = Object.values(structureType);
+// Dynamic animated placeholder prompts
+export const SEARCH_PROMPTS = [
+  // Budget-Focused & Shortlet
+  'Search "3 bedroom apartment in Lekki, Lagos under 50M"...',
+  'Try "Self-contain flat in Yaba, Lagos under 3 million"...',
+  'Search "Shortlet apartment in Ikoyi for 150k per night"...',
+  'Try "Duplex in Ikeja with budget around 10M to 30M"...',
+  'Search "Cheap land for sale in Epe, Lagos under 5M"...',
+
+  // Premium & Luxury
+  'Search "Luxury penthouse in Banana Island with swimming pool"...',
+  'Try "5 bedroom fully detached duplex in Maitama, Abuja"...',
+  'Search "Oceanfront villa in Victoria Island"...',
+  'Try "Fully furnished duplex in Guzape with elevator"...',
+
+  // Location & Regional Specific
+  'Search "Bungalow for sale in Abuja, Federal Capital Territory"...',
+  'Try "4 bedroom duplex in GRA Phase 2, Port Harcourt"...',
+  'Search "2 bedroom flat for rent in Bodija, Ibadan"...',
+  'Try "Houses for sale near Asaba Airport, Delta State"...',
+  'Search "Serviced apartment in Jabi, Abuja"...',
+
+  // Land & Investment Opportunities
+  'Search "Dry land with C of O in Ibeju-Lekki"...',
+  'Try "Commercial plot along Express Road, Kano"...',
+  'Search "Farmland for sale in Ogun State with C of O"...',
+  'Try "2 plots of land in Centenary City, Enugu"...',
+
+  // Commercial & Office Spaces
+  'Search "Commercial shop in Victoria Island"...',
+  'Try "Office space for rent in Central Business District, Abuja"...',
+  'Search "Warehouse for rent in Ikeja Industrial Estate"...',
+  'Try "Event center for sale in GRA, Benin City"...',
+
+  // Specific Features & Utilities
+  'Search "Serviced 3 bedroom flat with 24/7 power in Oniru"...',
+  'Try "House for rent with private gym and cinema in Chevron"...',
+  'Search "Smart home duplex in Katampe Extension"...',
+  'Try "Pet-friendly apartment in Surulere with parking space"...',
+];
 
 const BUDGET_RANGES = [
   { label: '₦1,000,000 - ₦3,000,000', min: 1000000, max: 3000000 },
@@ -20,51 +57,135 @@ const BUDGET_RANGES = [
 ];
 
 export default function PropertySearchFilter() {
-  const [state, setState] = useState<string>(NigeriaStateEnum.LAGOS);
-  const [area, setArea] = useState<string>('');
-  const [type, setType] = useState<string>('');
-  const [budget, setBudget] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const containerRef = useRef<HTMLDivElement>(null);
+  // Typewriter effect states
+  const [promptIndex, setPromptIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [placeholderText, setPlaceholderText] = useState('');
 
+  const containerRef = useRef<HTMLDivElement>(null);
   const [triggerSearch, { data, isFetching }] = useLazyGetCustomerListingsQuery();
 
-  // Resolve LGAs based on selected state
-  const activeStateEnumKey = (Object.keys(NigeriaStateEnum) as Array<keyof typeof NigeriaStateEnum>).find(
-    (key) => NigeriaStateEnum[key] === state
-  );
-  const areaOptions = activeStateEnumKey ? NIGERIA_LGA_MAP[NigeriaStateEnum[activeStateEnumKey]] : [];
-
-  // Parse budget range option
-  const selectedBudgetObj = BUDGET_RANGES.find((b) => b.label === budget);
-
-  // Trigger search on state updates with debouncing
+  // 1. Typewriter Animation Effect
   useEffect(() => {
-    const hasActiveFilters = Boolean(state || area || type || budget || searchQuery.trim().length > 0);
+    const currentPrompt = SEARCH_PROMPTS[promptIndex];
+    const typingSpeed = isDeleting ? 30 : 60;
+    const pauseDuration = 2200;
 
-    if (!hasActiveFilters) {
+    const timeout = setTimeout(() => {
+      if (!isDeleting && charIndex < currentPrompt.length) {
+        setPlaceholderText(currentPrompt.substring(0, charIndex + 1));
+        setCharIndex((prev) => prev + 1);
+      } else if (!isDeleting && charIndex === currentPrompt.length) {
+        setTimeout(() => setIsDeleting(true), pauseDuration);
+      } else if (isDeleting && charIndex > 0) {
+        setPlaceholderText(currentPrompt.substring(0, charIndex - 1));
+        setCharIndex((prev) => prev - 1);
+      } else if (isDeleting && charIndex === 0) {
+        setIsDeleting(false);
+        setPromptIndex((prev) => (prev + 1) % SEARCH_PROMPTS.length);
+      }
+    }, typingSpeed);
+
+    return () => clearTimeout(timeout);
+  }, [charIndex, isDeleting, promptIndex]);
+
+  // 2. Client-side NLP Extractor to preserve backend structure parameters
+  const parsedParameters = useMemo(() => {
+    const queryLower = searchQuery.toLowerCase();
+    if (!queryLower.trim()) return {};
+
+    // Match State
+    let detectedState: string | undefined = undefined;
+    for (const st of Object.values(NigeriaStateEnum)) {
+      if (queryLower.includes(st.toLowerCase())) {
+        detectedState = st;
+        break;
+      }
+    }
+
+    // Match LGA
+    let detectedLga: string | undefined = undefined;
+    if (detectedState && NIGERIA_LGA_MAP[detectedState as NigeriaStateEnum]) {
+      const lgas = NIGERIA_LGA_MAP[detectedState as NigeriaStateEnum];
+      for (const lga of lgas) {
+        if (queryLower.includes(lga.toLowerCase())) {
+          detectedLga = lga;
+          break;
+        }
+      }
+    } else {
+      for (const lgas of Object.values(NIGERIA_LGA_MAP)) {
+        for (const lga of lgas) {
+          if (queryLower.includes(lga.toLowerCase())) {
+            detectedLga = lga;
+            break;
+          }
+        }
+        if (detectedLga) break;
+      }
+    }
+
+    // Match Structure Type
+    let detectedCategory: string | undefined = undefined;
+    for (const type of Object.values(structureType)) {
+      if (queryLower.includes(type.toLowerCase())) {
+        detectedCategory = type;
+        break;
+      }
+    }
+
+    // Match Numbers/Prices (e.g., 5m, 10 million, 50,000,000)
+    let min_price: number | undefined = undefined;
+    let max_price: number | undefined = undefined;
+
+    const millionMatch = queryLower.match(/(\d+)\s*(m|million)/i);
+    if (millionMatch) {
+      const val = parseInt(millionMatch[1], 10) * 1000000;
+      if (queryLower.includes('under') || queryLower.includes('less than')) {
+        max_price = val;
+      } else if (queryLower.includes('above') || queryLower.includes('from')) {
+        min_price = val;
+      } else {
+        max_price = val;
+      }
+    }
+
+    return {
+      state: detectedState,
+      lga: detectedLga,
+      category: detectedCategory,
+      min_price,
+      max_price,
+    };
+  }, [searchQuery]);
+
+  // 3. Trigger debounced API query
+  useEffect(() => {
+    if (!searchQuery.trim()) {
       return;
     }
 
     const timer = setTimeout(() => {
       triggerSearch({
-        state: state || undefined,
-        lga: area || undefined,
-        category: type || undefined,
-        min_price: selectedBudgetObj?.min,
-        max_price: selectedBudgetObj?.max,
-        search: searchQuery.trim() || undefined,
+        search: searchQuery.trim(),
+        state: parsedParameters.state,
+        lga: parsedParameters.lga,
+        category: parsedParameters.category,
+        min_price: parsedParameters.min_price,
+        max_price: parsedParameters.max_price,
         page_size: 5,
       });
       setIsOpen(true);
-    }, 300);
+    }, 350);
 
     return () => clearTimeout(timer);
-  }, [state, area, type, budget, searchQuery, triggerSearch, selectedBudgetObj]);
+  }, [searchQuery, parsedParameters, triggerSearch]);
 
-  // Click outside listener to close the dynamic popover
+  // 4. Close dropdown on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -75,102 +196,84 @@ export default function PropertySearchFilter() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleStateChange = (newState: string) => {
-    setState(newState);
-    setArea('');
-  };
-
   const results = data?.data?.results || [];
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-5xl mx-auto px-4 z-30">
-      <form
-        onSubmit={(e) => e.preventDefault()}
-        className="bg-stone-50/95 backdrop-blur-md rounded-2xl md:rounded-3xl p-3 md:p-3.5 shadow-xl border border-stone-200/60 flex flex-col md:flex-row items-stretch md:items-center divide-y md:divide-y-0 md:divide-x divide-stone-200 gap-3 md:gap-0"
-      >
-        {/* TEXT SEARCH */}
-        <div className="flex-1 px-4 py-1.5 flex flex-col justify-center">
-          <label className="text-[10px] font-bold tracking-widest text-[#00AC72] uppercase mb-0.5 pointer-events-none">
-            Keyword
-          </label>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onFocus={() => setIsOpen(true)}
-            placeholder="e.g. Duplex, Lekki..."
-            className="w-full bg-transparent text-xs font-semibold text-stone-800 placeholder-stone-400 focus:outline-none"
-          />
-        </div>
+    <div ref={containerRef} className="relative w-full max-w-4xl mx-auto px-4 z-30">
+      {/* MOVING GRADIENT BORDER CONTAINER */}
+      <div className="relative p-[2.5px] rounded-full overflow-hidden shadow-2xl group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(42,133,69,0.25)]">
+        {/* Animated Gradient Background Ring */}
+        <div 
+          className="absolute inset-[-100%] animate-[spin_6s_linear_infinite]"
+          style={{
+            background: 'conic-gradient(from 0deg, #2a8545, #80da90, #00B075, #9bf7aa, #1B4D3E, #2a8545)',
+          }}
+        />
 
-        {/* STATE */}
-        <div className="flex-1 px-4 py-1.5 flex flex-col justify-center">
-          <label className="text-[10px] font-bold tracking-widest text-[#00AC72] uppercase mb-0.5 pointer-events-none">
-            State
-          </label>
-          <CustomSelect
-            options={STATE_OPTIONS}
-            selected={state}
-            onChange={handleStateChange}
-            defaultValue="Select State"
-          />
-        </div>
-
-        {/* AREA / LGA */}
-        <div className="flex-1 px-4 py-1.5 flex flex-col justify-center">
-          <label className="text-[10px] font-bold tracking-widest text-[#00AC72] uppercase mb-0.5 pointer-events-none">
-            Area / LGA
-          </label>
-          <CustomSelect
-            options={areaOptions}
-            selected={area}
-            onChange={setArea}
-            defaultValue={state ? 'Select LGA' : 'Select State First'}
-          />
-        </div>
-
-        {/* STRUCTURE TYPE */}
-        <div className="flex-1 px-4 py-1.5 flex flex-col justify-center">
-          <label className="text-[10px] font-bold tracking-widest text-[#00AC72] uppercase mb-0.5 pointer-events-none">
-            Type
-          </label>
-          <CustomSelect
-            options={TYPE_OPTIONS}
-            selected={type}
-            onChange={setType}
-            defaultValue="Any structure"
-          />
-        </div>
-
-        {/* BUDGET */}
-        <div className="flex-1 px-4 py-1.5 flex flex-col justify-center">
-          <label className="text-[10px] font-bold tracking-widest text-[#00AC72] uppercase mb-0.5 pointer-events-none">
-            Budget
-          </label>
-          <CustomSelect
-            options={BUDGET_RANGES.map((b) => b.label)}
-            selected={budget}
-            onChange={setBudget}
-            defaultValue="Any budget"
-          />
-        </div>
-
-        {/* SUBMIT BUTTON */}
-        <div className="p-1 flex items-center justify-end">
-          <button
-            type="button"
-            onClick={() => setIsOpen(true)}
-            className="w-full md:w-auto px-8 py-3.5 bg-[#00AC72] hover:bg-[#009663] text-white font-bold text-sm rounded-xl md:rounded-2xl shadow-md transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
-          >
+        {/* PILL INNER FORM */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (searchQuery.trim()) setIsOpen(true);
+          }}
+          className="relative bg-[#F5F2EB] dark:bg-stone-900 rounded-full px-4 md:px-6 py-2.5 md:py-3 flex items-center gap-3 w-full backdrop-blur-xl"
+        >
+          {/* AI Search Icon */}
+          <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#2a8545]/10 text-[#2a8545] shrink-0">
             {isFetching ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
-              <Search className="w-4 h-4" />
+              <Sparkles className="w-5 h-5 animate-pulse" />
             )}
-            <span>Search</span>
-          </button>
-        </div>
-      </form>
+          </div>
+
+          {/* INPUT FIELD WITH ANIMATED PLACEHOLDER */}
+          <div className="flex-1 relative flex items-center overflow-hidden">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => {
+                if (searchQuery.trim()) setIsOpen(true);
+              }}
+              placeholder={placeholderText}
+              className="w-full bg-transparent text-sm md:text-base font-medium text-[#262626] dark:text-stone-100 placeholder-[#5f5e5e] focus:outline-none pr-2"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setIsOpen(false);
+                }}
+                className="p-1 rounded-full text-stone-400 hover:text-stone-700 transition-colors mr-1"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+          </div>
+
+          {/* RIGHT SIDE: POWERED BY GOOGLE BADGE & BUTTON */}
+          <div className="flex items-center gap-3 shrink-0 border-l border-stone-300 dark:border-stone-700 pl-3 md:pl-4">
+            <div className="hidden sm:flex flex-col items-end pointer-events-none select-none">
+              <span className="text-[9px] font-semibold tracking-wider text-[#5f5e5e] uppercase">
+                Powered by
+              </span>
+              <span className="text-xs font-bold bg-gradient-to-r from-blue-600 via-red-500 to-yellow-500 bg-clip-text text-transparent">
+                Google AI
+              </span>
+            </div>
+
+            <button
+              type="submit"
+              className="px-5 py-2.5 bg-[#2a8545] hover:bg-[#80da90] hover:text-[#1B4D3E] text-white font-bold text-xs md:text-sm rounded-full shadow-md transition-all duration-200 flex items-center gap-2 cursor-pointer"
+            >
+              <Search className="w-4 h-4" />
+              <span className="hidden md:inline">Search</span>
+            </button>
+          </div>
+        </form>
+      </div>
 
       {/* POP-UP OVERLAY FOR SEARCH RESULTS */}
       <AnimatePresence>
@@ -179,16 +282,28 @@ export default function PropertySearchFilter() {
             initial={{ opacity: 0, y: 12, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.98 }}
-            transition={{ duration: 0.22, ease: 'easeOut' }}
-            className="absolute left-4 right-4 top-full mt-3 bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl border border-stone-200/80 p-4 z-50 max-h-105 overflow-y-auto scrollbar-none"
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="absolute left-4 right-4 top-full mt-3 bg-white/95 dark:bg-stone-900/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-stone-200/80 dark:border-stone-800 p-4 z-50 max-h-96 overflow-y-auto scrollbar-none"
           >
-            <div className="flex items-center justify-between pb-3 mb-2 border-b border-stone-100 px-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-stone-400">
-                Live Results ({data?.data.count ?? results.length})
-              </span>
+            <div className="flex items-center justify-between pb-3 mb-2 border-b border-stone-100 dark:border-stone-800 px-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold uppercase tracking-wider text-stone-400">
+                  AI Results ({data?.data?.count ?? results.length})
+                </span>
+                {parsedParameters.state && (
+                  <span className="text-[10px] bg-[#DBFCE7CC] text-[#2a8545] font-semibold px-2 py-0.5 rounded-full">
+                    {parsedParameters.state}
+                  </span>
+                )}
+                {parsedParameters.category && (
+                  <span className="text-[10px] bg-[#DBFCE7CC] text-[#2a8545] font-semibold px-2 py-0.5 rounded-full">
+                    {parsedParameters.category}
+                  </span>
+                )}
+              </div>
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1 rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-100 transition-colors"
+                className="p-1 rounded-full text-stone-400 hover:text-stone-700 transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -196,12 +311,12 @@ export default function PropertySearchFilter() {
 
             {isFetching ? (
               <div className="flex items-center justify-center py-10 text-stone-400 gap-2">
-                <Loader2 className="w-5 h-5 animate-spin text-[#00AC72]" />
-                <span className="text-sm font-medium">Fetching matching properties...</span>
+                <Loader2 className="w-5 h-5 animate-spin text-[#2a8545]" />
+                <span className="text-sm font-medium">Scanning properties with AI...</span>
               </div>
             ) : results.length === 0 ? (
               <div className="py-8 text-center text-stone-500 text-sm">
-                No matching properties found for your current criteria.
+                No properties matched your search prompt. Try clarifying the location or budget.
               </div>
             ) : (
               <div className="flex flex-col gap-2">
@@ -210,18 +325,18 @@ export default function PropertySearchFilter() {
                     key={item.uuid}
                     href={`/properties/${item.uuid}`}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-between p-3 rounded-2xl hover:bg-stone-50 border border-transparent hover:border-stone-200 transition-all group"
+                    className="flex items-center justify-between p-3 rounded-2xl hover:bg-[#EEF1EC] dark:hover:bg-stone-800 border border-transparent hover:border-stone-200 transition-all group"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-stone-100 flex items-center justify-center text-[#00AC72] group-hover:bg-[#00AC72] group-hover:text-white transition-colors">
+                      <div className="w-10 h-10 rounded-full bg-[#2a8545]/10 flex items-center justify-center text-[#2a8545] group-hover:bg-[#2a8545] group-hover:text-white transition-colors">
                         <Building className="w-5 h-5" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-stone-800 line-clamp-1">
+                        <h4 className="text-sm font-bold text-[#262626] dark:text-stone-100 line-clamp-1">
                           {item.title}
                         </h4>
-                        <div className="flex items-center gap-1.5 text-xs text-stone-500">
-                          <MapPin className="w-3 h-3 text-[#00AC72]" />
+                        <div className="flex items-center gap-1.5 text-xs text-[#5f5e5e]">
+                          <MapPin className="w-3 h-3 text-[#2a8545]" />
                           <span>
                             {item.location.lga}, {item.location.state}
                           </span>
@@ -230,7 +345,7 @@ export default function PropertySearchFilter() {
                     </div>
 
                     <div className="text-right">
-                      <span className="text-sm font-bold text-[#00AC72]">
+                      <span className="text-sm font-bold text-[#2a8545]">
                         ₦{item.base_price.toLocaleString()}
                       </span>
                       {item.payment_frequency && (

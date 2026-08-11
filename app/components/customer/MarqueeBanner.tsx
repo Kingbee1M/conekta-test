@@ -3,20 +3,19 @@
 import { motion } from 'framer-motion';
 
 const MARQUEE_ITEMS = [
-  '10,000+ verified listings',
-  'Lekki',
-  '2,300+ trusted realtors',
-  'Ikoyi',
-  '1,800+ artisans on-platform',
-  'Abuja',
-  'Zero fake agents',
-  'Port Harcourt',
-  'Fast inspection bookings',
-  'Ibadan',
-  'Vetted property managers',
-  'Enugu',
-  'Direct owner contacts',
-  'Lagos',
+  'FIND HOME',
+  'PAY YOUR WAY',
+  'LIVE WITH CONFIDENCE',
+  'MANAGE WITH EASE',
+  'OWN A PIECE',
+  'ALL CONNECTED',
+  'BUILD TOWARDS OWNERSHIP',
+  'VERIFIED HOMES',
+  'SECURE TRANSACTIONS',
+  'FLEXIBLE PAYMENTS',
+  'ONE HOME JOURNEY.',
+  'EVERY POSSIBILITY.',
+  'ONE CONNECTED PLATFORM.',
 ];
 
 export default function MarqueeBanner() {
