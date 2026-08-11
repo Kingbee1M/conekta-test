@@ -96,7 +96,7 @@ export default function MyHousingPage() {
   };
 
   return (
-    <main className="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen py-8 px-4 sm:px-6 lg:px-18">
       <div className="max-w-full mx-auto flex flex-col gap-6">
         
         {/* Pass down required fields dynamically */}

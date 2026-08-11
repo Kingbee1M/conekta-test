@@ -9,12 +9,44 @@ import { NigeriaStateEnum, NIGERIA_LGA_MAP } from '@/shared/enums/nigeriaRegions
 import { useLazyGetCustomerListingsQuery } from '@/shared/service/customer services/customerListing.services';
 
 // Dynamic animated placeholder prompts
-const SEARCH_PROMPTS = [
-  'Search "3 bedroom apartment in Lekki, Lagos under 50m"...',
+export const SEARCH_PROMPTS = [
+  // Budget-Focused & Shortlet
+  'Search "3 bedroom apartment in Lekki, Lagos under 50M"...',
+  'Try "Self-contain flat in Yaba, Lagos under 3 million"...',
+  'Search "Shortlet apartment in Ikoyi for 150k per night"...',
   'Try "Duplex in Ikeja with budget around 10M to 30M"...',
+  'Search "Cheap land for sale in Epe, Lagos under 5M"...',
+
+  // Premium & Luxury
+  'Search "Luxury penthouse in Banana Island with swimming pool"...',
+  'Try "5 bedroom fully detached duplex in Maitama, Abuja"...',
+  'Search "Oceanfront villa in Victoria Island"...',
+  'Try "Fully furnished duplex in Guzape with elevator"...',
+
+  // Location & Regional Specific
+  'Search "Bungalow for sale in Abuja, Federal Capital Territory"...',
+  'Try "4 bedroom duplex in GRA Phase 2, Port Harcourt"...',
+  'Search "2 bedroom flat for rent in Bodija, Ibadan"...',
+  'Try "Houses for sale near Asaba Airport, Delta State"...',
+  'Search "Serviced apartment in Jabi, Abuja"...',
+
+  // Land & Investment Opportunities
+  'Search "Dry land with C of O in Ibeju-Lekki"...',
+  'Try "Commercial plot along Express Road, Kano"...',
+  'Search "Farmland for sale in Ogun State with C of O"...',
+  'Try "2 plots of land in Centenary City, Enugu"...',
+
+  // Commercial & Office Spaces
   'Search "Commercial shop in Victoria Island"...',
-  'Try "Bungalow for sale in Abuja, Federal Capital Territory"...',
-  'Search "Self-contain flat in Yaba, Lagos under 3 million"...',
+  'Try "Office space for rent in Central Business District, Abuja"...',
+  'Search "Warehouse for rent in Ikeja Industrial Estate"...',
+  'Try "Event center for sale in GRA, Benin City"...',
+
+  // Specific Features & Utilities
+  'Search "Serviced 3 bedroom flat with 24/7 power in Oniru"...',
+  'Try "House for rent with private gym and cinema in Chevron"...',
+  'Search "Smart home duplex in Katampe Extension"...',
+  'Try "Pet-friendly apartment in Surulere with parking space"...',
 ];
 
 const BUDGET_RANGES = [

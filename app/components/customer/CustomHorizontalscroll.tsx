@@ -146,7 +146,6 @@ export default function CustomHorizontalScroll({
         }}
       >
         {doubledListings.map((item, index) => {
-          const displayRank = (index % listings.length) + 1;
           const raw = item as unknown as Record<string, unknown>;
           const id = item.id || (raw.uuid as string) || index;
           const category = (
@@ -162,11 +161,6 @@ export default function CustomHorizontalScroll({
               key={`${id}-${index}`}
               className="relative w-72.5 sm:w-77.5 shrink-0"
             >
-              {/* Floating Rank Badge */}
-              <div className="absolute top-4 left-4 w-8 h-8 rounded-full bg-stone-900/80 text-white font-mono font-bold text-xs flex items-center justify-center backdrop-blur-sm z-20 pointer-events-none shadow-sm">
-                #{displayRank}
-              </div>
-
               {isLand ? (
                 <LandCard property={item} />
               ) : (

@@ -26,6 +26,8 @@
   --color-lister-background: #EEF1EC;
   --color-secondary-color: #5f5e5e;
   --color-secondary-hover: #5f5e5e;
+  --color-primary-fixed: #9bf7aa;
+  --color-primary-fixed-dim: #80da90;
 }
 
 @theme inline {
