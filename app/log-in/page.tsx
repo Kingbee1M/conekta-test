@@ -13,7 +13,6 @@ import Link from "next/link"
 import { FaGoogle, FaFacebook } from "react-icons/fa"
 import { useState } from "react"
 import { FiEyeOff, FiEye } from "react-icons/fi"
-import { LuLoader } from "react-icons/lu"
 import { RoleEnum } from "@/shared/enums/roles.enum"
 import { motion } from "framer-motion"
 import { Loader } from "lucide-react"
@@ -159,10 +158,10 @@ export default function Login() {
                 {formik.isSubmitting ? (
                     <>
                     <Loader className="w-4 h-4 animate-spin" />
-                    <span className="text-white">Signing in...</span>
+                    <span className="text-primary-green">Signing in...</span>
                     </>
                 ) : (
-                    "Sign in"
+                    <span>Sign in</span>
                 )}
                 </button>
 

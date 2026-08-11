@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { LuArrowLeft, LuArrowRight } from 'react-icons/lu';
+import React, { useRef, useEffect, useCallback } from 'react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { ListingResult } from '@/shared/service/customer services/customerTypes';
 import PropertyCard from './PropetyCard';
 import LandCard from './LandCard';
@@ -11,7 +11,7 @@ export interface CustomHorizontalScrollProps {
   title?: string;
   subtitle?: string;
   listings: ListingResult[];
-  speed?: number; // Duration in seconds for full loop (default 40)
+  speed?: number; // Pixels per second (default 20)
 }
 
 export default function CustomHorizontalScroll({
@@ -19,57 +19,63 @@ export default function CustomHorizontalScroll({
   title = 'Trending listings',
   subtitle = 'What buyers across Nigeria are clicking into most right now.',
   listings = [],
-  speed = 40,
+  speed = 20, // Clean 20px per second scroll speed
 }: CustomHorizontalScrollProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
+  const isHoveredRef = useRef(false);
+  const lastTimeRef = useRef<number | null>(null);
 
-  // Duplicate items array once to establish seamless infinite loop boundaries
-  const doubledListings =
-    listings.length > 0 ? [...listings, ...listings] : [];
+  // Seamless duplication array
+  const doubledListings = listings.length > 0 ? [...listings, ...listings] : [];
 
-  // Wrap around scroll positions silently so scrolling never ends or bounces
+  // Silent infinite loop reset handler
   const handleScroll = useCallback(() => {
     const el = scrollContainerRef.current;
     if (!el) return;
 
-    const maxScroll = el.scrollWidth / 2;
-
-    if (el.scrollLeft >= maxScroll) {
-      el.scrollLeft -= maxScroll;
+    const halfWidth = el.scrollWidth / 2;
+    if (el.scrollLeft >= halfWidth) {
+      el.scrollLeft -= halfWidth;
     } else if (el.scrollLeft <= 0) {
-      el.scrollLeft += maxScroll;
+      el.scrollLeft += halfWidth;
     }
   }, []);
 
-  // Continuous marquee animation loop when not hovered
+  // Frame-rate independent smooth autoscroll loop
   useEffect(() => {
-    const el = scrollContainerRef.current;
-    if (!el || isHovered || listings.length === 0) return;
+    const container = scrollContainerRef.current;
+    if (!container || listings.length === 0) return;
 
     let animationFrameId: number;
-    const pxPerFrame = (el.scrollWidth / 2) / (speed * 60);
 
-    const step = () => {
-      if (el) {
-        el.scrollLeft += pxPerFrame;
-        handleScroll();
+    const step = (time: number) => {
+      if (lastTimeRef.current !== null) {
+        const deltaTime = (time - lastTimeRef.current) / 1000; // Convert to seconds
+
+        if (!isHoveredRef.current && container) {
+          container.scrollLeft += speed * deltaTime;
+          handleScroll();
+        }
       }
+
+      lastTimeRef.current = time;
       animationFrameId = requestAnimationFrame(step);
     };
 
     animationFrameId = requestAnimationFrame(step);
 
-    return () => cancelAnimationFrame(animationFrameId);
-  }, [isHovered, speed, listings.length, handleScroll]);
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      lastTimeRef.current = null;
+    };
+  }, [speed, listings.length, handleScroll]);
 
-  // Arrow button navigation
   const handleManualScroll = (direction: 'left' | 'right') => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
+    const container = scrollContainerRef.current;
+    if (!container) return;
 
-    const scrollAmount = direction === 'left' ? -360 : 360;
-    el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    const scrollAmount = direction === 'left' ? -340 : 340;
+    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
   };
 
   if (!listings || listings.length === 0) {
@@ -77,87 +83,98 @@ export default function CustomHorizontalScroll({
   }
 
   return (
-    <section className="w-full bg-[#F5F2EB] py-16 px-4 md:px-12 overflow-hidden select-none">
-      <div className="max-w-[1440px] mx-auto">
-        {/* Header Bar */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
-          <div>
-            {tagline && (
-              <div className="flex items-center gap-2 text-[#B28B36] font-mono text-xs font-bold uppercase tracking-wider mb-2">
-                <span>🔥</span>
-                <span>{tagline}</span>
-              </div>
-            )}
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#0D291E] tracking-tight">
-              {title}
-            </h2>
-            {subtitle && (
-              <p className="text-gray-500 font-sans text-sm md:text-base mt-2">
-                {subtitle}
-              </p>
-            )}
-          </div>
+    <section className="w-full max-w-7xl mx-auto px-4 py-12">
+      {/* Header Bar */}
+      <div className="flex items-end justify-between mb-8 gap-4">
+        <div>
+          {tagline && (
+            <span className="text-[11px] font-bold tracking-[0.2em] text-[#00AC72] uppercase mb-1 block">
+              {tagline}
+            </span>
+          )}
 
-          {/* Navigation Controls */}
-          <div className="flex items-center gap-3 self-end md:self-auto">
-            <button
-              onClick={() => handleManualScroll('left')}
-              aria-label="Scroll left"
-              className="w-12 h-12 rounded-full bg-white text-gray-800 flex items-center justify-center shadow-sm hover:bg-gray-100 transition active:scale-95 z-10"
-            >
-              <LuArrowLeft size={20} />
-            </button>
-            <button
-              onClick={() => handleManualScroll('right')}
-              aria-label="Scroll right"
-              className="w-12 h-12 rounded-full bg-white text-gray-800 flex items-center justify-center shadow-sm hover:bg-gray-100 transition active:scale-95 z-10"
-            >
-              <LuArrowRight size={20} />
-            </button>
-          </div>
+          <h2 className="text-3xl md:text-4xl font-extrabold text-stone-900 mb-2">
+            {title}
+          </h2>
+
+          {subtitle && (
+            <p className="text-stone-500 text-sm md:text-base max-w-xl">
+              {subtitle}
+            </p>
+          )}
         </div>
 
-        {/* Scroll Container (Hidden Scrollbars, True Wrap-Around Infinite Scroll) */}
-        <div
-          ref={scrollContainerRef}
-          onScroll={handleScroll}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          onTouchStart={() => setIsHovered(true)}
-          onTouchEnd={() => setIsHovered(false)}
-          className="flex gap-6 overflow-x-auto scrollbar-none [::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] py-2 cursor-grab active:cursor-grabbing"
-        >
-          {doubledListings.map((item, index) => {
-            const displayRank = (index % listings.length) + 1;
-            const raw = item as unknown as Record<string, unknown>;
-            const id = item.id || (raw.uuid as string) || index;
-            const category = (
-              (item as { category?: string }).category ||
-              ((raw.property_info as Record<string, unknown> | undefined)?.structure as string) ||
-              ''
-            ).toLowerCase();
-
-            const isLand = category.includes('land');
-
-            return (
-              <div
-                key={`${id}-${index}`}
-                className="relative w-[300px] sm:w-[340px] shrink-0"
-              >
-                {/* Floating Rank Badge */}
-                <div className="absolute top-4 left-4 w-9 h-9 rounded-full bg-black/80 text-white font-mono font-bold text-sm flex items-center justify-center backdrop-blur-sm z-20 pointer-events-none">
-                  {displayRank}
-                </div>
-
-                {isLand ? (
-                  <LandCard property={item} />
-                ) : (
-                  <PropertyCard listing={item} />
-                )}
-              </div>
-            );
-          })}
+        {/* Navigation Controls */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => handleManualScroll('left')}
+            aria-label="Scroll left"
+            className="p-3 rounded-full border border-stone-200 bg-white text-stone-700 hover:bg-stone-50 hover:border-stone-300 shadow-xs transition-all duration-200 active:scale-95 cursor-pointer"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => handleManualScroll('right')}
+            aria-label="Scroll right"
+            className="p-3 rounded-full border border-stone-200 bg-white text-stone-700 hover:bg-stone-50 hover:border-stone-300 shadow-xs transition-all duration-200 active:scale-95 cursor-pointer"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
+      </div>
+
+      {/* Scroll Container */}
+      <div
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+        onMouseEnter={() => {
+          isHoveredRef.current = true;
+        }}
+        onMouseLeave={() => {
+          isHoveredRef.current = false;
+        }}
+        onTouchStart={() => {
+          isHoveredRef.current = true;
+        }}
+        onTouchEnd={() => {
+          isHoveredRef.current = false;
+        }}
+        className="flex gap-6 overflow-x-auto scrollbar-none py-4 px-1 cursor-grab active:cursor-grabbing"
+        style={{
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none',
+        }}
+      >
+        {doubledListings.map((item, index) => {
+          const displayRank = (index % listings.length) + 1;
+          const raw = item as unknown as Record<string, unknown>;
+          const id = item.id || (raw.uuid as string) || index;
+          const category = (
+            (item as { category?: string }).category ||
+            ((raw.property_info as Record<string, unknown> | undefined)?.structure as string) ||
+            ''
+          ).toLowerCase();
+
+          const isLand = category.includes('land');
+
+          return (
+            <div
+              key={`${id}-${index}`}
+              className="relative w-72.5 sm:w-77.5 shrink-0"
+            >
+              {/* Floating Rank Badge */}
+              <div className="absolute top-4 left-4 w-8 h-8 rounded-full bg-stone-900/80 text-white font-mono font-bold text-xs flex items-center justify-center backdrop-blur-sm z-20 pointer-events-none shadow-sm">
+                #{displayRank}
+              </div>
+
+              {isLand ? (
+                <LandCard property={item} />
+              ) : (
+                <PropertyCard listing={item} />
+              )}
+            </div>
+          );
+        })}
       </div>
     </section>
   );

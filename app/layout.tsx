@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import './globals.css'
+import './globals.css';
 import StoreProvider from "@/lib/storeProvider";
 import CookieBanner from "./components/ui/cookieBanner";
 import DevStorageTool from "./components/ui/DevStorageTool";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastProvider } from "./components/ui/ToastProvider";
-import { Montserrat, Cormorant_Garamond, Poppins, Inter } from "next/font/google";
+import { Hanken_Grotesk, JetBrains_Mono } from "next/font/google";
 import NavbarWrapper from "./components/ui/clientNav";
 import NextProgress from "./components/ui/NextProgress";
 import { Suspense } from "react";
@@ -13,33 +13,22 @@ import FooterWrapper from "./components/ui/clientFooter";
 import AuthWatcher from "@/lib/authProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-const montserrat = Montserrat({
-  variable: "--font-montserrat",
-  subsets: ["latin"],
-});
-
-const poppins = Poppins({
-   variable: "--font-poppins",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const garamond = Cormorant_Garamond({
-  variable: "--font-cormorant-garamond",
-  subsets: ["latin"],
-});
-
-const inter = Inter ({
-  variable: "--font-inter",
+const hanken = Hanken_Grotesk({
+  variable: "--font-hanken",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800"],
-})
+});
+
+const jetbrains = JetBrains_Mono({
+  variable: "--font-jetbrains",
+  subsets: ["latin"],
+  weight: ["500"],
+});
 
 export const metadata: Metadata = {
-  title: "Conketa",
-  description: "Conketa is a platform that connects landlords and tenants, making it easier to find and rent properties. With Conketa, landlords can list their properties and manage their rentals, while tenants can search for available properties and apply for rentals. Conketa provides a seamless experience for both landlords and tenants, ensuring a smooth rental process.",
+  title: "Conekta",
+  description: "Conekta is a platform that connects landlords and tenants...",
 };
-
 
 export default function RootLayout({
   children,
@@ -48,25 +37,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} ${garamond.variable} ${poppins.variable} ${inter.variable} w-full max-w-screen min-h-screen flex flex-col items-center justify-between overflow-x-hidden`}>
+      <body className={`${hanken.variable} ${jetbrains.variable} font-sans w-full max-w-screen min-h-screen flex flex-col items-center justify-between overflow-x-hidden`}>
         <StoreProvider>
           <AuthWatcher>
             <ToastProvider>
-            <div id="cookie-portal" />
-            <div id="help-portal" />
+              <div id="cookie-portal" />
+              <div id="help-portal" />
 
-            <Suspense fallback={null}>
-          <NextProgress />
-        </Suspense>
-            <NavbarWrapper />
-            <TooltipProvider>
-
-            <main className="w-full max-w-520 flex-1 flex-col items-center justify-center ">
-              {children}
-            </main>
-
-            </TooltipProvider>
-            <FooterWrapper />
+              <Suspense fallback={null}>
+                <NextProgress />
+              </Suspense>
+              <NavbarWrapper />
+              <TooltipProvider>
+                <main className="w-full max-w-520 flex-1 flex-col items-center justify-center">
+                  {children}
+                </main>
+              </TooltipProvider>
+              <FooterWrapper />
             </ToastProvider>
 
             <CookieBanner />
