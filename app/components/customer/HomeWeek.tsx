@@ -84,7 +84,7 @@ export default function HomeOfTheWeek() {
         Editor&apos;s Pick
       </span>
       <h2 className="text-3xl md:text-4xl font-extrabold text-stone-900 mb-8">
-        Home of the Week
+        Best Available Home in Your Area
       </h2>
 
       {/* Hero Card Container */}

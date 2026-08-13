@@ -1,9 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { LuDroplet, LuZap } from "react-icons/lu";
+import { useRouter } from 'next/navigation';
+import { LuDroplet, LuZap, LuArrowLeft } from "react-icons/lu";
 
-import { Message, MaintenanceTicket, TenantData, } from '@/shared/service/customer services/customerTypes';
+import { Message, MaintenanceTicket, TenantData } from '@/shared/service/customer services/customerTypes';
 import { PaymentFrequencyEnum } from '@/shared/enums/paymentFreqency.enums';
 import HeaderTabs from '@/app/components/HeaderTabs';
 import OverviewTab from '@/app/components/OverviewTab';
@@ -11,6 +12,8 @@ import ChatTab from '@/app/components/ChatsTab';
 import MaintenanceTab from '@/app/components/MaintainanceTab';
 
 export default function MyHousingPage() {
+  const router = useRouter();
+
   const [tenantData, setTenantData] = useState<TenantData>({
     address: "Luxury 3 Bedroom Apartment, Admiralty Way, Lekki Phase 1",
     roomNumber: "Apartment 3B",
@@ -88,7 +91,7 @@ export default function MyHousingPage() {
       description: newTicketDesc,
       status: 'Pending Assignment',
       date: 'Today',
-      icon: newTicketService === 'Electrical' ? <LuZap className="text-amber-500" /> : <LuDroplet className="text-blue-500" />
+      icon: newTicketService === 'Electrical' ? <LuZap className="text-[#FBBC05]" /> : <LuDroplet className="text-[#4285F4]" />
     };
 
     setMaintenanceTickets([ticket, ...maintenanceTickets]);
@@ -99,7 +102,19 @@ export default function MyHousingPage() {
     <main className="min-h-screen py-8 px-4 sm:px-6 lg:px-18">
       <div className="max-w-full mx-auto flex flex-col gap-6">
         
-        {/* Pass down required fields dynamically */}
+        {/* TOP NAVIGATION BACK BUTTON */}
+        <div>
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 text-xs font-semibold transition-all group cursor-pointer"
+          >
+            <LuArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+            <span>Back</span>
+          </button>
+        </div>
+
+        {/* Header Tabs */}
         <HeaderTabs 
           activeTab={activeTab} 
           setActiveTab={setActiveTab} 

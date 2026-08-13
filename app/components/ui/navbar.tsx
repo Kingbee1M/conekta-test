@@ -15,8 +15,8 @@ export default function Navbar() {
     const navs = [
         { title: 'Discover', link: '/find-property' },
         { title: 'Find Artisans', link: '/find-artisan' },
-        { title: 'Manage', link: '/my-housing' },
-        { title: 'Invest', link: '/my-housing' },
+        { title: 'Manage', link: '/housing-hub' },
+        { title: 'Invest', link: '/housing-hub' },
     ]
     return (
         <nav className="w-screen fixed top-0 left-0 z-40 flex justify-center">
