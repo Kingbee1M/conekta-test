@@ -1,11 +1,11 @@
 'use client';
 
 import { ReactNode, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, notFound } from 'next/navigation';
 import NoSSR from "../components/noSSR";
 import AdminClientLayout from "../components/ui/adminClientLayout";
 import { useAppSelector } from '@/lib/hooks';
-import {RoleEnum} from "@/shared/enums/roles.enum"
+import { RoleEnum } from "@/shared/enums/roles.enum";
 
 interface LayoutProps {
   children: ReactNode;
@@ -20,11 +20,14 @@ export default function AdminDashboardLayout({ children }: LayoutProps) {
 
   useEffect(() => {
     if (!isAuthenticated || !session) {
-      router.replace('/admin/login');
-    } else if (!hasAccess) {
-      router.replace('/unauthorized'); 
+      router.replace('/admin-login');
     }
-  }, [isAuthenticated, session, router, allowedRoles, hasAccess]);
+  }, [isAuthenticated, session, router]);
+
+  // If session exists but the user lacks the required role, trigger 404
+  if (session && !hasAccess) {
+    notFound();
+  }
 
   if (!hasAccess) {
     return (
@@ -39,6 +42,7 @@ export default function AdminDashboardLayout({ children }: LayoutProps) {
 
   return (
     <NoSSR>
-    <AdminClientLayout>{children}</AdminClientLayout>
-    </NoSSR>);
+      <AdminClientLayout>{children}</AdminClientLayout>
+    </NoSSR>
+  );
 }

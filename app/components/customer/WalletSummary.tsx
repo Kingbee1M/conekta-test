@@ -54,7 +54,7 @@ export default function WalletSummary() {
         {/* Card Grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5 mt-5 items-stretch">
           {/* Main Wallet Balance Card */}
-          <div className="md:col-span-7 bg-gradient-to-br from-smooth-green to-primary-green text-white rounded-2xl p-5 flex flex-col justify-between shadow-md relative overflow-hidden">
+          <div className="md:col-span-7 bg-linear-to-br from-primary-green to-secondary-green-green text-white rounded-2xl p-5 flex flex-col justify-between shadow-md relative overflow-hidden">
             <div className="relative z-10 flex items-start justify-between">
               <div>
                 <span className="text-xs text-primary-fixed-dim uppercase tracking-wider font-medium">
@@ -85,13 +85,6 @@ export default function WalletSummary() {
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Top Up</span>
-                </button>
-                <button
-                  type="button"
-                  className="px-3 py-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors text-xs font-bold flex items-center gap-1 cursor-pointer"
-                >
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                  <span>Withdraw</span>
                 </button>
               </div>
             </div>

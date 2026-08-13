@@ -61,11 +61,11 @@ export default function SidebarCard({ tenant, activeTab, setActiveTab }: Sidebar
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-xs flex flex-col items-center text-center">
       {/* Dynamic Initials Badge */}
-      <div className="w-14 h-14 bg-emerald-50 text-[#00AC72] font-bold text-lg rounded-full flex items-center justify-center mb-3">
+      <div className="w-14 h-14 bg-secondary-green-hover text-primary-green font-bold text-lg rounded-full flex items-center justify-center mb-3">
         {tenant.avatarInitials}
       </div>
-      <h3 className="text-sm font-bold text-gray-800">{tenant.name}</h3>
-      <p className="text-[11px] text-gray-400 mb-2 truncate max-w-full">{tenant.email}</p>
+      <h3 className="text-sm font-bold text-gray-800">Blessing Bamise</h3>
+      <p className="text-[11px] text-gray-400 mb-2 truncate max-w-full">Blessing Bamise@useconekta.com</p>
       {tenant.isVerified && (
         <span className="bg-gray-100 text-gray-500 font-medium tracking-tight text-[10px] px-2.5 py-0.5 rounded-full mb-6">
           Verified Tenant
@@ -83,11 +83,11 @@ export default function SidebarCard({ tenant, activeTab, setActiveTab }: Sidebar
               onClick={() => setActiveTab(menu.id)}
               className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
                 isActive 
-                  ? 'bg-emerald-50/60 text-[#00AC72]' 
+                  ? 'bg-secondary-green text-white' 
                   : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
               }`}
             >
-              <Icon className={`text-base ${isActive ? 'text-[#00AC72]' : 'text-gray-400'}`} />
+              <Icon className={`text-base ${isActive ? 'text-primary-green' : 'text-gray-400'}`} />
               {menu.name}
             </button>
           );
