@@ -20,7 +20,7 @@ const MARQUEE_ITEMS = [
 
 export default function MarqueeBanner() {
   return (
-    <div className="w-full bg-[#00AC72] text-white py-3.5 overflow-hidden shadow-md border-y border-emerald-600 select-none">
+    <div className="w-full bg-primary-green text-white py-3.5 overflow-hidden shadow-md border-y border-emerald-600 select-none">
       <div className="flex w-max">
         {/* Render 2 identical sets side-by-side to allow seamless infinite loop */}
         {[0, 1].map((setIndex) => (
@@ -39,7 +39,7 @@ export default function MarqueeBanner() {
                 <span className="text-xs sm:text-sm font-semibold tracking-wide uppercase px-4">
                   {item}
                 </span>
-                <span className="text-emerald-200 text-xs px-2 opacity-80">●</span>
+                <span className="text-secondary-green-hover text-xs px-2 opacity-80">●</span>
               </div>
             ))}
           </motion.div>

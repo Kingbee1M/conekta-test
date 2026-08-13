@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 import { RootState } from '@/shared/store/store';
 import SidebarCard from '@/app/components/SideBarCard';
 import StatCards from '@/app/components/StatsCard';
@@ -37,7 +39,9 @@ export interface TransactionItem {
 }
 
 export default function TenantProfileContainer() {
-  // Pull profile state from your existing slice context
+  const router = useRouter();
+
+  // Pull profile state from existing slice context
   const { profile } = useSelector((state: RootState) => state.auth);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'transactions' | 'saved' | 'notifications' | 'support' | 'settings'>('dashboard');
 
@@ -69,14 +73,21 @@ export default function TenantProfileContainer() {
     { id: "TX-003", title: "Plumbing Service", date: "3/5/2026", amount: 25000, status: "completed", type: "artisan" }
   ];
 
+  // Handle Back Navigation
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+    } else {
+      router.push('/');
+    }
+  };
+
   // 2. Paystack Transaction Gateway Callback Mock Hook
   const handleMockPaymentInitiation = (homeDetails: HomeOverviewData) => {
-    
-    // Mock Paystack Transaction Receipt Record payload mapping format
     const mockReceipt = {
       reference: `PAY-MOCK-${Math.floor(100000 + Math.random() * 900000)}`,
       status: "success",
-      amount_paid_kobo: homeDetails.rentAmountNumeric * 100, // Paystack operates natively in kobo units
+      amount_paid_kobo: homeDetails.rentAmountNumeric * 100,
       paid_at: new Date().toISOString(),
       metadata: {
         property_title: homeDetails.title,
@@ -88,15 +99,29 @@ export default function TenantProfileContainer() {
     };
 
     alert(`[MOCK PAYSTACK GATEWAY SUCCESS]\nReference: ${mockReceipt.reference}\nAmount: ₦${homeDetails.rentAmountNumeric.toLocaleString()}`);
-    
   };
 
   return (
-    <div className="w-full min-h-screen bg-gray-50/50 px-4 md:px-10 py-8 ">
+    <div className="w-full min-h-screen bg-gray-50/50 px-4 md:px-10 py-8">
+      {/* Back Button Action Header */}
+      <div className="mb-4">
+        <button
+          onClick={handleBack}
+          className="inline-flex items-center gap-2 text-xs font-semibold text-gray-600 hover:text-gray-900 bg-white hover:bg-gray-100 border border-gray-200/80 px-3 py-1.5 rounded-xl transition-all cursor-pointer shadow-xs active:scale-95"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back
+        </button>
+      </div>
+
       {/* Top Banner Context heading lines */}
       <div className="mb-6 text-left">
-        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Welcome back, {firstName}!</h1>
-        <p className="text-xs text-gray-500 mt-0.5">Here&apos;s what&apos;s happening with your housing journey.</p>
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+          Welcome back, {firstName}!
+        </h1>
+        <p className="text-xs text-gray-500 mt-0.5">
+          Here&apos;s what&apos;s happening with your housing journey.
+        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">

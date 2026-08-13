@@ -2,7 +2,7 @@
 
 import { ReactNode, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useRouter } from 'next/navigation';
+import { useRouter, notFound } from 'next/navigation';
 import { RootState } from '@/shared/store/store';
 import ListerSideBar from '@/app/components/ui/listerSideBar';
 
@@ -14,26 +14,29 @@ export default function ListerClientLayout({ children }: ListerClientLayoutProps
   const router = useRouter();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  // 1. Read from our newly separated "session" slice
+  // 1. Read from session slice
   const { session, isAuthenticated } = useSelector((state: RootState) => state.auth);
 
   const toggleSidebar = () => setIsMobileOpen(!isMobileOpen);
   const closeSidebar = () => setIsMobileOpen(false);
 
-  // 2. Compute authorization status on the fly
+  // 2. Compute authorization status
   const activeRole = session?.active_role?.toLowerCase();
   const isAuthorized = isAuthenticated && session && activeRole === 'lister';
 
-  // 3. Handle redirects purely as a side effect
+  // 3. Handle login redirect if unauthenticated
   useEffect(() => {
     if (!isAuthenticated || !session) {
       router.replace('/log-in');
-    } else if (activeRole !== 'lister') {
-      router.replace('/unauthorized');
     }
-  }, [session, isAuthenticated, activeRole, router]);
+  }, [session, isAuthenticated, router]);
 
-  // 4. Show the loading spinner while auth resolves
+  // 4. Trigger 404 if authenticated but role is not lister
+  if (session && activeRole !== 'lister') {
+    notFound();
+  }
+
+  // 5. Show loading state while auth resolves
   if (!isAuthorized) {
     return (
       <div className="w-full h-screen flex justify-center items-center bg-gray-50">
