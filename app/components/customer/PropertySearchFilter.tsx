@@ -8,52 +8,18 @@ import { structureType } from '@/shared/enums/structure.enum';
 import { NigeriaStateEnum, NIGERIA_LGA_MAP } from '@/shared/enums/nigeriaRegions.enums';
 import { useLazyGetCustomerListingsQuery } from '@/shared/service/customer services/customerListing.services';
 
-// Dynamic animated placeholder prompts
+// Shortened prompts for crisp horizontal display
 export const SEARCH_PROMPTS = [
-  // Budget-Focused & Shortlet
-  'Search "3 bedroom apartment in Lekki, Lagos under 50M"...',
-  'Try "Self-contain flat in Yaba, Lagos under 3 million"...',
-  'Search "Shortlet apartment in Ikoyi for 150k per night"...',
-  'Try "Duplex in Ikeja with budget around 10M to 30M"...',
-  'Search "Cheap land for sale in Epe, Lagos under 5M"...',
-
-  // Premium & Luxury
-  'Search "Luxury penthouse in Banana Island with swimming pool"...',
-  'Try "5 bedroom fully detached duplex in Maitama, Abuja"...',
-  'Search "Oceanfront villa in Victoria Island"...',
-  'Try "Fully furnished duplex in Guzape with elevator"...',
-
-  // Location & Regional Specific
-  'Search "Bungalow for sale in Abuja, Federal Capital Territory"...',
-  'Try "4 bedroom duplex in GRA Phase 2, Port Harcourt"...',
-  'Search "2 bedroom flat for rent in Bodija, Ibadan"...',
-  'Try "Houses for sale near Asaba Airport, Delta State"...',
-  'Search "Serviced apartment in Jabi, Abuja"...',
-
-  // Land & Investment Opportunities
-  'Search "Dry land with C of O in Ibeju-Lekki"...',
-  'Try "Commercial plot along Express Road, Kano"...',
-  'Search "Farmland for sale in Ogun State with C of O"...',
-  'Try "2 plots of land in Centenary City, Enugu"...',
-
-  // Commercial & Office Spaces
-  'Search "Commercial shop in Victoria Island"...',
-  'Try "Office space for rent in Central Business District, Abuja"...',
-  'Search "Warehouse for rent in Ikeja Industrial Estate"...',
-  'Try "Event center for sale in GRA, Benin City"...',
-
-  // Specific Features & Utilities
-  'Search "Serviced 3 bedroom flat with 24/7 power in Oniru"...',
-  'Try "House for rent with private gym and cinema in Chevron"...',
-  'Search "Smart home duplex in Katampe Extension"...',
-  'Try "Pet-friendly apartment in Surulere with parking space"...',
-];
-
-const BUDGET_RANGES = [
-  { label: '₦1,000,000 - ₦3,000,000', min: 1000000, max: 3000000 },
-  { label: '₦3,000,000 - ₦10,000,000', min: 3000000, max: 10000000 },
-  { label: '₦10,000,000 - ₦50,000,000', min: 10000000, max: 50000000 },
-  { label: '₦50,000,000+', min: 50000000, max: undefined },
+  '3 bed apartment in Lekki under 50M...',
+  'Self-contain in Yaba under 3M...',
+  'Shortlet in Ikoyi for 150k/night...',
+  'Duplex in Ikeja around 10M-30M...',
+  'Cheap land in Epe under 5M...',
+  'Penthouse in Banana Island with pool...',
+  '5 bed duplex in Maitama, Abuja...',
+  'Serviced flat with 24/7 power in Oniru...',
+  'Commercial plot along Express Rd, Kano...',
+  '4 bed duplex in GRA, Port Harcourt...',
 ];
 
 export default function PropertySearchFilter() {
@@ -72,8 +38,8 @@ export default function PropertySearchFilter() {
   // 1. Typewriter Animation Effect
   useEffect(() => {
     const currentPrompt = SEARCH_PROMPTS[promptIndex];
-    const typingSpeed = isDeleting ? 30 : 60;
-    const pauseDuration = 2200;
+    const typingSpeed = isDeleting ? 25 : 55;
+    const pauseDuration = 2000;
 
     const timeout = setTimeout(() => {
       if (!isDeleting && charIndex < currentPrompt.length) {
@@ -93,12 +59,11 @@ export default function PropertySearchFilter() {
     return () => clearTimeout(timeout);
   }, [charIndex, isDeleting, promptIndex]);
 
-  // 2. Client-side NLP Extractor to preserve backend structure parameters
+  // 2. Client-side NLP Extractor
   const parsedParameters = useMemo(() => {
     const queryLower = searchQuery.toLowerCase();
     if (!queryLower.trim()) return {};
 
-    // Match State
     let detectedState: string | undefined = undefined;
     for (const st of Object.values(NigeriaStateEnum)) {
       if (queryLower.includes(st.toLowerCase())) {
@@ -107,7 +72,6 @@ export default function PropertySearchFilter() {
       }
     }
 
-    // Match LGA
     let detectedLga: string | undefined = undefined;
     if (detectedState && NIGERIA_LGA_MAP[detectedState as NigeriaStateEnum]) {
       const lgas = NIGERIA_LGA_MAP[detectedState as NigeriaStateEnum];
@@ -129,7 +93,6 @@ export default function PropertySearchFilter() {
       }
     }
 
-    // Match Structure Type
     let detectedCategory: string | undefined = undefined;
     for (const type of Object.values(structureType)) {
       if (queryLower.includes(type.toLowerCase())) {
@@ -138,7 +101,6 @@ export default function PropertySearchFilter() {
       }
     }
 
-    // Match Numbers/Prices (e.g., 5m, 10 million, 50,000,000)
     let min_price: number | undefined = undefined;
     let max_price: number | undefined = undefined;
 
@@ -165,9 +127,7 @@ export default function PropertySearchFilter() {
 
   // 3. Trigger debounced API query
   useEffect(() => {
-    if (!searchQuery.trim()) {
-      return;
-    }
+    if (!searchQuery.trim()) return;
 
     const timer = setTimeout(() => {
       triggerSearch({
@@ -199,14 +159,14 @@ export default function PropertySearchFilter() {
   const results = data?.data?.results || [];
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-4xl mx-auto px-4 z-30">
-      {/* MOVING GRADIENT BORDER CONTAINER */}
-      <div className="relative p-[2.5px] rounded-full overflow-hidden shadow-2xl group transition-all duration-300 hover:shadow-[0_10px_30px_rgba(42,133,69,0.25)]">
-        {/* Animated Gradient Background Ring */}
-        <div 
-          className="absolute inset-[-100%] animate-[spin_6s_linear_infinite]"
+    <div ref={containerRef} className="relative w-full z-30">
+      {/* GOOGLE COLOR-GRADIENT BORDER CONTAINER */}
+      <div className="relative p-0.5 rounded-full overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300">
+        <div
+          className="absolute -inset-full animate-[spin_5s_linear_infinite]"
           style={{
-            background: 'conic-gradient(from 0deg, #2a8545, #80da90, #00B075, #9bf7aa, #1B4D3E, #2a8545)',
+            background:
+              'conic-gradient(from 0deg, #4285F4, #EA4335, #FBBC05, #34A853, #4285F4)',
           }}
         />
 
@@ -216,19 +176,19 @@ export default function PropertySearchFilter() {
             e.preventDefault();
             if (searchQuery.trim()) setIsOpen(true);
           }}
-          className="relative bg-[#F5F2EB] dark:bg-stone-900 rounded-full px-4 md:px-6 py-2.5 md:py-3 flex items-center gap-3 w-full backdrop-blur-xl"
+          className="relative bg-app-background dark:bg-stone-900 rounded-full px-3 sm:px-4 py-2 flex items-center gap-2 w-full backdrop-blur-xl"
         >
-          {/* AI Search Icon */}
-          <div className="flex items-center justify-center w-9 h-9 rounded-full bg-[#2a8545]/10 text-[#2a8545] shrink-0">
+          {/* AI Sparkles Icon with Google AI Gradient */}
+          <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-linear-to-r from-[#4285F4]/15 via-[#EA4335]/15 to-[#34A853]/15 text-[#4285F4] shrink-0">
             {isFetching ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <Loader2 className="w-4 h-4 animate-spin text-[#4285F4]" />
             ) : (
-              <Sparkles className="w-5 h-5 animate-pulse" />
+              <Sparkles className="w-4 h-4 animate-pulse text-[#4285F4]" />
             )}
           </div>
 
-          {/* INPUT FIELD WITH ANIMATED PLACEHOLDER */}
-          <div className="flex-1 relative flex items-center overflow-hidden">
+          {/* INPUT FIELD WITH TRUNCATED ANIMATED PLACEHOLDER */}
+          <div className="flex-1 min-w-0 relative flex items-center">
             <input
               type="text"
               value={searchQuery}
@@ -237,7 +197,7 @@ export default function PropertySearchFilter() {
                 if (searchQuery.trim()) setIsOpen(true);
               }}
               placeholder={placeholderText}
-              className="w-full bg-transparent text-sm md:text-base font-medium text-[#262626] dark:text-stone-100 placeholder-[#5f5e5e] focus:outline-none pr-2"
+              className="w-full bg-transparent text-xs sm:text-sm font-medium text-text-primary dark:text-stone-100 placeholder-[#737373] focus:outline-none truncate pr-1"
             />
             {searchQuery && (
               <button
@@ -246,30 +206,35 @@ export default function PropertySearchFilter() {
                   setSearchQuery('');
                   setIsOpen(false);
                 }}
-                className="p-1 rounded-full text-stone-400 hover:text-stone-700 transition-colors mr-1"
+                className="p-1 rounded-full text-stone-400 hover:text-stone-700 transition-colors shrink-0"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
 
-          {/* RIGHT SIDE: POWERED BY GOOGLE BADGE & BUTTON */}
-          <div className="flex items-center gap-3 shrink-0 border-l border-stone-300 dark:border-stone-700 pl-3 md:pl-4">
-            <div className="hidden sm:flex flex-col items-end pointer-events-none select-none">
-              <span className="text-[9px] font-semibold tracking-wider text-[#5f5e5e] uppercase">
-                Powered by
+          {/* RIGHT SIDE: COLORFUL GOOGLE BRANDING & BUTTON */}
+          <div className="flex items-center gap-2 shrink-0 border-l border-stone-300/70 dark:border-stone-700/70 pl-2">
+            {/* Explicit "Powered by Google AI" Label */}
+            <div className="hidden sm:flex items-center gap-1 pointer-events-none select-none text-[10px] font-medium text-stone-500 dark:text-stone-400">
+              <span className="text-[9px]">Powered by</span>
+              <span className="font-bold tracking-tight">
+                <span className="text-[#4285F4]">G</span>
+                <span className="text-[#EA4335]">o</span>
+                <span className="text-[#FBBC05]">o</span>
+                <span className="text-[#4285F4]">g</span>
+                <span className="text-[#34A853]">l</span>
+                <span className="text-[#EA4335]">e</span>
               </span>
-              <span className="text-xs font-bold bg-gradient-to-r from-blue-600 via-red-500 to-yellow-500 bg-clip-text text-transparent">
-                Google AI
-              </span>
+              <span className="font-semibold text-[#4285F4] text-[9px]">AI</span>
             </div>
 
             <button
               type="submit"
-              className="px-5 py-2.5 bg-[#2a8545] hover:bg-[#80da90] hover:text-[#1B4D3E] text-white font-bold text-xs md:text-sm rounded-full shadow-md transition-all duration-200 flex items-center gap-2 cursor-pointer"
+              className="p-2 sm:px-3.5 sm:py-1.5 bg-primary-green hover:bg-primary-green-hover text-white font-bold text-xs rounded-full shadow-sm transition-all duration-200 flex items-center gap-1.5 cursor-pointer shrink-0"
             >
-              <Search className="w-4 h-4" />
-              <span className="hidden md:inline">Search</span>
+              <Search className="w-3.5 h-3.5" />
+              <span className="hidden xl:inline">Search</span>
             </button>
           </div>
         </form>
@@ -279,24 +244,24 @@ export default function PropertySearchFilter() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 12, scale: 0.98 }}
+            initial={{ opacity: 0, y: 8, scale: 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.98 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="absolute left-4 right-4 top-full mt-3 bg-white/95 dark:bg-stone-900/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-stone-200/80 dark:border-stone-800 p-4 z-50 max-h-96 overflow-y-auto scrollbar-none"
+            exit={{ opacity: 0, y: 6, scale: 0.98 }}
+            transition={{ duration: 0.18, ease: 'easeOut' }}
+            className="absolute left-0 right-0 top-full mt-2 bg-white/95 dark:bg-stone-900/95 backdrop-blur-xl rounded-2xl shadow-xl border border-stone-200/80 dark:border-stone-800 p-3 z-50 max-h-80 overflow-y-auto scrollbar-none"
           >
-            <div className="flex items-center justify-between pb-3 mb-2 border-b border-stone-100 dark:border-stone-800 px-2">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-stone-400">
-                  AI Results ({data?.data?.count ?? results.length})
+            <div className="flex items-center justify-between pb-2 mb-2 border-b border-stone-100 dark:border-stone-800 px-1">
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
+                  Results ({data?.data?.count ?? results.length})
                 </span>
                 {parsedParameters.state && (
-                  <span className="text-[10px] bg-[#DBFCE7CC] text-[#2a8545] font-semibold px-2 py-0.5 rounded-full">
+                  <span className="text-[9px] bg-active-link text-primary-green font-semibold px-1.5 py-0.5 rounded-full">
                     {parsedParameters.state}
                   </span>
                 )}
                 {parsedParameters.category && (
-                  <span className="text-[10px] bg-[#DBFCE7CC] text-[#2a8545] font-semibold px-2 py-0.5 rounded-full">
+                  <span className="text-[9px] bg-active-link text-primary-green font-semibold px-1.5 py-0.5 rounded-full">
                     {parsedParameters.category}
                   </span>
                 )}
@@ -305,51 +270,51 @@ export default function PropertySearchFilter() {
                 onClick={() => setIsOpen(false)}
                 className="p-1 rounded-full text-stone-400 hover:text-stone-700 transition-colors"
               >
-                <X className="w-4 h-4" />
+                <X className="w-3.5 h-3.5" />
               </button>
             </div>
 
             {isFetching ? (
-              <div className="flex items-center justify-center py-10 text-stone-400 gap-2">
-                <Loader2 className="w-5 h-5 animate-spin text-[#2a8545]" />
-                <span className="text-sm font-medium">Scanning properties with AI...</span>
+              <div className="flex items-center justify-center py-6 text-stone-400 gap-2">
+                <Loader2 className="w-4 h-4 animate-spin text-[#4285F4]" />
+                <span className="text-xs font-medium">Scanning properties...</span>
               </div>
             ) : results.length === 0 ? (
-              <div className="py-8 text-center text-stone-500 text-sm">
-                No properties matched your search prompt. Try clarifying the location or budget.
+              <div className="py-6 text-center text-stone-500 text-xs">
+                No properties matched your query. Try a different location or price.
               </div>
             ) : (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col gap-1.5">
                 {results.map((item) => (
                   <Link
                     key={item.uuid}
                     href={`/properties/${item.uuid}`}
                     onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-between p-3 rounded-2xl hover:bg-[#EEF1EC] dark:hover:bg-stone-800 border border-transparent hover:border-stone-200 transition-all group"
+                    className="flex items-center justify-between p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 transition-all group"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#2a8545]/10 flex items-center justify-center text-[#2a8545] group-hover:bg-[#2a8545] group-hover:text-white transition-colors">
-                        <Building className="w-5 h-5" />
+                    <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                      <div className="w-8 h-8 rounded-full bg-[#2a8545]/10 flex items-center justify-center text-[#2a8545] shrink-0">
+                        <Building className="w-4 h-4" />
                       </div>
-                      <div>
-                        <h4 className="text-sm font-bold text-[#262626] dark:text-stone-100 line-clamp-1">
+                      <div className="min-w-0">
+                        <h4 className="text-xs font-bold text-text-primary dark:text-stone-100 truncate">
                           {item.title}
                         </h4>
-                        <div className="flex items-center gap-1.5 text-xs text-[#5f5e5e]">
-                          <MapPin className="w-3 h-3 text-[#2a8545]" />
-                          <span>
+                        <div className="flex items-center gap-1 text-[11px] text-[#5f5e5e] truncate">
+                          <MapPin className="w-3 h-3 text-[#2a8545] shrink-0" />
+                          <span className="truncate">
                             {item.location.lga}, {item.location.state}
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="text-right">
-                      <span className="text-sm font-bold text-[#2a8545]">
+                    <div className="text-right shrink-0">
+                      <span className="text-xs font-bold text-[#2a8545]">
                         ₦{item.base_price.toLocaleString()}
                       </span>
                       {item.payment_frequency && (
-                        <span className="text-[10px] text-stone-400 block uppercase">
+                        <span className="text-[9px] text-stone-400 block uppercase">
                           /{item.payment_frequency}
                         </span>
                       )}

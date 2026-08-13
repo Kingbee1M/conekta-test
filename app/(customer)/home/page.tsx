@@ -4,6 +4,7 @@ import FeaturedProperties from '@/app/components/customer/FeaturedProperties';
 import RoleCards from '@/app/components/customer/RoleCards';
 import TrendingNeighborhoods from '@/app/components/customer/TrendingNeighborhoods';
 import EditorsPick from '@/app/components/customer/editorsPick';
+import HomeWelcomeSection from '@/app/components/customer/HomeWelcomeSection';
 
 export const metadata: Metadata = {
   title: 'Conekta | Find Verified Homes & Real Estate in Nigeria',
@@ -64,7 +65,8 @@ export default function Home() {
       />
 
       <main className="w-full flex flex-col items-center mb-5 gap-7">
-        <HomeCarousel />
+        {/* <HomeCarousel /> */}
+        <HomeWelcomeSection />
         <EditorsPick />
         <FeaturedProperties />
         <RoleCards />
