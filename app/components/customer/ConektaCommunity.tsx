@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import community from '@/public/png/conekta-community.png';
+import VerifiedPropertySummaryCard from './VerifiedPropertySummaryCard';
 
 export default function ConektaCommunity() {
   return (
@@ -38,18 +39,7 @@ export default function ConektaCommunity() {
         </div>
 
         {/* Right Column: Image Preview Card */}
-        <div className="flex-1 w-full max-w-lg flex items-center justify-center">
-          <div className="relative w-full rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-            <Image
-              src={community}
-              alt="Conekta Community Impact - Project Roof"
-              width={600}
-              height={450}
-              className="w-full h-auto object-cover rounded-2xl"
-              priority
-            />
-          </div>
-        </div>
+        <VerifiedPropertySummaryCard />
 
       </div>
     </section>
