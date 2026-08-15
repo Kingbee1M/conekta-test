@@ -92,7 +92,7 @@ export default function PropertyCard({ listing }: PropertyCardProps) {
 
       {/* Lower Section: Card Details */}
       <div className="pt-9 pb-5 px-5 flex flex-col justify-between">
-        <Link href={`/find-property/${listing.uuid}`} className="block group-hover:opacity-95">
+        <Link href={`/discover/${listing.uuid}`} className="block group-hover:opacity-95">
           {/* Tag Line / Category */}
           <p className="text-[11px] font-bold tracking-widest text-[#00AC72] uppercase mb-1">
             {listing.payment_frequency ? `FOR ${listing.payment_frequency}` : 'FOR SALE'}

@@ -8,7 +8,7 @@ export default function Footer() {
 
 
     const links: Array<Record<string, Record<string, string>>> = [
-        {'Quick Links': {'Find Property': '/find-property', 'List Property': '/list-property', 'Invest': '/invest', 'Find Artisans': '/artisans', 'Help Center': '/help-center'}},
+        {'Quick Links': {'Find Property': '/discover', 'List Property': '/list-property', 'Invest': '/invest', 'Find Artisans': '/artisans', 'Help Center': '/help-center'}},
         {'Company': {'About Us': '/about', 'How It Works': '/how-it-works', 'Blog': '/blog', 'Careers': '/careers', 'Terms & Privacy': '/terms-privacy', 'Contact Us': '/contact'}},
         {'Contact': { 'Address': 'Lagos, Nigeria', 'Phone': '+234 807 238 3942', 'Email': 'info@useconekta.com' }}
     ]

@@ -53,7 +53,7 @@ export default function PropertyDetailsPage({ params }: PageProps) {
           We couldn&apos;t load the requested property details or it may no longer be available.
         </p>
         <Link
-          href="/find-property"
+          href="/discover"
           className="px-4 py-2 bg-primary-green text-white text-xs font-bold rounded-xl hover:bg-[#1e5d39] transition"
         >
           Return to Listings
@@ -85,7 +85,7 @@ export default function PropertyDetailsPage({ params }: PageProps) {
         {/* Navigation Breadcrumb Action */}
         <div className="flex items-center">
           <Link
-            href="/find-property"
+            href="/discover"
             className="flex items-center gap-1.5 text-xs font-bold text-gray-500 hover:text-gray-800 transition"
           >
             <LuChevronLeft className="text-sm stroke-[2.5px]" />

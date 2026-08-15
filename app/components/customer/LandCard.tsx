@@ -55,7 +55,7 @@ export default function LandCard({ property, priority = false }: LandCardProps) 
   return (
     <div ref={cardRef} className="w-full">
       <Link 
-        href={`/find-property/${id}`}
+        href={`/discover/${id}`}
         className="group block bg-white rounded-[28px] border border-gray-100 shadow-sm overflow-hidden transition-all duration-300 hover:shadow-md"
       >
         {/* Top Image Container with Badge */}

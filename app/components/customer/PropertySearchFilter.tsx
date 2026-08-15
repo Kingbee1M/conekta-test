@@ -1,32 +1,33 @@
 'use client';
 
-import { useState, useEffect, useRef, useMemo } from 'react';
-import { Search, Loader2, MapPin, Building, X, Sparkles } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { Search, Loader2, MapPin, Building, X, Sparkles, Bot } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { structureType } from '@/shared/enums/structure.enum';
-import { NigeriaStateEnum, NIGERIA_LGA_MAP } from '@/shared/enums/nigeriaRegions.enums';
-import { useLazyGetCustomerListingsQuery } from '@/shared/service/customer services/customerListing.services';
+import {
+  useLazyGetCustomerListingsQuery,
+  type FetchCustomerListingsQueryParams,
+} from '@/shared/service/customer services/customerListing.services';
 
-// Shortened prompts for crisp horizontal display
 export const SEARCH_PROMPTS = [
   '3 bed apartment in Lekki under 50M...',
   'Self-contain in Yaba under 3M...',
   'Shortlet in Ikoyi for 150k/night...',
   'Duplex in Ikeja around 10M-30M...',
   'Cheap land in Epe under 5M...',
-  'Penthouse in Banana Island with pool...',
-  '5 bed duplex in Maitama, Abuja...',
-  'Serviced flat with 24/7 power in Oniru...',
-  'Commercial plot along Express Rd, Kano...',
-  '4 bed duplex in GRA, Port Harcourt...',
 ];
 
 export default function PropertySearchFilter() {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [aiMessage, setAiMessage] = useState<string>('');
+  const [isAiProcessing, setIsAiProcessing] = useState<boolean>(false);
+  const [extractedFilters, setExtractedFilters] = useState<{
+    state?: string;
+    category?: string;
+    lga?: string;
+  }>({});
 
-  // Typewriter effect states
   const [promptIndex, setPromptIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -34,6 +35,12 @@ export default function PropertySearchFilter() {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [triggerSearch, { data, isFetching }] = useLazyGetCustomerListingsQuery();
+
+  const resetSearchState = () => {
+    setIsOpen(false);
+    setAiMessage('');
+    setExtractedFilters({});
+  };
 
   // 1. Typewriter Animation Effect
   useEffect(() => {
@@ -59,93 +66,80 @@ export default function PropertySearchFilter() {
     return () => clearTimeout(timeout);
   }, [charIndex, isDeleting, promptIndex]);
 
-  // 2. Client-side NLP Extractor
-  const parsedParameters = useMemo(() => {
-    const queryLower = searchQuery.toLowerCase();
-    if (!queryLower.trim()) return {};
+  // 2. AI Reasoning Search Handler wrapped in useCallback
+  // 2. AI Reasoning Search Handler wrapped in useCallback
+  const handleAiSearch = useCallback(
+    async (queryToSearch: string) => {
+      if (!queryToSearch.trim()) return;
 
-    let detectedState: string | undefined = undefined;
-    for (const st of Object.values(NigeriaStateEnum)) {
-      if (queryLower.includes(st.toLowerCase())) {
-        detectedState = st;
-        break;
-      }
-    }
-
-    let detectedLga: string | undefined = undefined;
-    if (detectedState && NIGERIA_LGA_MAP[detectedState as NigeriaStateEnum]) {
-      const lgas = NIGERIA_LGA_MAP[detectedState as NigeriaStateEnum];
-      for (const lga of lgas) {
-        if (queryLower.includes(lga.toLowerCase())) {
-          detectedLga = lga;
-          break;
-        }
-      }
-    } else {
-      for (const lgas of Object.values(NIGERIA_LGA_MAP)) {
-        for (const lga of lgas) {
-          if (queryLower.includes(lga.toLowerCase())) {
-            detectedLga = lga;
-            break;
-          }
-        }
-        if (detectedLga) break;
-      }
-    }
-
-    let detectedCategory: string | undefined = undefined;
-    for (const type of Object.values(structureType)) {
-      if (queryLower.includes(type.toLowerCase())) {
-        detectedCategory = type;
-        break;
-      }
-    }
-
-    let min_price: number | undefined = undefined;
-    let max_price: number | undefined = undefined;
-
-    const millionMatch = queryLower.match(/(\d+)\s*(m|million)/i);
-    if (millionMatch) {
-      const val = parseInt(millionMatch[1], 10) * 1000000;
-      if (queryLower.includes('under') || queryLower.includes('less than')) {
-        max_price = val;
-      } else if (queryLower.includes('above') || queryLower.includes('from')) {
-        min_price = val;
-      } else {
-        max_price = val;
-      }
-    }
-
-    return {
-      state: detectedState,
-      lga: detectedLga,
-      category: detectedCategory,
-      min_price,
-      max_price,
-    };
-  }, [searchQuery]);
-
-  // 3. Trigger debounced API query
-  useEffect(() => {
-    if (!searchQuery.trim()) return;
-
-    const timer = setTimeout(() => {
-      triggerSearch({
-        search: searchQuery.trim(),
-        state: parsedParameters.state,
-        lga: parsedParameters.lga,
-        category: parsedParameters.category,
-        min_price: parsedParameters.min_price,
-        max_price: parsedParameters.max_price,
-        page_size: 5,
-      });
+      setIsAiProcessing(true);
       setIsOpen(true);
-    }, 350);
+      setAiMessage('');
 
-    return () => clearTimeout(timer);
-  }, [searchQuery, parsedParameters, triggerSearch]);
+      try {
+        const res = await fetch('/api/ai-search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: queryToSearch.trim() }),
+        });
 
-  // 4. Close dropdown on click outside
+        const aiData = await res.json();
+        
+        // 🔍 LOG raw response from Next.js API route
+        console.log('📦 Raw AI API Response:', aiData);
+
+        if (!res.ok) {
+          throw new Error(aiData.error || 'Failed to parse query');
+        }
+
+        if (aiData.replyMessage) {
+          setAiMessage(aiData.replyMessage);
+        }
+
+        const activeFilters: FetchCustomerListingsQueryParams = {};
+
+        if (aiData.filters) {
+          Object.entries(aiData.filters).forEach(([key, val]) => {
+            if (val !== null && val !== undefined && val !== '') {
+              (activeFilters as Record<string, unknown>)[key] = val;
+            }
+          });
+        }
+
+        setExtractedFilters({
+          state: activeFilters.state,
+          category: activeFilters.category,
+          lga: activeFilters.lga,
+        });
+
+        const queryPayload = {
+          page: 1,
+          page_size: 5,
+          ...activeFilters,
+        };
+
+        console.log('🚀 [AI Search] Derived Parameters:', queryPayload);
+        triggerSearch(queryPayload);
+      } catch (err) {
+        console.error('❌ Gemini search error, falling back:', err);
+        setAiMessage('Searching properties based on keywords:');
+
+        const fallbackPayload = {
+          search: queryToSearch.trim(),
+          page_size: 5,
+        };
+
+        console.log('⚠️ [AI Search Fallback]:', fallbackPayload);
+        triggerSearch(fallbackPayload);
+      } finally {
+        setIsAiProcessing(false);
+      }
+    },
+    [triggerSearch]
+  );
+
+
+  // 5. Close dropdown on click outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
@@ -157,6 +151,7 @@ export default function PropertySearchFilter() {
   }, []);
 
   const results = data?.data?.results || [];
+  const isLoading = isAiProcessing || isFetching;
 
   return (
     <div ref={containerRef} className="relative w-full z-30">
@@ -174,25 +169,27 @@ export default function PropertySearchFilter() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            if (searchQuery.trim()) setIsOpen(true);
+            handleAiSearch(searchQuery);
           }}
           className="relative bg-app-background dark:bg-stone-900 rounded-full px-3 sm:px-4 py-2 flex items-center gap-2 w-full backdrop-blur-xl"
         >
-          {/* AI Sparkles Icon with Google AI Gradient */}
           <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-linear-to-r from-[#4285F4]/15 via-[#EA4335]/15 to-[#34A853]/15 text-[#4285F4] shrink-0">
-            {isFetching ? (
+            {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin text-[#4285F4]" />
             ) : (
               <Sparkles className="w-4 h-4 animate-pulse text-[#4285F4]" />
             )}
           </div>
 
-          {/* INPUT FIELD WITH TRUNCATED ANIMATED PLACEHOLDER */}
           <div className="flex-1 min-w-0 relative flex items-center">
             <input
               type="text"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSearchQuery(val);
+                if (!val.trim()) resetSearchState();
+              }}
               onFocus={() => {
                 if (searchQuery.trim()) setIsOpen(true);
               }}
@@ -204,7 +201,7 @@ export default function PropertySearchFilter() {
                 type="button"
                 onClick={() => {
                   setSearchQuery('');
-                  setIsOpen(false);
+                  resetSearchState();
                 }}
                 className="p-1 rounded-full text-stone-400 hover:text-stone-700 transition-colors shrink-0"
               >
@@ -213,9 +210,7 @@ export default function PropertySearchFilter() {
             )}
           </div>
 
-          {/* RIGHT SIDE: COLORFUL GOOGLE BRANDING & BUTTON */}
           <div className="flex items-center gap-2 shrink-0 border-l border-stone-300/70 dark:border-stone-700/70 pl-2">
-            {/* Explicit "Powered by Google AI" Label */}
             <div className="hidden sm:flex items-center gap-1 pointer-events-none select-none text-[10px] font-medium text-stone-500 dark:text-stone-400">
               <span className="text-[9px]">Powered by</span>
               <span className="font-bold tracking-tight">
@@ -248,21 +243,38 @@ export default function PropertySearchFilter() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 6, scale: 0.98 }}
             transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="absolute left-0 right-0 top-full mt-2 bg-white/95 dark:bg-stone-900/95 backdrop-blur-xl rounded-2xl shadow-xl border border-stone-200/80 dark:border-stone-800 p-3 z-50 max-h-80 overflow-y-auto scrollbar-none"
+            className="absolute left-0 right-0 top-full mt-2 bg-white/95 dark:bg-stone-900/95 backdrop-blur-xl rounded-2xl shadow-xl border border-stone-200/80 dark:border-stone-800 p-3.5 z-50 max-h-96 overflow-y-auto scrollbar-none"
           >
+            {/* AI CONVERSATIONAL RESPONSE BUBBLE */}
+            {aiMessage && !isAiProcessing && (
+              <div className="mb-3 p-2.5 rounded-xl bg-linear-to-r from-[#4285F4]/10 via-[#EA4335]/5 to-[#34A853]/10 border border-[#4285F4]/20 flex items-start gap-2.5">
+                <div className="p-1 rounded-md bg-[#4285F4] text-white shrink-0 mt-0.5">
+                  <Bot className="w-3.5 h-3.5" />
+                </div>
+                <p className="text-xs text-stone-700 dark:text-stone-200 font-medium leading-relaxed">
+                  {aiMessage}
+                </p>
+              </div>
+            )}
+
             <div className="flex items-center justify-between pb-2 mb-2 border-b border-stone-100 dark:border-stone-800 px-1">
               <div className="flex items-center gap-1.5 flex-wrap">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400">
                   Results ({data?.data?.count ?? results.length})
                 </span>
-                {parsedParameters.state && (
+                {extractedFilters.state && (
                   <span className="text-[9px] bg-active-link text-primary-green font-semibold px-1.5 py-0.5 rounded-full">
-                    {parsedParameters.state}
+                    {extractedFilters.state}
                   </span>
                 )}
-                {parsedParameters.category && (
+                {extractedFilters.lga && (
                   <span className="text-[9px] bg-active-link text-primary-green font-semibold px-1.5 py-0.5 rounded-full">
-                    {parsedParameters.category}
+                    {extractedFilters.lga}
+                  </span>
+                )}
+                {extractedFilters.category && (
+                  <span className="text-[9px] bg-active-link text-primary-green font-semibold px-1.5 py-0.5 rounded-full">
+                    {extractedFilters.category}
                   </span>
                 )}
               </div>
@@ -274,21 +286,25 @@ export default function PropertySearchFilter() {
               </button>
             </div>
 
-            {isFetching ? (
-              <div className="flex items-center justify-center py-6 text-stone-400 gap-2">
-                <Loader2 className="w-4 h-4 animate-spin text-[#4285F4]" />
-                <span className="text-xs font-medium">Scanning properties...</span>
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-8 text-stone-400 gap-2">
+                <Loader2 className="w-5 h-5 animate-spin text-[#4285F4]" />
+                <span className="text-xs font-medium">
+                  {isAiProcessing
+                    ? 'Gemini is processing your request...'
+                    : 'Fetching matching listings...'}
+                </span>
               </div>
             ) : results.length === 0 ? (
               <div className="py-6 text-center text-stone-500 text-xs">
-                No properties matched your query. Try a different location or price.
+                No properties matched your query. Try adjusting your budget or location.
               </div>
             ) : (
               <div className="flex flex-col gap-1.5">
                 {results.map((item) => (
                   <Link
                     key={item.uuid}
-                    href={`/properties/${item.uuid}`}
+                    href={`/discover/${item.uuid}`}
                     onClick={() => setIsOpen(false)}
                     className="flex items-center justify-between p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 transition-all group"
                   >

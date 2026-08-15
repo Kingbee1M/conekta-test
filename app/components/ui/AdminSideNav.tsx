@@ -76,12 +76,12 @@ export default function AdminSideNav() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Pull Redux auth state
-  const { session, profile } = useAppSelector((state: RootState) => state.auth);
+  const { session, listerProfile } = useAppSelector((state: RootState) => state.auth);
 
   // Check if current user is Super Admin
   const isSuperAdmin =
     session?.active_role === RoleEnum.SUPER_ADMIN ||
-    profile?.other_roles.includes(RoleEnum.SUPER_ADMIN);
+    session?.user?.other_roles.includes(RoleEnum.SUPER_ADMIN);
 
   const mainNav: NavItem[] = [
     { title: 'Dashboard', link: '/overview', icon: IoGridOutline },

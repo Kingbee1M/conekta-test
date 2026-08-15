@@ -107,11 +107,10 @@ const DEFAULT_TENANCY_DATA: TenancyData = {
 export default function HomeWelcomeSection({
   userName: customUserName,
   tenancy = DEFAULT_TENANCY_DATA,
-  onSearchClick,
 }: HomeWelcomeSectionProps) {
   const [showCalendarHover, setShowCalendarHover] = useState(false);
 
-  const authProfile = useAppSelector((state: RootState) => state.auth?.profile);
+  const authProfile = useAppSelector((state: RootState) => state.auth?.customerProfile);
   const authSession = useAppSelector((state: RootState) => state.auth?.session);
 
   const fallbackName = authSession?.user?.profile?.full_name?.split(' ')[0];
@@ -249,7 +248,7 @@ export default function HomeWelcomeSection({
                       {/* HOVER CALENDAR POPOVER */}
                       {showCalendarHover && (
                         <div 
-                          className="absolute right-0 bottom-full mb-3 z-50 w-[300px] rounded-2xl p-5 shadow-2xl border transition-all duration-200 animate-in fade-in slide-in-from-bottom-2 bg-white"
+                          className="absolute right-0 bottom-full mb-3 z-50 w-75 rounded-2xl p-5 shadow-2xl border transition-all duration-200 animate-in fade-in slide-in-from-bottom-2 bg-white"
                           style={{
                             borderColor: 'var(--color-primary-fixed-dim, #80da90)',
                           }}

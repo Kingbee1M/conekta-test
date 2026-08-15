@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 import { LuSend } from "react-icons/lu";
 import { Message, TenantData } from '@/shared/service/customer services/customerTypes';
 
@@ -23,7 +24,6 @@ export default function ChatTab({
   setNewMessage,
   onSendMessage
 }: ChatTabProps) {
-  // Safe default background avatar logic based on current chat channel context
   const getAvatarForMessage = (msg: Message) => {
     if (msg.sender === 'landlord') return tenantData.landlord.avatar;
     const matchingNeighbor = tenantData.neighbors.find(n => n.name === msg.senderName);
@@ -31,17 +31,18 @@ export default function ChatTab({
   };
 
   return (
-    <div className="col-span-1 lg:col-span-12 grid grid-cols-1 lg:grid-cols-[300px_1fr] bg-white border border-gray-100 rounded-3xl overflow-hidden min-h-145 shadow-sm">
+    <div className="col-span-1 lg:col-span-12 grid grid-cols-1 lg:grid-cols-[300px_1fr] bg-white border border-gray-100 rounded-3xl overflow-hidden min-h-145 shadow-xs">
       {/* Channels Sidebar */}
       <div className="border-r border-gray-100 p-5 flex flex-col gap-4 bg-gray-50/50">
         <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Boards</h3>
         <div className="flex flex-col gap-2">
-          <button
+          <motion.button
+            whileTap={{ scale: 0.98 }}
             type="button"
             onClick={() => setChatChannel('landlord')}
             className={`w-full flex items-center gap-3 p-3 rounded-2xl transition text-left cursor-pointer border ${
               chatChannel === 'landlord' 
-                ? 'bg-white border-gray-200 shadow-sm text-gray-800 font-bold' 
+                ? 'bg-white border-gray-200 shadow-xs text-gray-800 font-bold' 
                 : 'border-transparent text-gray-500 hover:bg-gray-100'
             }`}
           >
@@ -52,14 +53,15 @@ export default function ChatTab({
               <p className="text-xs font-bold leading-tight">{tenantData.landlord.name}</p>
               <p className="text-[10px] text-primary-green font-semibold mt-0.5">Verified Landlord</p>
             </div>
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
+            whileTap={{ scale: 0.98 }}
             type="button"
             onClick={() => setChatChannel('roommates')}
             className={`w-full flex items-center gap-3 p-3 rounded-2xl transition text-left cursor-pointer border ${
               chatChannel === 'roommates' 
-                ? 'bg-white border-gray-200 shadow-sm text-gray-800 font-bold' 
+                ? 'bg-white border-gray-200 shadow-xs text-gray-800 font-bold' 
                 : 'border-transparent text-gray-500 hover:bg-gray-100'
             }`}
           >
@@ -70,7 +72,7 @@ export default function ChatTab({
                 {tenantData.neighbors.length} Active members
               </p>
             </div>
-          </button>
+          </motion.button>
         </div>
       </div>
 
@@ -89,26 +91,34 @@ export default function ChatTab({
 
         {/* Dialog Thread */}
         <div className="flex-1 p-6 flex flex-col gap-4 overflow-y-auto max-h-100">
-          {messages.map((msg) => {
-            const isSelf = msg.sender === 'tenant';
-            const avatarUrl = getAvatarForMessage(msg);
-            return (
-              <div key={msg.id} className={`flex gap-3 max-w-[80%] ${isSelf ? 'self-end flex-row-reverse' : 'self-start'}`}>
-                {!isSelf && avatarUrl && (
-                  <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 bg-gray-100 border">
-                    <Image fill src={avatarUrl} alt="Sender avatar" className="object-cover" />
+          <AnimatePresence initial={false}>
+            {messages.map((msg) => {
+              const isSelf = msg.sender === 'tenant';
+              const avatarUrl = getAvatarForMessage(msg);
+              return (
+                <motion.div
+                  key={msg.id}
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: 0.2 }}
+                  className={`flex gap-3 max-w-[80%] ${isSelf ? 'self-end flex-row-reverse' : 'self-start'}`}
+                >
+                  {!isSelf && avatarUrl && (
+                    <div className="relative w-8 h-8 rounded-full overflow-hidden shrink-0 bg-gray-100 border">
+                      <Image fill src={avatarUrl} alt="Sender avatar" className="object-cover" />
+                    </div>
+                  )}
+                  <div>
+                    <p className={`text-[10px] font-bold text-gray-400 mb-1 ${isSelf ? 'text-right' : ''}`}>{msg.senderName}</p>
+                    <div className={`p-3.5 rounded-2xl text-xs font-semibold leading-relaxed ${isSelf ? 'bg-primary-green text-white rounded-tr-none' : 'bg-gray-100 text-gray-800 rounded-tl-none'}`}>
+                      {msg.text}
+                    </div>
+                    <p className={`text-[9px] text-gray-400 mt-1 ${isSelf ? 'text-right' : ''}`}>{msg.timestamp}</p>
                   </div>
-                )}
-                <div>
-                  <p className={`text-[10px] font-bold text-gray-400 mb-1 ${isSelf ? 'text-right' : ''}`}>{msg.senderName}</p>
-                  <div className={`p-3.5 rounded-2xl text-xs font-semibold leading-relaxed ${isSelf ? 'bg-primary-green text-white rounded-tr-none' : 'bg-gray-100 text-gray-800 rounded-tl-none'}`}>
-                    {msg.text}
-                  </div>
-                  <p className={`text-[9px] text-gray-400 mt-1 ${isSelf ? 'text-right' : ''}`}>{msg.timestamp}</p>
-                </div>
-              </div>
-            );
-          })}
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
         </div>
 
         {/* Messaging Footer Input Box */}
@@ -120,9 +130,14 @@ export default function ChatTab({
             placeholder={chatChannel === 'landlord' ? "Message landlord..." : "Text roommates..."}
             className="flex-1 border border-gray-200 rounded-2xl px-4 py-3.5 text-xs font-medium bg-white outline-none focus:ring-2 focus:ring-primary-green/20 focus:border-primary-green transition"
           />
-          <button type="submit" className="h-11 w-11 bg-primary-green hover:bg-[#1d5d39] text-white rounded-xl flex items-center justify-center transition active:scale-95 shrink-0">
+          <motion.button 
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.9 }}
+            type="submit" 
+            className="h-11 w-11 bg-primary-green hover:bg-[#1d5d39] text-white rounded-xl flex items-center justify-center transition-colors shrink-0 cursor-pointer"
+          >
             <LuSend className="text-base" />
-          </button>
+          </motion.button>
         </form>
       </div>
     </div>

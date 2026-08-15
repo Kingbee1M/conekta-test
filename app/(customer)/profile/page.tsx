@@ -42,13 +42,13 @@ export default function TenantProfileContainer() {
   const router = useRouter();
 
   // Pull profile state from existing slice context
-  const { profile } = useSelector((state: RootState) => state.auth);
+  const { customerProfile } = useSelector((state: RootState) => state.auth);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'transactions' | 'saved' | 'notifications' | 'support' | 'settings'>('dashboard');
 
   // 1. Fallback presentation schemas populated dynamically or via mock metrics
-  const firstName = profile?.first_name || "Chioma";
-  const lastName = profile?.last_name || "Okafor";
-  const tenantEmail = profile?.email || "chioma.okafor@email.com";
+  const firstName = customerProfile?.first_name || "Chioma";
+  const lastName = customerProfile?.last_name || "Okafor";
+  const tenantEmail = customerProfile?.email || "chioma.okafor@email.com";
   
   const tenantUser: TenantProfileData = {
     name: `${firstName} ${lastName}`,

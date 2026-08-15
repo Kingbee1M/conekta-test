@@ -1,7 +1,7 @@
 'use client';
-import Link from 'next/link';
 import Image from 'next/image';
-import { LuCalendar, LuShield, LuSparkles } from "react-icons/lu";
+import { motion } from 'framer-motion';
+import { LuCalendar, LuShield } from "react-icons/lu";
 import { TenantData } from '@/shared/service/customer services/customerTypes';
 import { PaymentFrequencyEnum } from '@/shared/enums/paymentFreqency.enums';
 import ArtisanSosCarousel from './customer/ArtisanSOS';
@@ -12,7 +12,7 @@ interface OverviewTabProps {
   onNavigateToMaintenance: () => void;
 }
 
-export default function OverviewTab({ tenantData, onNavigateToChat, onNavigateToMaintenance }: OverviewTabProps) {
+export default function OverviewTab({ tenantData, onNavigateToChat }: OverviewTabProps) {
   const frequencyLabels: Record<PaymentFrequencyEnum, string> = {
     [PaymentFrequencyEnum.ONE_OFF]: 'One-Off',
     [PaymentFrequencyEnum.MONTHLY]: 'Monthly',
@@ -31,7 +31,12 @@ export default function OverviewTab({ tenantData, onNavigateToChat, onNavigateTo
       {/* MAIN METRIC COLUMNS */}
       <div className="col-span-1 lg:col-span-8 flex flex-col gap-6">
         {/* Tenancy Progress & Rent Clock */}
-        <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm flex flex-col gap-5">
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="bg-white rounded-3xl border border-gray-100 p-6 shadow-xs flex flex-col gap-5"
+        >
           <div className="flex justify-between items-start">
             <div>
               <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Tenant Ledger</h3>
@@ -64,13 +69,23 @@ export default function OverviewTab({ tenantData, onNavigateToChat, onNavigateTo
               <span>{progressPercent}% Complete</span>
             </div>
             <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-              <div className="h-full bg-primary-green rounded-full transition-all" style={{ width: `${progressPercent}%` }} />
+              <motion.div 
+                initial={{ width: 0 }}
+                animate={{ width: `${progressPercent}%` }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="h-full bg-primary-green rounded-full" 
+              />
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Landlord Contact Info */}
-        <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+          className="bg-white rounded-3xl border border-gray-100 p-6 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+        >
           <div className="flex items-center gap-4">
             <div className="relative w-14 h-14 rounded-full overflow-hidden shrink-0 border-2 border-gray-100 bg-gray-50">
               <Image fill src={tenantData.landlord.avatar} alt="Landlord Avatar" className="object-cover" />
@@ -82,18 +97,25 @@ export default function OverviewTab({ tenantData, onNavigateToChat, onNavigateTo
               <p className="text-xs text-gray-400 font-medium mt-0.5">Active landlord since 2021</p>
             </div>
           </div>
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.97 }}
             type="button"
             onClick={() => onNavigateToChat('landlord')}
-            className="w-full sm:w-auto px-5 py-3.5 bg-primary-green hover:bg-[#1d5d39] text-white text-xs font-bold rounded-2xl transition shadow-sm"
+            className="w-full sm:w-auto px-5 py-3.5 bg-primary-green hover:bg-[#1d5d39] text-white text-xs font-bold rounded-2xl transition-colors shadow-xs cursor-pointer"
           >
             Direct Message Owner
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
 
         {/* Extra Utility Splitting Widget */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm flex flex-col gap-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.2 }}
+            className="bg-white rounded-3xl border border-gray-100 p-6 shadow-xs flex flex-col gap-4"
+          >
             <h3 className="text-sm font-bold text-gray-900">Utility Split Tracker</h3>
             <div className="flex flex-col gap-3">
               {[
@@ -109,9 +131,14 @@ export default function OverviewTab({ tenantData, onNavigateToChat, onNavigateTo
                 </div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm flex flex-col gap-4 justify-between">
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.25 }}
+            className="bg-white rounded-3xl border border-gray-100 p-6 shadow-xs flex flex-col gap-4 justify-between"
+          >
             <div>
               <h3 className="text-sm font-bold text-gray-900">Conekta Shield Protection</h3>
               <p className="text-xs text-gray-400 font-medium leading-relaxed mt-2">
@@ -122,13 +149,18 @@ export default function OverviewTab({ tenantData, onNavigateToChat, onNavigateTo
               <LuShield className="text-lg shrink-0" />
               <span>Shield Coverage Active</span>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
 
       {/* SIDEBAR ROOMMATES */}
-      <div className="col-span-1 lg:col-span-4 flex flex-col gap-6">
-        <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm flex flex-col gap-5">
+      <motion.div 
+        initial={{ opacity: 0, x: 10 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3, delay: 0.15 }}
+        className="col-span-1 lg:col-span-4 flex flex-col gap-6"
+      >
+        <div className="bg-white rounded-3xl border border-gray-100 p-6 shadow-xs flex flex-col gap-5">
           <div>
             <h3 className="text-sm font-bold text-gray-900">Co-Living Directory</h3>
             <p className="text-xs text-gray-400 font-medium mt-0.5">Tenants registered inside this compound</p>
@@ -153,17 +185,19 @@ export default function OverviewTab({ tenantData, onNavigateToChat, onNavigateTo
               </div>
             ))}
           </div>
-          <button
+          <motion.button
+            whileHover={{ scale: 1.01 }}
+            whileTap={{ scale: 0.97 }}
             type="button"
             onClick={() => onNavigateToChat('roommates')}
-            className="w-full py-3 bg-gray-100 hover:bg-gray-200/85 text-gray-800 text-xs font-bold rounded-2xl transition text-center"
+            className="w-full py-3 bg-gray-100 hover:bg-gray-200/85 text-gray-800 text-xs font-bold rounded-2xl transition-colors text-center cursor-pointer"
           >
             Open Co-living Board
-          </button>
+          </motion.button>
         </div>
 
         <ArtisanSosCarousel/>
-      </div>
+      </motion.div>
     </>
   );
 }

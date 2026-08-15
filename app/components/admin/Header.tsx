@@ -29,18 +29,18 @@ export default function Header({
   onNotificationClick,
 }: HeaderProps) {
   // Pull slice state matching your AuthState definition
-  const { session, profile } = useAppSelector((state: RootState) => state.auth);
+  const { session, listerProfile } = useAppSelector((state: RootState) => state.auth);
 
   // 1. Resolve First & Last Names
   const firstName =
-    profile?.first_name ||
-    profile?.first_name ||
+    listerProfile?.first_name ||
+    listerProfile?.first_name ||
     session?.user?.profile?.full_name?.split(' ')[0] ||
     '';
 
   const lastName =
-    profile?.last_name ||
-    profile?.last_name ||
+    listerProfile?.last_name ||
+    listerProfile?.last_name ||
     session?.user?.profile?.full_name?.split(' ').slice(1).join(' ') ||
     '';
 
@@ -49,7 +49,7 @@ export default function Header({
     propName ||
     (firstName || lastName ? `${firstName} ${lastName}`.trim() : null) ||
     session?.user?.profile?.full_name ||
-    profile?.email ||
+    listerProfile?.email ||
     session?.user?.email ||
     'Edward Clemons';
 
