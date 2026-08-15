@@ -304,7 +304,7 @@ export default function PropertySearchFilter() {
                 {results.map((item) => (
                   <Link
                     key={item.uuid}
-                    href={`/properties/${item.uuid}`}
+                    href={`/discover/${item.uuid}`}
                     onClick={() => setIsOpen(false)}
                     className="flex items-center justify-between p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 transition-all group"
                   >

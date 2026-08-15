@@ -37,8 +37,8 @@ const locationInsights = [
 ];
 
 export default function AnalyticsPage() {
-    const { profile } = useSelector((state: RootState) => state.auth);
-    const typedUser = profile as FlatUserData & { user?: FlatUserData } | null;
+    const { listerProfile } = useSelector((state: RootState) => state.auth);
+    const typedUser = listerProfile as FlatUserData & { user?: FlatUserData } | null;
     const targetUserObj = typedUser?.user || typedUser;
     const firstName = targetUserObj?.profile?.first_name || '';
     const lastName = targetUserObj?.profile?.last_name || '';
@@ -68,7 +68,7 @@ export default function AnalyticsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6 w-full items-stretch">
         
         {/* Dynamic Refactored Custom Donut Column */}
-        <div className="w-full min-h-[290px]">
+        <div className="w-full min-h-72.5">
           <ListerPieChart 
             title="Portfolio Breakdown" 
             data={portfolioData} 

@@ -30,13 +30,13 @@ export default function Properties() {
     const [debouncedSearch, setDebouncedSearch] = useState('');
     
     // Auth selectors
-    const { profile } = useSelector((state: RootState) => state.auth);
+    const { listerProfile } = useSelector((state: RootState) => state.auth);
     
     const propertiesList = useSelector(
         (state: RootState) => state.listing.propertiesList
     );
 
-    const typedUser = profile as FlatUserData & { user?: FlatUserData } | null;
+    const typedUser = listerProfile as FlatUserData & { user?: FlatUserData } | null;
     const firstName = typedUser?.profile?.first_name || '';
     const lastName = typedUser?.profile?.last_name || '';
     
@@ -115,8 +115,8 @@ export default function Properties() {
 
                     {/* Search & Add Action Wrapper */}
                     <div className='flex flex-col sm:flex-row gap-2 w-full md:w-auto'>
-                        <div className='flex gap-3 items-center bg-[#F0F0F0] px-3 rounded-xl border border-gray-200/40 h-[38px] flex-1 md:flex-none'>
-                            <FaSearch className='text-gray-400 text-sm flex-shrink-0'/>
+                        <div className='flex gap-3 items-center bg-[#F0F0F0] px-3 rounded-xl border border-gray-200/40 h-9.5 flex-1 md:flex-none'>
+                            <FaSearch className='text-gray-400 text-sm shrink-0'/>
                             <input 
                                 type="search" 
                                 value={searchVal}
@@ -125,7 +125,7 @@ export default function Properties() {
                                 placeholder="Search properties..." 
                             />
                         </div>
-                        <button onClick={() => setOpenAdd(true)} className='flex gap-1 font-semibold items-center justify-center bg-primary-green text-white px-4 h-[38px] rounded-xl text-sm transition-opacity hover:opacity-90 shadow-sm cursor-pointer w-full sm:w-auto'>
+                        <button onClick={() => setOpenAdd(true)} className='flex gap-1 font-semibold items-center justify-center bg-primary-green text-white px-4 h-9.5 rounded-xl text-sm transition-opacity hover:opacity-90 shadow-sm cursor-pointer w-full sm:w-auto'>
                             <IoMdAdd className='text-lg'/> Add Property
                         </button>
                     </div>

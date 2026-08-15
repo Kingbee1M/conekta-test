@@ -4,19 +4,37 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/shared/store/store';
 import { getNameInitials } from "@/lib/hooks";
-import { PersonalData } from '@/shared/store/authSlice';
+import { ListerProfile } from '@/shared/store/authSlice';
 import { MdModeEdit, MdSave } from "react-icons/md";
 import { FaCamera, FaCheckCircle, FaCalendarAlt, FaUser, FaGlobe, FaExclamationTriangle, FaChevronRight } from 'react-icons/fa';
 import { HiMail, HiPhone, HiLocationMarker } from 'react-icons/hi';
 import Link from 'next/link';
 
 export default function MyProfile() {
-  const { profile } = useSelector((state: RootState) => state.auth);
+  const { listerProfile } = useSelector((state: RootState) => state.auth);
+  const { session } = useSelector((state: RootState) => state.auth);
+  const activeRole = session?.active_role ?? 'Lister';
+  const otherRoles = session?.user?.other_roles ?? [];
 
-  return <ProfileContent key={profile?.uuid || 'profile-form'} profile={profile} />;
+  return (
+    <ProfileContent
+      key={listerProfile?.profile_uuid || 'profile-form'}
+      profile={listerProfile}
+      activeRole={activeRole}
+      otherRoles={otherRoles}
+    />
+  );
 }
 
-function ProfileContent({ profile }: { profile: PersonalData | null }) {
+function ProfileContent({
+  profile,
+  activeRole,
+  otherRoles,
+}: {
+  profile: ListerProfile | null;
+  activeRole: string;
+  otherRoles: string[];
+}) {
   const [isEdit, setIsEdit] = useState(false);
 
   // Verification state (Hardcoded to false until backend integration)
@@ -102,7 +120,7 @@ function ProfileContent({ profile }: { profile: PersonalData | null }) {
 
             <div className="mt-4 inline-flex items-center gap-1.5 bg-emerald-50 border border-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-bold tracking-wide capitalize">
               <FaCheckCircle className="text-[11px]" />
-              Role: {profile?.active_role || 'User'}
+              Role: {activeRole}
             </div>
 
             <div className="w-full border-t border-slate-50 mt-6 pt-4 flex items-center justify-center gap-2 text-[11px] font-semibold text-slate-400">
@@ -119,13 +137,13 @@ function ProfileContent({ profile }: { profile: PersonalData | null }) {
               <div className="flex justify-between items-center text-xs border-b border-slate-50/60 pb-2">
                 <span className="text-slate-500 font-medium">Account ID</span>
                 <span className="font-mono text-[11px] font-bold text-slate-700">
-                  {profile?.uuid ? `${profile.uuid.slice(0, 8)}...` : 'N/A'}
+                  {profile?.profile_uuid ? `${profile.profile_uuid.slice(0, 8)}...` : 'N/A'}
                 </span>
               </div>
               <div className="flex justify-between items-center text-xs border-b border-slate-50/60 pb-2">
                 <span className="text-slate-500 font-medium">Secondary Roles</span>
                 <span className="font-bold text-slate-700 capitalize">
-                  {profile?.other_roles?.length ? profile.other_roles.join(', ') : 'None'}
+                  {otherRoles.length ? otherRoles.join(', ') : 'None'}
                 </span>
               </div>
             </div>

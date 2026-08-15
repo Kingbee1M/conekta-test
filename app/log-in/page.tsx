@@ -153,11 +153,11 @@ export default function Login() {
                <button 
                 type="submit"
                 disabled={formik.isSubmitting}
-                className="w-full my-3 bg-[#00AC72] text-white px-3 py-2 rounded-lg font-semibold group border border-transparent hover:border-[#008f5d] transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full my-3 bg-[#00AC72] text-white px-3 py-2 rounded-lg font-semibold group border border-transparent hover:bg-white hover:border-[#008f5d] transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
                 >
                 {formik.isSubmitting ? (
                     <>
-                    <Loader className="w-4 h-4 animate-spin" />
+                    <Loader className="w-4 h-4 animate-spin group-hover:text-primary-green" />
                     <span className="group-hover:text-primary-green text-white">Signing in...</span>
                     </>
                 ) : (

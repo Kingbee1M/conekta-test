@@ -8,13 +8,10 @@ import { FlatUserData } from '@/types';
 
 
 export default function ListerTopBar () {
-    const { profile } = useSelector((state: RootState) => state.auth);
+    const { listerProfile } = useSelector((state: RootState) => state.auth);
     const { session } = useSelector((state: RootState) => state.auth);
-
-    const typedUser = profile as FlatUserData & { user?: FlatUserData } | null;
-    const targetUserObj = typedUser?.user || typedUser;
-    const firstName = profile?.first_name;
-    const lastName = profile?.last_name;
+    const firstName = listerProfile?.first_name;
+    const lastName = listerProfile?.last_name;
     
     const currentName = firstName || lastName ? `${firstName} ${lastName}`.trim() : '';
     const initial = currentName.trim().charAt(0).toUpperCase() || '?';
