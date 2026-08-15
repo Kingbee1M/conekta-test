@@ -17,12 +17,12 @@ export const profileApiSlice = apiSlice.injectEndpoints({
           const personalData = responseBody.data; 
 
           if (personalData) {
-            
-            // Put it cleanly in its own home!
+            console.log("resp: ", responseBody)
             dispatch(setPersonalProfile(personalData));
           }
         } catch (error) {
           console.error('Failed to sync personal profile to auth state:', error);
+          console.log("error: ",error)
         }
       },
     }),

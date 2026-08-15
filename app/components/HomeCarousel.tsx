@@ -90,12 +90,12 @@ export default function HomeCarousel() {
 
         {/* Action Buttons */}
         <div className="mt-8 flex flex-wrap items-center gap-4">
-          <Link href="/find-property" className={actionBtnStyle}>
+          <Link href="/discover" className={actionBtnStyle}>
             <span>Find a Home</span>
             <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
 
-          <Link href="/find-property" className={actionBtnStyle}>
+          <Link href="/discover" className={actionBtnStyle}>
             <span>Start Investing</span>
             <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
           </Link>

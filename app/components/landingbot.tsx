@@ -8,7 +8,7 @@ export default function LandigBot() {
 
             <div className="flex flex-col lg:flex-row gap-3">
                 <Link href={'/sign-up'} className="text-primary-green px-5 py-3 bg-white rounded-lg cursor-pointer hover:bg-primary-green hover:bg-secondary-green" >Get started for Free</Link>
-                <Link href={'/find-property'} className="text-primary-green px-5 py-3 bg-white rounded-lg cursor-pointer hover:bg-secondary-green">Browse Properties</Link>
+                <Link href={'/discover'} className="text-primary-green px-5 py-3 bg-white rounded-lg cursor-pointer hover:bg-secondary-green">Browse Properties</Link>
             </div>
 
         </section>

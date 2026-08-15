@@ -80,10 +80,10 @@ export default function EverythingYou() {
     }, [mouseX, mouseY]);
 
     const needs = [
-        {icon: <FiHome/> , color: '#D0FAE5', text: '#009966',title: 'Find Your Home', desc: 'Browse thousands of properties with advanced filters and virtual tours.', link: 'find-property', linkName: 'Explore Properties'},
-        {icon: <LuPiggyBank/> , color: '#DBEAFE', text: '#155DFC',title: 'Flexible Payments', desc: 'Rent-to-own, rent now pay later, or pay in installments - you choose.', link: 'find-property', linkName: 'View Options'},
-        {icon: <GrLineChart/> , color: '#F3E8FF', text: '#9810FA',title: 'Invest & Earn', desc: 'Start fractional real estate investing from as low as ₦500,000', link: 'find-property', linkName: 'Start Investing'},
-        {icon: <LuHammer/> , color: '#FFEDD4', text: '#F54900',title: 'Trusted Artisans', desc: 'Connect with verified plumbers, electricians, and home service providers.', link: 'find-property', linkName: 'Find Artisans'},
+        {icon: <FiHome/> , color: '#D0FAE5', text: '#009966',title: 'Find Your Home', desc: 'Browse thousands of properties with advanced filters and virtual tours.', link: 'discover', linkName: 'Explore Properties'},
+        {icon: <LuPiggyBank/> , color: '#DBEAFE', text: '#155DFC',title: 'Flexible Payments', desc: 'Rent-to-own, rent now pay later, or pay in installments - you choose.', link: 'discover', linkName: 'View Options'},
+        {icon: <GrLineChart/> , color: '#F3E8FF', text: '#9810FA',title: 'Invest & Earn', desc: 'Start fractional real estate investing from as low as ₦500,000', link: 'discover', linkName: 'Start Investing'},
+        {icon: <LuHammer/> , color: '#FFEDD4', text: '#F54900',title: 'Trusted Artisans', desc: 'Connect with verified plumbers, electricians, and home service providers.', link: 'discover', linkName: 'Find Artisans'},
     ]
 
     return (
