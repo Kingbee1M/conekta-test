@@ -27,13 +27,6 @@ interface ListerSideBarProps {
 export default function ListerSideBar({ onItemClick }: ListerSideBarProps) {
     const { listerProfile } = useSelector((state: RootState) => state.auth);
     
-    const typedUser = listerProfile as FlatUserData & { user?: FlatUserData } | null;
-    const targetUserObj = typedUser?.user || typedUser;
-    const firstName = targetUserObj?.profile?.first_name || '';
-    const lastName = targetUserObj?.profile?.last_name || '';
-    
-    const currentName = firstName || lastName ? `${firstName} ${lastName}`.trim() : '';
-    
     const unreadInboxCount = 5;
     const pathname = usePathname();
 
@@ -50,13 +43,8 @@ export default function ListerSideBar({ onItemClick }: ListerSideBarProps) {
         }
     };
 
-    // Build the workspace slug clean string
-    const userSlug = currentName
-        ? encodeURIComponent(currentName.toLowerCase().replace(/\s+/g, '-'))
-        : 'workspace';
-
     const links = [
-        { title: 'Dashboard', link: `/${userSlug}`, icon: link1, isInbox: false, exact: true },
+        { title: 'Dashboard', link: `/lister-dashboard`, icon: link1, isInbox: false, exact: true },
         { title: 'Properties', link: `/properties`, icon: link6, isInbox: false },
         { title: 'Analytics', link: `/analytics`, icon: link3, isInbox: false },
         { title: 'Rented Listings', link: `/rented-listings`, icon: link2, isInbox: false },

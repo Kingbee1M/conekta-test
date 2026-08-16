@@ -11,6 +11,7 @@ import listerReducer from './adminListerSlice';
 import adminListingReducer from './adminListingSlice';
 import adminUserReducer from './adminUsersSlice';
 import customerListingReducer from './customerListingSlice';
+import publicKYCReducer from './publicKycSlice'
 import { apiSlice } from '@/lib/api';
 import { resetStore } from './actions';
 
@@ -24,6 +25,7 @@ const appReducer = combineReducers({
   adminListing: adminListingReducer,
   adminUsers: adminUserReducer,
   customerListing: customerListingReducer,
+  publicKyc: publicKYCReducer,
   [apiSlice.reducerPath]: apiSlice.reducer, 
 });
 
@@ -39,7 +41,7 @@ const rootReducer = (state: ReturnType<typeof appReducer> | undefined, action: U
 const persistConfig = {
   key: 'conketa_root',
   storage,
-  whitelist: ['auth', 'cookieConsent', 'listing', 'listingView', 'adminCustomer', 'adminLister', 'adminListing', 'adminUsers', 'customerListing'], 
+  whitelist: ['auth', 'cookieConsent', 'listing', 'listingView', 'adminCustomer', 'adminLister', 'adminListing', 'adminUsers', 'customerListing', 'publicKyc'], 
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

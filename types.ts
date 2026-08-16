@@ -6,7 +6,9 @@ export interface signupTypes {
     email: string;
     phone_number: string;
     password: string;
-    role: string;
+    address: string;
+    state: string;
+    lga: string
 }
 
 export type loginTypes = {

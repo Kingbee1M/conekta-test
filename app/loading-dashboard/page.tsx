@@ -7,7 +7,8 @@ import { RootState } from '@/shared/store/store';
 import {
   useGetCustomerProfileMeQuery,
   useGetListerProfileMeQuery,
-} from '@/shared/service/me.services'; // Ensure this points to your new profileApiSlice
+} from '@/shared/service/me.services';
+import { useGetMyKycProfileQuery } from '@/shared/service/publicKyc/publicKYC.services';
 import { CustomerProfile, ListerProfile, setCustomerProfile, setListerProfile } from '@/shared/store/authSlice';
 import { RoleEnum } from '@/shared/enums/roles.enum';
 
@@ -44,6 +45,11 @@ export default function LoadingDashboard() {
   // Execute lister query if activeRole === LISTER
   const listerQueryResult = useGetListerProfileMeQuery(undefined, {
     skip: !isListerRole || !session,
+  });
+
+  // Prefetch KYC profile into Redux store slice automatically
+  useGetMyKycProfileQuery(undefined, {
+    skip: !session,
   });
 
   // Extract active query execution status based on current active role
@@ -83,19 +89,10 @@ export default function LoadingDashboard() {
 
     // 3. SUCCESS PATHWAY: Route based on verified profile & role context
     if ((isSuccess || activeProfile) && hasName) {
-      const computedFullName =
-        firstName || lastName
-          ? `${firstName || ''} ${lastName || ''}`.trim()
-          : fullName || 'user';
-
-      const userSlug = encodeURIComponent(
-        computedFullName.toLowerCase().replace(/\s+/g, '-')
-      );
-
       if (activeRole === RoleEnum.ADMIN || activeRole === RoleEnum.SUPER_ADMIN) {
         router.replace('/overview');
       } else if (activeRole === RoleEnum.LISTER) {
-        router.replace(`/${userSlug}`);
+        router.replace('/lister-dashboard');
       } else if (activeRole === RoleEnum.CUSTOMER) {
         router.replace('/home');
       } else {
@@ -122,26 +119,26 @@ export default function LoadingDashboard() {
   ]);
 
   return (
-    <div className="relative w-full min-h-screen flex flex-col items-center justify-center bg-gray-50/50 overflow-hidden px-4">
-      {/* Background Subtle Glowing Gradients */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-primary-green/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-emerald-300/20 rounded-full blur-3xl pointer-events-none" />
+    <div className="relative w-full min-h-screen flex flex-col items-center justify-center bg-app-background overflow-hidden px-4">
+      {/* Background Glowing Gradients */}
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-[#2a8545]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-primary-fixed/20 rounded-full blur-3xl pointer-events-none" />
 
       {/* Main Glassmorphic Loading Card */}
       <div className="relative z-10 w-full max-w-sm p-8 bg-white/80 backdrop-blur-xl border border-gray-100 rounded-3xl shadow-xl shadow-gray-200/50 flex flex-col items-center text-center space-y-6">
         
         {/* Animated Spinner Icon Container */}
         <div className="relative flex items-center justify-center">
-          <div className="w-16 h-16 border-4 border-gray-100 border-t-primary-green rounded-full animate-spin" />
-          <div className="absolute inset-0 w-16 h-16 border-4 border-emerald-400/20 rounded-full animate-ping opacity-25" />
+          <div className="w-16 h-16 border-4 border-gray-100 border-t-[#2a8545] rounded-full animate-spin" />
+          <div className="absolute inset-0 w-16 h-16 border-4 border-[#80da90]/30 rounded-full animate-ping opacity-25" />
         </div>
 
         {/* Dynamic Status Message */}
         <div className="space-y-2">
-          <h2 className="text-lg font-bold text-gray-900 tracking-tight">
+          <h2 className="text-lg font-bold text-text-primary tracking-tight">
             {isLoading ? 'Verifying Session' : 'Preparing Your Workspace'}
           </h2>
-          <p className="text-xs text-gray-500 font-medium leading-relaxed">
+          <p className="text-xs text-[#5f5e5e] font-medium leading-relaxed">
             {isListerRole
               ? 'Loading Lister dashboard settings...'
               : isCustomerRole
@@ -152,9 +149,9 @@ export default function LoadingDashboard() {
 
         {/* Contextual Active Role Badge */}
         {activeRole && (
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-100 rounded-full">
-            <span className="w-2 h-2 rounded-full bg-primary-green animate-pulse" />
-            <span className="text-[11px] font-semibold text-emerald-800 uppercase tracking-wider">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-active-link border border-[#2a8545]/20 rounded-full">
+            <span className="w-2 h-2 rounded-full bg-[#2a8545] animate-pulse" />
+            <span className="text-[11px] font-semibold text-[#2a8545] uppercase tracking-wider">
               {activeRole} MODE
             </span>
           </div>
