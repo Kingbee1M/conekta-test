@@ -66,7 +66,7 @@ export default function CustomerClientLayout({ children }: CustomerClientLayoutP
 
   if (!isAuthorized) {
     return (
-      <div className="w-full h-screen flex justify-center items-center bg-app-background">
+      <div className="w-full h-screen flex justify-center items-center bg-linear-to-br from-[#EDFDF5] via-[#EDFDF5] to-white">
         <div className="w-8 h-8 border-4 border-[#00AC72] border-t-transparent rounded-full animate-spin"></div>
       </div>
     );

@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { AppDispatch } from '@/shared/store/store';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/shared/store/store';
 import { logoutUser } from '@/shared/features/auth/auth.action';
 import { useToast } from './ui/ToastProvider';
+import { useKycModal } from '@/lib/KycModalContext';
+import { SubmissionStatusEnum } from '@/shared/enums/kycEnums/submissionStatus.enum';
 import { TenantProfileData } from '../(customer)/profile/page';
 import { 
   LuLayoutDashboard, 
@@ -28,7 +30,69 @@ interface SidebarCardProps {
 export default function SidebarCard({ tenant, activeTab, setActiveTab }: SidebarCardProps) {
   const dispatch = useDispatch<AppDispatch>();
   const { addToast } = useToast();
+  const { openModal } = useKycModal();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  // Read KYC profile status from Redux store slice
+  const { profile: kycProfile } = useSelector(
+    (state: RootState) => state.publicKyc
+  );
+  const kycStatus = kycProfile?.status ?? SubmissionStatusEnum.NOT_STARTED;
+  // Trigger popup modal on load if status is not APPROVED
+  useEffect(() => {
+  // If profile has finished loading (or is explicitly available/initialized)
+  if (kycStatus !== SubmissionStatusEnum.APPROVED) {
+    openModal();
+  }
+}, [kycStatus, openModal]);
+
+  // Helper function to render status badge styles & labels
+  const getKycBadge = () => {
+    switch (kycStatus) {
+      case SubmissionStatusEnum.APPROVED:
+        return (
+          <span className="bg-primary-green/10 text-primary-green border border-primary-green/20 font-semibold tracking-tight text-[10px] px-2.5 py-0.5 rounded-full mb-6 inline-flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary-green" />
+            Verified Tenant
+          </span>
+        );
+      case SubmissionStatusEnum.IN_PROGRESS:
+      case SubmissionStatusEnum.PENDING_REVIEW:
+        return (
+          <button
+            type="button"
+            onClick={openModal}
+            className="bg-lister-blue/10 text-lister-blue border border-lister-blue/20 hover:bg-lister-blue/20 font-semibold tracking-tight text-[10px] px-2.5 py-0.5 rounded-full mb-6 inline-flex items-center gap-1 transition-colors cursor-pointer"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-lister-blue animate-pulse" />
+            Verification Underway
+          </button>
+        );
+      case SubmissionStatusEnum.CHANGES_REQUESTED:
+        return (
+          <button
+            type="button"
+            onClick={openModal}
+            className="bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 font-semibold tracking-tight text-[10px] px-2.5 py-0.5 rounded-full mb-6 inline-flex items-center gap-1 transition-colors cursor-pointer"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-red-600" />
+            Verification Rejected
+          </button>
+        );
+      case SubmissionStatusEnum.NOT_STARTED:
+      default:
+        return (
+          <button
+            type="button"
+            onClick={openModal}
+            className="bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 font-semibold tracking-tight text-[10px] px-2.5 py-0.5 rounded-full mb-6 inline-flex items-center gap-1 transition-colors cursor-pointer"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-red-600 animate-ping" />
+            Unverified Account
+          </button>
+        );
+    }
+  };
 
   const menus: { id: SidebarTab; name: string; icon: typeof LuLayoutDashboard }[] = [
     { id: 'dashboard', name: 'Dashboard', icon: LuLayoutDashboard },
@@ -66,11 +130,9 @@ export default function SidebarCard({ tenant, activeTab, setActiveTab }: Sidebar
       </div>
       <h3 className="text-sm font-bold text-gray-800">Blessing Bamise</h3>
       <p className="text-[11px] text-gray-400 mb-2 truncate max-w-full">Blessing Bamise@useconekta.com</p>
-      {tenant.isVerified && (
-        <span className="bg-gray-100 text-gray-500 font-medium tracking-tight text-[10px] px-2.5 py-0.5 rounded-full mb-6">
-          Verified Tenant
-        </span>
-      )}
+      
+      {/* Dynamic KYC Status Badge */}
+      {getKycBadge()}
 
       {/* Nav Actions Links stack */}
       <nav className="w-full flex flex-col gap-1">
@@ -87,7 +149,7 @@ export default function SidebarCard({ tenant, activeTab, setActiveTab }: Sidebar
                   : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
               }`}
             >
-              <Icon className={`text-base ${isActive ? 'text-primary-green' : 'text-gray-400'}`} />
+              <Icon className={`text-base ${isActive ? 'text-white' : 'text-gray-400'}`} />
               {menu.name}
             </button>
           );

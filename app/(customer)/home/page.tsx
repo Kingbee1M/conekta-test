@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className="w-full flex flex-col items-center mb-10 gap-7 bg-app-background dark:bg-stone-950 min-h-screen py-4">
+    <main className="w-full flex flex-col items-center mb-10 gap-7 min-h-screen py-4">
       <HomeWelcomeSection />
       <MarqueeBanner />
 
