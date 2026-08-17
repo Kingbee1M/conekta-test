@@ -10,6 +10,15 @@ export interface ListingLocation {
   state: string;
   lga: string;
   country: string;
+  latitude: string
+  longitude: string
+}
+
+export interface ListingMedia {
+  url: string;
+  media_type?: string;
+  is_primary?: boolean;
+  sort_order?: number;
 }
 
 export interface ListingResult {
@@ -33,6 +42,7 @@ export interface ListingResult {
   bathrooms?: number;
   amenities?: string[];
   images?: string[];
+  media?: ListingMedia[];
   is_active?: boolean;
   created_at?: string;
   updated_at?: string;

@@ -77,7 +77,7 @@ export default function SidebarWidget({ basePrice, paymentFrequency }: SidebarWi
       </div>
 
       {/* CARD 2: PURPLE FRACTIONAL INVESTMENT WIDGET */}
-      <div className="bg-violet-50/50 rounded-3xl border border-violet-100/60 p-6 shadow-sm flex flex-col gap-5">
+      <div className="bg-white rounded-3xl border border-violet-100/60 p-6 shadow-sm flex flex-col gap-5">
         <div className="flex items-center gap-2.5 text-violet-700">
           <LuTrendingUp className="text-2xl shrink-0" />
           <h3 className="text-base font-extrabold tracking-tight">Investment Opportunity</h3>
@@ -87,7 +87,6 @@ export default function SidebarWidget({ basePrice, paymentFrequency }: SidebarWi
           Own a fraction of this property and earn monthly yields as a passive investment stream.
         </p>
 
-        {/* Investment parameters mapping card metadata */}
         <div className="flex flex-col gap-3 py-1">
           <div className="flex justify-between items-center text-xs font-bold">
             <span className="text-violet-600/70">Price per unit</span>
@@ -98,7 +97,7 @@ export default function SidebarWidget({ basePrice, paymentFrequency }: SidebarWi
             <span className="text-violet-900">4 / 10</span>
           </div>
 
-          {/* Unit sold track */}
+          
           <div className="w-full h-2 bg-violet-100 rounded-full overflow-hidden mt-1">
             <div className="h-full bg-violet-600 rounded-full" style={{ width: '40%' }} />
           </div>

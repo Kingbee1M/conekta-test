@@ -109,7 +109,6 @@ export default function ClientbuyProperty() {
   });
 
   const loadListings = useCallback(() => {
-    // Check if slider range was altered
     const isCustomMinPrice = minPrice !== undefined && minPrice > 0;
     const isCustomMaxPrice = maxPrice !== undefined && maxPrice < 150;
 
