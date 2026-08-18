@@ -309,7 +309,7 @@ export default function PropertySearchFilter() {
                     className="flex items-center justify-between p-2 rounded-xl hover:bg-stone-100 dark:hover:bg-stone-800 transition-all group"
                   >
                     <div className="flex items-center gap-2.5 min-w-0 pr-2">
-                      <div className="w-8 h-8 rounded-full bg-[#2a8545]/10 flex items-center justify-center text-[#2a8545] shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-primary-green/10 flex items-center justify-center text-primary-green shrink-0">
                         <Building className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
@@ -317,7 +317,7 @@ export default function PropertySearchFilter() {
                           {item.title}
                         </h4>
                         <div className="flex items-center gap-1 text-[11px] text-[#5f5e5e] truncate">
-                          <MapPin className="w-3 h-3 text-[#2a8545] shrink-0" />
+                          <MapPin className="w-3 h-3 text-primary-green shrink-0" />
                           <span className="truncate">
                             {item.location.lga}, {item.location.state}
                           </span>
@@ -326,7 +326,7 @@ export default function PropertySearchFilter() {
                     </div>
 
                     <div className="text-right shrink-0">
-                      <span className="text-xs font-bold text-[#2a8545]">
+                      <span className="text-xs font-bold text-primary-green">
                         ₦{item.base_price.toLocaleString()}
                       </span>
                       {item.payment_frequency && (

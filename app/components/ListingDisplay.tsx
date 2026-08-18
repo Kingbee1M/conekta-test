@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import PropertyCard from './customer/PropetyCard';
+import PropertyCard2 from './customer/PropertyCard2';
 import { 
   LuArrowUpDown, 
   LuChevronLeft, 
@@ -80,7 +80,7 @@ export function ListingDisplay({
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {listings.map((item, index) => {
             const id = item.id || (item as Record<string, unknown>).uuid as string;
-            return <PropertyCard key={id} listing={item} />;
+            return <PropertyCard2 key={id} listing={item} />;
           })}
         </div>
       )}

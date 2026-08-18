@@ -14,15 +14,19 @@
 
   /* -------- COLORS -------- */
   --color-primary-green: #2a8545;
-  --color-primary-green-hover: #80da90;
-  --color-secondary-green: #2a8545;
-  --color-secondary-green-hover: #80da90;
-  --color-text-primary: #262626;
-  --color-tertiary-green: #00B075;
+
+  /* Refined Complementary Variables */
+  --color-primary-green-hover: #216d37;    
+  --color-secondary-green: #1b5e32;        
+  --color-secondary-green-hover: #134624;
+  --color-tertiary-green: #e8f5e9;         
+  --color-text-primary: #1e293b;
+
   --color-active-link: #DBFCE7CC;
   --color-artisan-orange: #ff5500;
   --color-lister-blue: #2476FF;
-  --color-app-background: #F5F2EB;
+  /* --color-app-background: #F5F2EB; */
+  --color-app-background: #fff;
   --color-lister-background: #EEF1EC;
   --color-secondary-color: #5f5e5e;
   --color-secondary-hover: #5f5e5e;

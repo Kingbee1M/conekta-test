@@ -8,7 +8,7 @@ import VerifiedPropertySummaryCard from './VerifiedPropertySummaryCard';
 export default function ConektaCommunity() {
   return (
     <section className="w-full max-w-7xl px-4 sm:px-6 my-6">
-      <div className="bg-[#f9f7f2] dark:bg-stone-900 rounded-3xl p-6 sm:p-10 lg:p-12 border border-stone-200/60 dark:border-stone-800 flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-16">
+      <div className="rounded-3xl p-6 sm:p-10 lg:p-12 border border-stone-200/60 dark:border-stone-800 flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-16">
         
         {/* Left Column: Text & CTA */}
         <div className="flex-1 max-w-xl flex flex-col items-start text-left">

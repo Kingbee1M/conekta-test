@@ -2,7 +2,6 @@
 
 import { FiHome } from "react-icons/fi";
 import { TbBuildingSkyscraper } from "react-icons/tb";
-import { GrLineChart } from "react-icons/gr";
 import { LuHammer } from "react-icons/lu";
 import Link from "next/link";
 import { GoArrowRight } from "react-icons/go";
