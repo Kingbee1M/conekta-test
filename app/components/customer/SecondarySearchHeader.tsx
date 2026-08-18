@@ -250,7 +250,7 @@ export function SecondarySearchHeader({
   };
 
   return (
-    <div ref={containerRef} className={`relative w-full ${className}`}>
+    <div ref={containerRef} className={`relative w-9/10 ${className}`}>
       {/* Search Header Container */}
       <div className="w-full bg-slate-100/80 backdrop-blur-md rounded-2xl p-2 md:p-3 border border-slate-200/60 shadow-xs flex items-center justify-between gap-3">
         {/* Search Input Box */}

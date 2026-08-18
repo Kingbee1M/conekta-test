@@ -171,9 +171,12 @@ export default function ClientbuyProperty() {
   }, [filterValues]);
 
   return (
-    <main className="min-h-full p-4 md:p-10 overflow-x-clip">
+    <main className="min-h-full py-4 md:py-10 overflow-x-clip flex flex-col items-center">
       {/* 1. Hero Banner */}
-      <BuyPropertyBanner />
+      <div className='w-full'>
+        <BuyPropertyBanner />
+      </div>
+      
 
       <SecondarySearchHeader
       />

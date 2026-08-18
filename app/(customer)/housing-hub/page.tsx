@@ -104,7 +104,7 @@ export default function MyHousingPage() {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="min-h-screen py-8 px-4 sm:px-6 lg:px-18"
+      className="min-h-screen pb-8 px-4 sm:px-6 lg:px-18 lg:pt-20"
     >
       <div className="max-w-full mx-auto flex flex-col gap-6">
         
