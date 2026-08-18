@@ -33,7 +33,7 @@ export default function BuyPropertyHero() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start mt-2">
           {/* Left Side - Main Headline */}
           <div className="lg:col-span-7">
-            <h1 className="text-4xl sm:text-5xl md:text-3xl font-bold tracking-tight leading-[1.1] text-slate-900 drop-shadow-xs">
+            <h1 className="text-4xl sm:text-5xl md:text-4xl font-bold tracking-tight leading-[1.1] text-slate-900 drop-shadow-xs">
               Some of these <br className="hidden sm:inline" />
               are already <span className="text-primary-green italic">home.</span>
             </h1>
@@ -41,7 +41,7 @@ export default function BuyPropertyHero() {
 
           {/* Right Side - Paragraph Description */}
           <div className="lg:col-span-5 lg:pt-3">
-            <p className="text-sm sm:text-base md:text-lg text-white font-normal leading-relaxed max-w-md bg-white/40 backdrop-blur-xs p-4 rounded-2xl border border-white/30 shadow-xs">
+            <p className="text-sm sm:text-base md:text-lg text-slate-50 font-normal leading-relaxed max-w-md bg-slate-400/40 backdrop-blur-xs p-4 rounded-2xl border border-white/30 shadow-xs">
               From Lekki penthouses to Gwarinpa bungalows <br/>every listing here has been walked through and verified by our on-ground team.
             </p>
           </div>
