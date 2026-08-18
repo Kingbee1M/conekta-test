@@ -64,7 +64,7 @@ export default function ServerBuyProperty() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <main className="w-full min-h-screen">
+      <main className="w-full min-h-screen py-0">
         <ClientbuyProperty />
       </main>
     </>

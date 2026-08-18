@@ -6,6 +6,7 @@ import { ListingDisplay } from '@/app/components/ListingDisplay';
 import { LuFilter, LuX } from 'react-icons/lu';
 import { useAppSelector, useAppDispatch } from '@/lib/hooks';
 import BuyPropertyBanner from './BuyProppertyBanner';
+import TrendingNeighborhoods from './TrendingNeighborhoods';
 import CustomHorizontalScroll from '@/app/components/customer/CustomHorizontalscroll';
 import type { ListingResult } from '@/shared/service/customer services/customerTypes';
 import {
@@ -18,61 +19,8 @@ import {
   setFilterAmenities,
   resetCustomerFilters,
 } from '@/shared/store/customerListingSlice';
-
-const MOCK_LAND_DEALS: ListingResult[] = [
-  {
-    id: 'land-1',
-    title: 'Epe Waterfront Plots',
-    category: 'Land',
-    price: 12000000,
-    state: 'Lagos',
-    lga: 'Epe',
-    images: [
-      'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80',
-    ],
-    verified: true,
-    size: '600 sqm',
-  } as unknown as ListingResult,
-  {
-    id: 'land-2',
-    title: 'Ibeju-Lekki Estate Land',
-    category: 'Land',
-    price: 18500000,
-    state: 'Lagos',
-    lga: 'Ibeju-Lekki',
-    images: [
-      'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=800&q=80',
-    ],
-    verified: true,
-    size: '450 sqm',
-  } as unknown as ListingResult,
-  {
-    id: 'land-3',
-    title: 'Karshi District Plots',
-    category: 'Land',
-    price: 8200000,
-    state: 'Abuja',
-    lga: 'Karshi',
-    images: [
-      'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80',
-    ],
-    verified: true,
-    size: '500 sqm',
-  } as unknown as ListingResult,
-  {
-    id: 'land-4',
-    title: 'Moniya Commercial Land',
-    category: 'Land',
-    price: 5400000,
-    state: 'Oyo',
-    lga: 'Akinyele',
-    images: [
-      'https://images.unsplash.com/photo-1511497584788-876761c11969?auto=format&fit=crop&w=800&q=80',
-    ],
-    verified: true,
-    size: '900 sqm',
-  } as unknown as ListingResult,
-];
+import { SecondarySearchHeader } from './SecondarySearchHeader';
+import SellHomeHero from './SellYourHome';
 
 export default function ClientbuyProperty() {
   const dispatch = useAppDispatch();
@@ -170,7 +118,6 @@ export default function ClientbuyProperty() {
       )
     );
 
-    // Omit default range min 0 and max 150 when setting store price range
     dispatch(
       setPriceRange({
         minPrice: filterValues.minPrice > 0 ? filterValues.minPrice : undefined,
@@ -178,9 +125,10 @@ export default function ClientbuyProperty() {
       })
     );
 
-    const parsedBedrooms = filterValues.bedrooms === 'Any' 
-      ? undefined 
-      : parseInt(filterValues.bedrooms.replace('+', ''), 10);
+    const parsedBedrooms =
+      filterValues.bedrooms === 'Any'
+        ? undefined
+        : parseInt(filterValues.bedrooms.replace('+', ''), 10);
     dispatch(setFilterBedrooms(parsedBedrooms));
 
     dispatch(setFilterAmenities(filterValues.amenities.join(',')));
@@ -224,11 +172,16 @@ export default function ClientbuyProperty() {
 
   return (
     <main className="min-h-full p-4 md:p-10 overflow-x-clip">
+      {/* 1. Hero Banner */}
       <BuyPropertyBanner />
 
-      <div className="max-w-[1440px] mx-auto flex flex-col gap-8">
+      <SecondarySearchHeader
+      />
+
+      {/* 3. Main Content Area */}
+      <div className="max-w-360 mx-auto flex flex-">
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        {/* <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl md:text-4xl font-black text-gray-900 tracking-tight">
               Find Your Perfect Home
@@ -240,7 +193,7 @@ export default function ClientbuyProperty() {
 
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-2xl font-bold text-gray-800 shadow-sm hover:bg-gray-50 transition-all active:scale-95"
+            className="flex items-center justify-center gap-2 px-6 py-3 bg-white border border-gray-200 rounded-2xl font-bold text-gray-800 shadow-xs hover:bg-gray-50 transition-all active:scale-95 cursor-pointer"
           >
             {showFilters ? (
               <LuX className="text-rose-500" />
@@ -249,14 +202,13 @@ export default function ClientbuyProperty() {
             )}
             {showFilters ? 'Hide Filters' : 'Filter Properties'}
           </button>
-        </div>
+        </div> */}
 
         {/* Layout Grid / Sidebar Structure */}
-        <div className="flex flex-col lg:flex-row gap-8 items-start">
-          
-          {/* DESKTOP SIDEBAR (Static side placement when open) */}
+        {/* <div className="flex flex-col lg:flex-row gap-8 items-start">
+          DESKTOP SIDEBAR
           {showFilters && (
-            <aside className="hidden lg:block w-[360px] shrink-0 mt-16">
+            <aside className="hidden lg:block w-90 shrink-0">
               <PropertyFilter
                 values={filterValues}
                 onChange={setFilterValues}
@@ -266,10 +218,10 @@ export default function ClientbuyProperty() {
             </aside>
           )}
 
-          {/* MOBILE SLIDE DRAWER */}
+          MOBILE SLIDE DRAWER
           <div
             className={`
-              lg:hidden fixed inset-0 z-[100] transition-all duration-300
+              lg:hidden fixed inset-0 z-100 transition-all duration-300
               ${showFilters ? 'visible opacity-100' : 'invisible opacity-0'}
             `}
           >
@@ -279,7 +231,7 @@ export default function ClientbuyProperty() {
             />
 
             <div
-              className={`absolute left-0 top-0 h-full w-[85%] max-w-[360px] bg-white transition-transform duration-300 shadow-2xl p-4 overflow-y-auto ${
+              className={`absolute left-0 top-0 h-full w-[85%] max-w-90 bg-white transition-transform duration-300 shadow-2xl p-4 overflow-y-auto ${
                 showFilters ? 'translate-x-0' : '-translate-x-full'
               }`}
             >
@@ -293,11 +245,39 @@ export default function ClientbuyProperty() {
             </div>
           </div>
 
-          {/* Main Property Listings Area */}
+          Main Property Listings Area
           <div className="flex-1 w-full min-w-0">
             {loading ? (
-              <div className="flex items-center justify-center p-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#257448]" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
+                {Array.from({ length: pageSize || 6 }).map((_, index) => (
+                  <div
+                    key={index}
+                    className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs flex flex-col"
+                  >
+                    <div className="relative w-full h-52 bg-slate-200">
+                      <div className="absolute top-3 left-3 h-6 w-20 bg-slate-300 rounded-full" />
+                      <div className="absolute top-3 right-3 h-8 w-8 bg-slate-300 rounded-full" />
+                    </div>
+
+                    <div className="p-4 flex flex-col gap-3 flex-1 justify-between">
+                      <div className="space-y-2">
+                        <div className="h-5 bg-slate-200 rounded-md w-3/4" />
+                        <div className="h-4 bg-slate-200 rounded-md w-1/3" />
+                      </div>
+
+                      <div className="flex items-center gap-2">
+                        <div className="h-3 w-3 bg-slate-200 rounded-full" />
+                        <div className="h-3 bg-slate-200 rounded-md w-1/2" />
+                      </div>
+
+                      <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <div className="h-4 bg-slate-200 rounded-md w-12" />
+                        <div className="h-4 bg-slate-200 rounded-md w-12" />
+                        <div className="h-4 bg-slate-200 rounded-md w-16" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : error ? (
               <div className="p-6 bg-red-50 text-red-700 rounded-2xl border border-red-200 text-center">
@@ -314,47 +294,37 @@ export default function ClientbuyProperty() {
               />
             )}
           </div>
+        </div> */}
 
-        </div>
-      </div>
+        {/* 4. Bottom Horizontal Scroll Sections */}
+        {!loading && listings.length > 0 && (
+          <div className="flex flex-col gap-12 mt-16 pt-12">
+            {/* Section 1: Explore Our Homes (Featured standard cards) */}
+            <div className='flex flex-col w-full items-center'>
+              <h1>Explore Our Homes</h1>
+              <p>We help you discover elegant, high-quality homes across prime locations.</p>
+            <CustomHorizontalScroll
+              listings={listings}
+              cardVariant="v2"
+              speed={25}
+            />
+            </div>
 
-      {/* Bottom Horizontal Scroll Sections */}
-      <div className="mt-16 flex flex-col gap-12 -mx-4 md:-mx-10">
-        {/* 1. Trending Listings */}
-        <CustomHorizontalScroll
-          tagline="MOST VIEWED THIS WEEK"
-          title="Trending listings"
-          subtitle="What buyers across Nigeria are clicking into most right now."
-          listings={listings}
-          speed={35}
-        />
+            <SellHomeHero />
 
-        {/* 2. Good Land Deals (Using Mock Land Data) */}
-        <CustomHorizontalScroll
-          tagline="VERIFIED PLOTS"
-          title="Good land deals"
-          subtitle="Titled land with clean survey documents — flagged by our legal team."
-          listings={MOCK_LAND_DEALS}
-          speed={40}
-        />
+            <TrendingNeighborhoods/>
 
-        {/* 3. New Developments */}
-        <CustomHorizontalScroll
-          tagline="OFF-PLAN & NEW BUILDS"
-          title="New developments"
-          subtitle="Reserve early at pre-launch pricing, backed by an escrow guarantee."
-          listings={listings}
-          speed={38}
-        />
-
-        {/* 4. Recent Price Drops */}
-        <CustomHorizontalScroll
-          tagline="JUST REDUCED"
-          title="Recent price drops"
-          subtitle="Sellers who've adjusted price in the last 14 days — move fast on these."
-          listings={listings}
-          speed={36}
-        />
+            {/* Section 2: Homes For You (Alternative card layout) */}
+            <CustomHorizontalScroll
+              tagline="RECOMMENDED FOR YOU"
+              title="Homes For You"
+              subtitle="Handpicked listings matching popular buyer searches and market trends."
+              listings={listings}
+              cardVariant="v3"
+              speed={20}
+            />
+          </div>
+        )}
       </div>
     </main>
   );

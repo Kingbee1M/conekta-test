@@ -106,7 +106,7 @@ export default function PropertyDetailsClient({ params }: PageProps) {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen py-6 px-4 sm:px-6 lg:px-8">
+      <main className="min-h-screen py-6 px-4 sm:px-6 lg:px-8 pt-20">
         <div className="max-w-360 mx-auto flex flex-col gap-6 animate-pulse">
           <div className="h-4 w-28 bg-gray-200 rounded-md" />
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 items-start">
@@ -148,7 +148,7 @@ export default function PropertyDetailsClient({ params }: PageProps) {
 
   if (isError || !listing) {
     return (
-      <main className="min-h-screen flex flex-col items-center justify-center py-20 px-4">
+      <main className="min-h-screen flex flex-col items-center justify-center py-20 px-4 pt-20">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -276,7 +276,7 @@ export default function PropertyDetailsClient({ params }: PageProps) {
   };
 
   return (
-    <main className="min-h-screen py-6 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen py-6 px-4 sm:px-6 lg:px-8 pt-20">
       <motion.div
         variants={containerVariants}
         initial="hidden"

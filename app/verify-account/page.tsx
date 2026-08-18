@@ -267,7 +267,7 @@ export default function VerifyAccount() {
           {totalRequirements > 0 && (
             <div className="space-y-3 pt-2">
               <div className="flex justify-between items-center text-xs md:text-sm font-medium">
-                <span className="text-primary-green-hover">
+                <span className="text-white">
                   Verification progress · {submittedCount} of {totalRequirements} submitted
                 </span>
                 <span className="text-xl font-bold text-white">

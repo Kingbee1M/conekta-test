@@ -75,7 +75,7 @@ export default function CustomerClientLayout({ children }: CustomerClientLayoutP
   return (
     <div className="min-h-screen bg-app-background text-stone-900 flex flex-col items-center">
       {/* Main Content Area */}
-      <main className="w-full max-w-520 flex-1 flex-col items-center justify-center mt-10 md:mt-16 relative">
+      <main className="w-full max-w-520 flex-1 flex-col items-center justify-center relative">
         {children}
       </main>
 
@@ -88,26 +88,33 @@ export default function CustomerClientLayout({ children }: CustomerClientLayoutP
 
       {/* FLOATING HELP TRIGGER BUTTON */}
       <motion.button 
-        ref={buttonRef}
-        drag
-        dragElastic={0.1}
-        dragConstraints={{ 
-          left: -(typeof window !== 'undefined' ? window.innerWidth - 80 : 300), 
-          right: 0, 
-          top: -600, 
-          bottom: 0 
-        }}
-        animate={helpButtonControls}
-        onDragEnd={handleDragEnd}
-        whileTap={{ scale: 0.9 }}
-        className="fixed bottom-15 right-5 w-fit cursor-pointer z-30 touch-none" 
-        onClick={() => setIsHelpOpen(!isHelpOpen)}
-      >
-        <IoChatbubble className="text-6xl md:text-7xl text-primary-green"/>
-        <span className="absolute top-5 md:top-7 right-1 md:right-2 text-[9px] md:text-[10px] text-white font-bold select-none">
-          Need help?
-        </span>
-      </motion.button>
+  ref={buttonRef}
+  drag
+  dragElastic={0.1}
+  dragConstraints={{ 
+    left: -(typeof window !== 'undefined' ? window.innerWidth - 80 : 300), 
+    right: 0, 
+    top: -600, 
+    bottom: 0 
+  }}
+  animate={helpButtonControls}
+  onDragEnd={handleDragEnd}
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.92 }}
+  className="fixed bottom-6 right-6 z-30 flex items-center gap-2.5 px-4 py-2.5 bg-primary-green text-white rounded-full shadow-lg hover:shadow-xl hover:bg-[#23703a] border border-white/20 backdrop-blur-sm transition-colors cursor-pointer touch-none select-none" 
+  onClick={() => setIsHelpOpen(!isHelpOpen)}
+>
+  <span className="relative flex h-2.5 w-2.5">
+    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-300 opacity-75" />
+    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white" />
+  </span>
+
+  <span className="text-xs md:text-sm font-semibold tracking-wide">
+    Need help?
+  </span>
+
+  <IoChatbubble className="text-base md:text-lg text-white" />
+</motion.button>
     </div>
   );
 }

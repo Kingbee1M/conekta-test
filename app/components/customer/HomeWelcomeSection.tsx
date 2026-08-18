@@ -139,7 +139,7 @@ export default function HomeWelcomeSection({
               {currentDateFormatted}
             </span>
             <h1 className="text-3xl md:text-4xl font-extrabold" style={{ color: 'var(--color-text-primary, #262626)' }}>
-              Good day, <span className="italic font-normal" style={{ color: 'var(--color-tertiary-green, #00B075)' }}> Blessing Bamise.</span>
+              Good day, <span className="italic font-normal text-primary-green"> Blessing Bamise.</span>
             </h1>
             <p className="text-sm md:text-base mt-1" style={{ color: 'var(--color-secondary-color, #5f5e5e)' }}>
               {tenancy
