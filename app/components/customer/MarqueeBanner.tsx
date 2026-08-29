@@ -39,7 +39,7 @@ export default function MarqueeBanner() {
                 <span className="text-xs sm:text-sm font-semibold tracking-wide uppercase px-4">
                   {item}
                 </span>
-                <span className="text-secondary-green-hover text-xs px-2 opacity-80">●</span>
+                <span className="text-white text-xs px-2 opacity-80">●</span>
               </div>
             ))}
           </motion.div>

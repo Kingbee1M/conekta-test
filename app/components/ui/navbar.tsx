@@ -7,10 +7,15 @@ import { useState } from "react"
 import { usePathname } from "next/navigation"
 import { IoIosNotificationsOutline } from "react-icons/io"
 import { MdPersonOutline } from "react-icons/md"
+import { useGetUnreadCountQuery } from "@/shared/service/notification.socket"
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
+
+  // Consumes RTK Query endpoint; automatically refetched when WS invalidates 'UnreadCount' tag
+  const { data: unreadData } = useGetUnreadCountQuery()
+  const hasUnread = (unreadData?.count ?? 0) > 0
 
   const navs = [
     { title: 'Discover', link: '/discover' },
@@ -99,7 +104,10 @@ export default function Navbar() {
               href="/notification"
               className="relative p-1.5 bg-slate-200/60 hover:bg-slate-200 text-slate-700 rounded-full transition-colors shadow-xs"
             >
-              <span className="absolute top-1 right-1 h-1.5 w-1.5 rounded-full bg-secondary-green ring-2 ring-slate-100" />
+              {/* Render dot conditionally when unread notifications count > 0 */}
+              {hasUnread && (
+                <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-[#00AC72] ring-2 ring-white animate-pulse" />
+              )}
               <IoIosNotificationsOutline className="text-base" />
             </Link>
 
