@@ -38,7 +38,10 @@ export default function PropertyCard2({ listing }: PropertyCard2Props) {
       .join(', ') || 'Location unavailable';
 
   return (
-    <div className="group relative w-full max-w-sm rounded-3xl bg-white p-3 shadow-sm hover:shadow-xl border border-slate-100 transition-all duration-300">
+    <Link
+      href={`/discover/${listing.uuid}`}
+      className="group relative block w-full max-w-sm rounded-3xl bg-white p-3 shadow-sm hover:shadow-xl border border-slate-100 transition-all duration-300 cursor-pointer"
+    >
       {/* Upper Section: Rounded Image Header */}
       <div className="relative w-full h-52 rounded-2xl overflow-hidden bg-slate-100">
         <Image
@@ -65,17 +68,14 @@ export default function PropertyCard2({ listing }: PropertyCard2Props) {
             )}
           </div>
 
-          <Link
-            href={`/discover/${listing.uuid}`}
-            className="inline-flex items-center gap-1 px-3.5 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition-colors shrink-0"
-          >
+          <span className="inline-flex items-center gap-1 px-3.5 py-2 rounded-full bg-slate-100 group-hover:bg-slate-200 text-slate-700 font-semibold text-xs transition-colors shrink-0">
             <span>View Details</span>
             <ArrowUpRight className="w-3.5 h-3.5 text-slate-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-          </Link>
+          </span>
         </div>
 
         {/* Title & Location */}
-        <Link href={`/discover/${listing.uuid}`} className="block group-hover:opacity-90">
+        <div className="block group-hover:opacity-90">
           <h3 className="text-base font-bold text-slate-800 leading-snug line-clamp-1 mb-1">
             {listing.title}
           </h3>
@@ -83,7 +83,7 @@ export default function PropertyCard2({ listing }: PropertyCard2Props) {
           <p className="text-xs font-medium text-slate-400 line-clamp-1 mb-4">
             {locationText}
           </p>
-        </Link>
+        </div>
 
         {/* Divider */}
         <div className="w-full h-px bg-slate-100 mb-3.5" />
@@ -121,6 +121,6 @@ export default function PropertyCard2({ listing }: PropertyCard2Props) {
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
