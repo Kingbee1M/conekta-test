@@ -61,6 +61,8 @@ const MOCK_NEIGHBORHOODS: Neighborhood[] = [
 export default function TrendingNeighborhoods() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isHoveredRef = useRef(false);
+  const isManualScrollingRef = useRef(false);
+  const manualScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Smooth continuous autoscroll effect
   useEffect(() => {
@@ -71,7 +73,7 @@ export default function TrendingNeighborhoods() {
     const speed = 0.5; // Scroll speed multiplier
 
     const step = () => {
-      if (!isHoveredRef.current && container) {
+      if (!isHoveredRef.current && !isManualScrollingRef.current && container) {
         container.scrollLeft += speed;
         // Infinite scroll loop reset
         if (container.scrollLeft >= container.scrollWidth - container.clientWidth - 1) {
@@ -88,11 +90,24 @@ export default function TrendingNeighborhoods() {
 
   const scroll = (direction: 'left' | 'right') => {
     if (!scrollContainerRef.current) return;
+
+    // Temporarily pause the animation frame loop
+    isManualScrollingRef.current = true;
+
+    if (manualScrollTimeoutRef.current) {
+      clearTimeout(manualScrollTimeoutRef.current);
+    }
+
     const scrollAmount = direction === 'left' ? -320 : 320;
     scrollContainerRef.current.scrollBy({
       left: scrollAmount,
       behavior: 'smooth',
     });
+
+    // Resume continuous auto-scrolling once the smooth scroll finishes
+    manualScrollTimeoutRef.current = setTimeout(() => {
+      isManualScrollingRef.current = false;
+    }, 600);
   };
 
   const carouselItems = [...MOCK_NEIGHBORHOODS, ...MOCK_NEIGHBORHOODS];
@@ -100,16 +115,16 @@ export default function TrendingNeighborhoods() {
   return (
     <section className="w-full max-w-7xl mx-auto px-4 py-12">
       <div className="flex items-end justify-between mb-8">
-        <div className='mx-0 lg:mx-16'>
+        <div className="mx-0 lg:mx-16">
           <span className="text-[11px] font-bold tracking-[0.2em] text-primary-green uppercase mb-2 block">
             WHERE PEOPLE ARE MOVING
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#0A3022]  tracking-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-[#0A3022] tracking-tight">
             Trending neighborhoods
           </h2>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 z-10">
           <button
             onClick={() => scroll('left')}
             aria-label="Previous slide"
@@ -129,8 +144,18 @@ export default function TrendingNeighborhoods() {
 
       <div
         ref={scrollContainerRef}
-        onMouseEnter={() => { isHoveredRef.current = true; }}
-        onMouseLeave={() => { isHoveredRef.current = false; }}
+        onMouseEnter={() => {
+          isHoveredRef.current = true;
+        }}
+        onMouseLeave={() => {
+          isHoveredRef.current = false;
+        }}
+        onTouchStart={() => {
+          isHoveredRef.current = true;
+        }}
+        onTouchEnd={() => {
+          isHoveredRef.current = false;
+        }}
         className="flex items-center gap-5 overflow-x-auto scrollbar-none pb-4 -mx-4 px-4"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
@@ -149,7 +174,7 @@ export default function TrendingNeighborhoods() {
               unoptimized
             />
 
-            <div className="absolute inset-0 bg-linear-to-t from-[#0A3022]/90 via-[#0A3022]/30 to-transparent z-10" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/30 to-transparent z-10" />
 
             <div className="absolute bottom-0 left-0 right-0 p-6 z-20 flex flex-col justify-end text-left">
               <h3 className="text-xl sm:text-2xl font-bold text-white leading-snug mb-1 group-hover:text-amber-200 transition-colors">
