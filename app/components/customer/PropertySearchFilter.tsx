@@ -86,7 +86,6 @@ export default function PropertySearchFilter() {
         const aiData = await res.json();
         
         // 🔍 LOG raw response from Next.js API route
-        console.log('📦 Raw AI API Response:', aiData);
 
         if (!res.ok) {
           throw new Error(aiData.error || 'Failed to parse query');

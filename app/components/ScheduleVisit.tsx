@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { createPortal as reactCreatePortal } from 'react-dom';
+import { useState, useSyncExternalStore } from 'react';
+import { createPortal } from 'react-dom';
 import { Calendar } from '@/components/ui/calendar';
 import CustomSelect from './ui/CustomSelect';
+import { sendSocketMessage } from '@/shared/service/notification.socket';
+import { useNotification } from '@/lib/NotificationProvider';
 
 const TIME_SLOTS = [
   '09:00 AM',
@@ -20,43 +22,90 @@ const VISIT_TYPES = [
   'In-Person Consultation',
 ];
 
+const emptySubscribe = () => () => {};
+
 export default function ScheduleVisitPortal({ onClose }: { onClose?: () => void }) {
-  const [mounted, setMounted] = useState(false);
+  const { addToast } = useNotification();
+
+  const isMounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false
+  );
+
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedTime, setSelectedTime] = useState<string>('10:30 AM');
   const [visitType, setVisitType] = useState<string>('');
   const [fullName, setFullName] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Ensure portal only renders on the client side to avoid SSR hydration mismatches
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true);
-  }, []);
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedDate || !visitType) return;
+  if (!selectedDate || !visitType) {
+    addToast({
+      title: 'Validation Error',
+      description: 'Please select both a visit type and a date.',
+      variant: 'warning',
+    });
+    return;
+  }
 
-    const bookingPayload = {
+  setIsLoading(true);
+
+  try {
+    const payload = {
       fullName,
       phone,
       visitType,
       date: selectedDate.toISOString(),
       time: selectedTime,
     };
-    setIsSubmitted(true);
-  };
 
-  if (!mounted) return null;
+    const sent = sendSocketMessage({
+      event: 'schedule_visit',
+      data: payload,
+    });
+
+    if (!sent) {
+      throw new Error(
+        'The notification service is not connected. Please try again.'
+      );
+    }
+
+    setIsSubmitted(true);
+
+    addToast({
+      title: 'Visit Request Dispatched',
+      description: `Scheduled ${visitType} for ${selectedDate.toLocaleDateString()} at ${selectedTime}.`,
+      variant: 'success',
+    });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : 'An error occurred while booking.';
+
+    console.error('Failed to post via socket:', error);
+
+    addToast({
+      title: 'Booking Failed',
+      description: errorMessage,
+      variant: 'error',
+    });
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+  if (!isMounted) return null;
 
   const content = (
     <div className="fixed h-full inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 overflow-y-auto animate-fade-in">
-      {/* Outer Dismiss Click Wrapper */}
       <div className="fixed inset-0" onClick={onClose} />
 
-      {/* Surface Card */}
       <div className="relative bg-white w-full max-w-2xl rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-2xl z-10 max-h-[90vh] overflow-y-auto">
         {isSubmitted ? (
           <div className="w-full text-center flex flex-col items-center gap-4 py-6">
@@ -68,9 +117,13 @@ export default function ScheduleVisitPortal({ onClose }: { onClose?: () => void 
               <p className="text-xs text-gray-500 mt-1 max-w-sm">
                 We&apos;ve reserved your slot for{' '}
                 <span className="font-semibold text-gray-800">
-                  {selectedDate?.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  {selectedDate?.toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
                 </span>{' '}
-                at <span className="font-semibold text-gray-800">{selectedTime}</span>. A confirmation has been logged.
+                at <span className="font-semibold text-gray-800">{selectedTime}</span>.
               </p>
             </div>
             <button
@@ -98,7 +151,6 @@ export default function ScheduleVisitPortal({ onClose }: { onClose?: () => void 
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-              {/* Contact Info Row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1 text-left">
                   <label className="text-xs font-semibold text-gray-700">Full Name</label>
@@ -125,7 +177,6 @@ export default function ScheduleVisitPortal({ onClose }: { onClose?: () => void 
                 </div>
               </div>
 
-              {/* Visit Type Selector */}
               <div className="flex flex-col gap-1 text-left">
                 <label className="text-xs font-semibold text-gray-700">Visit Type</label>
                 <CustomSelect
@@ -137,9 +188,7 @@ export default function ScheduleVisitPortal({ onClose }: { onClose?: () => void 
                 />
               </div>
 
-              {/* Calendar & Time Slots Split */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start pt-2 border-t border-gray-100">
-                {/* Calendar Picker */}
                 <div className="flex flex-col items-center gap-2">
                   <span className="text-xs font-semibold text-gray-700 self-start">Select Date</span>
                   <div className="p-1 border border-gray-200 rounded-xl bg-gray-50/50">
@@ -153,7 +202,6 @@ export default function ScheduleVisitPortal({ onClose }: { onClose?: () => void 
                   </div>
                 </div>
 
-                {/* Available Slots Grid */}
                 <div className="flex flex-col gap-2">
                   <span className="text-xs font-semibold text-gray-700">Available Time Slots</span>
                   <div className="grid grid-cols-2 gap-2">
@@ -178,7 +226,6 @@ export default function ScheduleVisitPortal({ onClose }: { onClose?: () => void 
                 </div>
               </div>
 
-              {/* Actions */}
               <div className="flex gap-2.5 justify-end pt-4 border-t border-gray-100">
                 {onClose && (
                   <button
@@ -191,10 +238,10 @@ export default function ScheduleVisitPortal({ onClose }: { onClose?: () => void 
                 )}
                 <button
                   type="submit"
-                  disabled={!visitType || !selectedDate}
+                  disabled={isLoading || !visitType || !selectedDate}
                   className="px-5 py-2.5 bg-[#00AC72] hover:bg-[#009663] disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold rounded-xl transition-colors shadow-md shadow-emerald-700/10 cursor-pointer"
                 >
-                  Confirm Schedule
+                  {isLoading ? 'Scheduling...' : 'Confirm Schedule'}
                 </button>
               </div>
             </form>
@@ -204,6 +251,5 @@ export default function ScheduleVisitPortal({ onClose }: { onClose?: () => void 
     </div>
   );
 
-  // Climbs out to document.body
-  return reactCreatePortal(content, document.body);
+  return createPortal(content, document.body);
 }

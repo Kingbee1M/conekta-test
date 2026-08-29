@@ -11,7 +11,9 @@ import listerReducer from './adminListerSlice';
 import adminListingReducer from './adminListingSlice';
 import adminUserReducer from './adminUsersSlice';
 import customerListingReducer from './customerListingSlice';
-import publicKYCReducer from './publicKycSlice'
+import publicKYCReducer from './publicKycSlice';
+import notificationReducer from './notification.slice';
+import { notificationApi } from '@/shared/service/notification.services';
 import { apiSlice } from '@/lib/api';
 import { resetStore } from './actions';
 
@@ -26,6 +28,8 @@ const appReducer = combineReducers({
   adminUsers: adminUserReducer,
   customerListing: customerListingReducer,
   publicKyc: publicKYCReducer,
+  notification: notificationReducer,
+  [notificationApi.reducerPath]: notificationApi.reducer, // <-- Add API reducer
   [apiSlice.reducerPath]: apiSlice.reducer, 
 });
 
@@ -41,7 +45,18 @@ const rootReducer = (state: ReturnType<typeof appReducer> | undefined, action: U
 const persistConfig = {
   key: 'conketa_root',
   storage,
-  whitelist: ['auth', 'cookieConsent', 'listing', 'listingView', 'adminCustomer', 'adminLister', 'adminListing', 'adminUsers', 'customerListing', 'publicKyc'], 
+  whitelist: [
+    'auth',
+    'cookieConsent',
+    'listing',
+    'listingView',
+    'adminCustomer',
+    'adminLister',
+    'adminListing',
+    'adminUsers',
+    'customerListing',
+    'publicKyc',
+  ], // Removed 'notification' to prevent persisting temporary UI state & stale cache
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -52,7 +67,7 @@ export const makeStore = () => {
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
         serializableCheck: false, // Essential for Redux Persist
-      }).concat(apiSlice.middleware),
+      }).concat(apiSlice.middleware, notificationApi.middleware), // <-- Add notificationApi.middleware
   });
 };
 

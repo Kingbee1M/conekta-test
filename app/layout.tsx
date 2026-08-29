@@ -13,6 +13,7 @@ import FooterWrapper from "./components/ui/clientFooter";
 import AuthWatcher from "@/lib/authProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { KycModalProvider } from "@/lib/KycModalContext";
+import { NotificationProvider } from "@/lib/NotificationProvider";
 
 const hanken = Hanken_Grotesk({
   variable: "--font-hanken",
@@ -56,11 +57,13 @@ export default function RootLayout({
               </Suspense>
               <NavbarWrapper />
               <TooltipProvider>
+                <NotificationProvider>
                 <KycModalProvider>
                 <main className="w-full max-w-520 flex-1 flex-col items-center justify-center">
                   {children}
                 </main>
                 </KycModalProvider>
+                </NotificationProvider>
               </TooltipProvider>
               <FooterWrapper />
             </ToastProvider>
