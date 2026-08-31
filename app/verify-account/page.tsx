@@ -9,6 +9,7 @@ import { DocumentTypeEnum, DocumentTypeLabels } from '@/shared/enums/kycEnums/do
 import { DocumentSideEnum } from '@/shared/enums/kycEnums/documentSide.enum';
 import { KycRequirementItem, KycRequirement } from '@/shared/service/publicKyc/publicKYCtypes';
 import Navbar from '../components/ui/navbar';
+import HelpPortal from '../components/ui/helpPortal';
 import { 
   useSubmitKycDocumentsMutation, 
   useSubmitKycProfileMutation,
@@ -43,7 +44,7 @@ export default function VerifyAccount() {
   // 1. Query Hooks - Fetch data on mount
   const { isLoading: isProfileLoading, error: profileError } = useGetMyKycProfileQuery();
   const { isLoading: isReqLoading, error: requirementsError } = useGetKycRequirementsQuery();
-  
+  const [isOpen, setIsOpen] = useState(false)
   // 2. Redux State Selectors
   const { profile, requirements, isLoading: isReduxLoading, error: reduxError } = useSelector(
     (state: RootState) => state.publicKyc
@@ -518,11 +519,15 @@ export default function VerifyAccount() {
               If your verification document was rejected or you have questions about specific requirements, contact our support team.
             </p>
             <button
+            onClick={()=>setIsOpen(!isOpen)}
               type="button"
               className="w-full py-3 px-4 bg-primary-green hover:bg-primary-green-hover text-white font-bold text-xs rounded-2xl transition shadow"
             >
               Contact Support
             </button>
+            {isOpen && (
+              <HelpPortal isOpen={isOpen} onClose={()=>setIsOpen(false)} />
+            )}
           </div>
         </div>
 

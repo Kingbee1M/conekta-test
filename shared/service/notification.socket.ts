@@ -1,4 +1,7 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import {
+  createApi,
+  fetchBaseQuery,
+} from "@reduxjs/toolkit/query/react";
 
 export interface NotificationData {
   [key: string]: unknown;
@@ -41,98 +44,141 @@ export interface UnreadCountResponse {
   count: number;
 }
 
+/* -------------------------------------------------------------------------- */
+/* WebSocket                                                                  */
+/* -------------------------------------------------------------------------- */
+
 let activeSocket: WebSocket | null = null;
 let isExplicitlyClosing = false;
 
-export const setNotificationSocketInstance = (socket: WebSocket | null) => {
+/**
+ * Store the active notification socket.
+ */
+export const setNotificationSocketInstance = (
+  socket: WebSocket | null
+) => {
   activeSocket = socket;
 };
 
-export const getNotificationSocketInstance = (): WebSocket | null => {
-  return activeSocket;
-};
-
-const getCookie = (name: string): string | null => {
-  if (typeof document === "undefined") return null;
-  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
-  return match ? decodeURIComponent(match[2]) : null;
-};
-
 /**
- * Constructs the WebSocket URL with fallback authentication query token
+ * Get the active notification socket.
  */
-export const getNotificationSocketUrl = (): string => {
-  const baseUrl = process.env.NEXT_PUBLIC_WS_URL || "wss://conekta.onrender.com/ws/notifications/";
-  
-  // Retrieve token from your client storage or state
-  const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-
-  if (!token) {
-    console.warn("[Notifications] No auth token found. Skipping WS connection.");
-    return "";
-  }
-
-  // Append token to the upgrade handshake
-  const wsUrl = new URL(baseUrl);
-  wsUrl.searchParams.set("token", token);
-
-  return wsUrl.toString();
-};
+export const getNotificationSocketInstance =
+  (): WebSocket | null => {
+    return activeSocket;
+  };
 
 /**
- * Connect to the notification WebSocket with connection state locks
+ * WebSocket URL.
+ *
+ * Authentication is handled by the backend using
+ * the HttpOnly access-token cookie.
+ *
+ * IMPORTANT:
+ * No token is read from localStorage.
+ * No ?token= parameter is added.
+ */
+export const getNotificationSocketUrl =
+  (): string => {
+    return (
+      process.env.NEXT_PUBLIC_WS_URL ||
+      "wss://conekta.onrender.com/ws/notifications/"
+    );
+  };
+
+/**
+ * Connect to the notification WebSocket.
  */
 export const connectNotificationSocket = (
-  onMessage?: (message: NotificationSocketMessage) => void
+  onMessage?: (
+    message: NotificationSocketMessage
+  ) => void
 ): WebSocket | null => {
   if (typeof window === "undefined") {
     return null;
   }
 
+  /*
+   * Reuse an existing socket if it is already
+   * connected or in the process of connecting.
+   */
   if (
     activeSocket &&
-    (activeSocket.readyState === WebSocket.OPEN ||
-      activeSocket.readyState === WebSocket.CONNECTING)
+    (
+      activeSocket.readyState === WebSocket.OPEN ||
+      activeSocket.readyState ===
+        WebSocket.CONNECTING
+    )
   ) {
+    console.log(
+      "[Notifications] Reusing existing WebSocket."
+    );
+
     return activeSocket;
   }
 
-  const url = getNotificationSocketUrl();
-  if (!url) return null;
-
   isExplicitlyClosing = false;
-  console.log("[Notifications] Connecting to WebSocket...");
 
+  const url = getNotificationSocketUrl();
+
+  console.log(
+    "[Notifications] Connecting to WebSocket..."
+  );
+
+  /*
+   * The browser handles the HttpOnly cookie
+   * during the WebSocket handshake.
+   */
   const socket = new WebSocket(url);
+
   activeSocket = socket;
 
   socket.onopen = () => {
-    console.log("[Notifications] WebSocket connected.");
+    console.log(
+      "[Notifications] WebSocket connected."
+    );
   };
 
   socket.onmessage = (event) => {
     try {
-      const message: NotificationSocketMessage = JSON.parse(event.data);
-      console.log("[Notifications] Received:", message);
+      const message: NotificationSocketMessage =
+        JSON.parse(event.data);
+
+      console.log(
+        "[Notifications] Received:",
+        message
+      );
+
       onMessage?.(message);
     } catch (error) {
-      console.error("[Notifications] Failed to parse message:", error);
+      console.error(
+        "[Notifications] Failed to parse message:",
+        error
+      );
     }
   };
 
   socket.onerror = (error) => {
-    // Ignore suppressed errors caused by intentional teardowns in dev mode
-    if (isExplicitlyClosing) return;
-    console.error("[Notifications] WebSocket error:", error);
+    if (isExplicitlyClosing) {
+      return;
+    }
+
+    console.error(
+      "[Notifications] WebSocket error:",
+      error
+    );
   };
 
   socket.onclose = (event) => {
     if (!isExplicitlyClosing) {
-      console.log("[Notifications] WebSocket closed.", {
-        code: event.code,
-        reason: event.reason,
-        wasClean: event.wasClean,
-      });
+      console.log(
+        "[Notifications] WebSocket closed:",
+        {
+          code: event.code,
+          reason: event.reason,
+          wasClean: event.wasClean,
+        }
+      );
     }
 
     if (activeSocket === socket) {
@@ -144,92 +190,173 @@ export const connectNotificationSocket = (
 };
 
 /**
- * Safely disconnect the active notification WebSocket
+ * Disconnect the active notification WebSocket.
  */
-export const disconnectNotificationSocket = () => {
-  if (!activeSocket) return;
+export const disconnectNotificationSocket =
+  () => {
+    const socket = activeSocket;
 
-  isExplicitlyClosing = true;
+    if (!socket) {
+      return;
+    }
 
-  // Only close if it's already connecting or connected
+    isExplicitlyClosing = true;
+
+    activeSocket = null;
+
+    /*
+     * Only close an active/connecting socket.
+     */
+    if (
+      socket.readyState === WebSocket.OPEN ||
+      socket.readyState ===
+        WebSocket.CONNECTING
+    ) {
+      socket.close(
+        1000,
+        "Provider unmounted"
+      );
+    }
+  };
+
+/**
+ * Send a message through the active WebSocket.
+ */
+export const sendSocketMessage = (
+  data: unknown
+): boolean => {
   if (
-    activeSocket.readyState === WebSocket.OPEN ||
-    activeSocket.readyState === WebSocket.CONNECTING
+    !activeSocket ||
+    activeSocket.readyState !==
+      WebSocket.OPEN
   ) {
-    activeSocket.close(1000, "Provider unmounted");
-  }
+    console.warn(
+      "[Notifications] WebSocket is not connected."
+    );
 
-  activeSocket = null;
-};
-
-export const sendSocketMessage = (data: unknown): boolean => {
-  if (!activeSocket || activeSocket.readyState !== WebSocket.OPEN) {
-    console.warn("[Notifications] WebSocket is not connected.");
     return false;
   }
 
   try {
-    activeSocket.send(JSON.stringify(data));
+    activeSocket.send(
+      JSON.stringify(data)
+    );
+
     return true;
   } catch (error) {
-    console.error("[Notifications] Failed to send WebSocket message:", error);
+    console.error(
+      "[Notifications] Failed to send WebSocket message:",
+      error
+    );
+
     return false;
   }
 };
 
-/**
- * REST API Definition
- */
-export const notificationApi = createApi({
-  reducerPath: "notificationApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: "https://conekta.onrender.com",
-    credentials: "include",
-  }),
-  tagTypes: ["Notifications", "UnreadCount"],
-  endpoints: (builder) => ({
-    getNotifications: builder.query<
-      NotificationListResponse,
-      { unread?: boolean } | void
-    >({
-      query: (params) => {
-        const searchParams = new URLSearchParams();
-        if (params?.unread) {
-          searchParams.set("unread", "true");
-        }
-        const queryString = searchParams.toString();
-        return {
-          url: `/api/v1/notifications/${
-            queryString ? `?${queryString}` : ""
-          }`,
-          method: "GET",
-        };
-      },
-      providesTags: ["Notifications"],
+/* -------------------------------------------------------------------------- */
+/* REST API                                                                   */
+/* -------------------------------------------------------------------------- */
+
+export const notificationApi =
+  createApi({
+    reducerPath:
+      "notificationApi",
+
+    baseQuery: fetchBaseQuery({
+      baseUrl:
+        "https://conekta.onrender.com",
+
+      credentials: "include",
     }),
-    getUnreadCount: builder.query<UnreadCountResponse, void>({
-      query: () => ({
-        url: "/api/v1/notifications/unread_count/",
-        method: "GET",
-      }),
-      providesTags: ["UnreadCount"],
+
+    tagTypes: [
+      "Notifications",
+      "UnreadCount",
+    ],
+
+    endpoints: (builder) => ({
+      getNotifications:
+        builder.query<
+          NotificationListResponse,
+          { unread?: boolean } | void
+        >({
+          query: (params) => {
+            const searchParams =
+              new URLSearchParams();
+
+            if (params?.unread) {
+              searchParams.set(
+                "unread",
+                "true"
+              );
+            }
+
+            const queryString =
+              searchParams.toString();
+
+            return {
+              url: `/api/v1/notifications/${
+                queryString
+                  ? `?${queryString}`
+                  : ""
+              }`,
+              method: "GET",
+            };
+          },
+
+          providesTags: [
+            "Notifications",
+          ],
+        }),
+
+      getUnreadCount:
+        builder.query<
+          UnreadCountResponse,
+          void
+        >({
+          query: () => ({
+            url: "/api/v1/notifications/unread_count/",
+            method: "GET",
+          }),
+
+          providesTags: [
+            "UnreadCount",
+          ],
+        }),
+
+      markNotificationAsRead:
+        builder.mutation<
+          unknown,
+          string
+        >({
+          query: (uuid) => ({
+            url: `/api/v1/notifications/${uuid}/read/`,
+            method: "POST",
+          }),
+
+          invalidatesTags: [
+            "Notifications",
+            "UnreadCount",
+          ],
+        }),
+
+      markAllNotificationsAsRead:
+        builder.mutation<
+          unknown,
+          void
+        >({
+          query: () => ({
+            url: "/api/v1/notifications/mark-all-read/",
+            method: "POST",
+          }),
+
+          invalidatesTags: [
+            "Notifications",
+            "UnreadCount",
+          ],
+        }),
     }),
-    markNotificationAsRead: builder.mutation<unknown, string>({
-      query: (uuid) => ({
-        url: `/api/v1/notifications/${uuid}/read/`,
-        method: "POST",
-      }),
-      invalidatesTags: ["Notifications", "UnreadCount"],
-    }),
-    markAllNotificationsAsRead: builder.mutation<unknown, void>({
-      query: () => ({
-        url: "/api/v1/notifications/mark-all-read/",
-        method: "POST",
-      }),
-      invalidatesTags: ["Notifications", "UnreadCount"],
-    }),
-  }),
-});
+  });
 
 export const {
   useGetNotificationsQuery,

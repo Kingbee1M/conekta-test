@@ -302,6 +302,17 @@
   color: #F3F3F5;
 }
 
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+.input-error {
+  border: 2px solid #e11d48 !important; /* Rose error border */
+  animation: shake 0.3s ease-in-out;
+}
+
 .chat-bubble-tail {
   position: relative;
 }

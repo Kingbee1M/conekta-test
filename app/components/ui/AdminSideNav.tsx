@@ -84,15 +84,15 @@ export default function AdminSideNav() {
     session?.user?.other_roles.includes(RoleEnum.SUPER_ADMIN);
 
   const mainNav: NavItem[] = [
-    { title: 'Dashboard', link: '/overview', icon: IoGridOutline },
-    { title: 'Employees', link: '/admin-users', icon: RiAdminLine, superAdminOnly: true },
-    { title: 'Properties', link: '/listings', icon: BiBuildings, superAdminOnly: true },
-    { title: 'Customers', link: '/customer-users', icon: BsPeople },
-    { title: 'Listers', link: '/lister-users', icon: BsPersonBadge },
-    { title: 'Artisans', link: '/artisan-users', icon: TbUserCheck, superAdminOnly: true },
-    { title: 'Transactions', link: '/transactions', icon: TbCurrencyNaira, superAdminOnly: true },
-    { title: 'Inbox', link: '/inbox', icon: IoMailOutline, superAdminOnly: true, badge: 2 },
-    { title: 'Verification', link: '/verification', icon: FaCheckDouble },
+    { title: 'Dashboard', link: '/admin/overview', icon: IoGridOutline },
+    { title: 'Employees', link: '/admin/admin-users', icon: RiAdminLine, superAdminOnly: true },
+    { title: 'Properties', link: '/admin/listings', icon: BiBuildings, superAdminOnly: true },
+    { title: 'Customers', link: '/admin/customer-users', icon: BsPeople },
+    { title: 'Listers', link: '/admin/lister-users', icon: BsPersonBadge },
+    { title: 'Artisans', link: '/admin/artisan-users', icon: TbUserCheck, superAdminOnly: true },
+    { title: 'Transactions', link: '/admin/transactions', icon: TbCurrencyNaira, superAdminOnly: true },
+    { title: 'Inbox', link: '/admin/inbox', icon: IoMailOutline, superAdminOnly: true, badge: 2 },
+    { title: 'Verification', link: '/admin/verification', icon: FaCheckDouble },
   ];
 
   const bottomNav: NavItem[] = [
@@ -126,12 +126,12 @@ export default function AdminSideNav() {
         href={nav.link}
         className={`flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-medium transition-all group active:scale-[0.98] ${
           isActive
-            ? 'bg-tertiary-green text-[#0A5C36] font-bold shadow-xs'
-            : 'text-white hover:bg-tertiary-green'
+            ? 'bg-secondary-green text-[#0A5C36] font-bold shadow-xs'
+            : 'text-white hover:bg-secondary-green'
         }`}
       >
         <div className="flex items-center gap-3">
-          <Icon className="text-base shrink-0" />
+          <Icon className="text-base text-white shrink-0" />
           <span className='text-white'>{nav.title}</span>
         </div>
 
