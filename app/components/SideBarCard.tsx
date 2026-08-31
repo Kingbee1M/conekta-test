@@ -125,7 +125,7 @@ export default function SidebarCard({ tenant, activeTab, setActiveTab }: Sidebar
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-xs flex flex-col items-center text-center">
       {/* Dynamic Initials Badge */}
-      <div className="w-14 h-14 bg-secondary-green-hover text-primary-green font-bold text-lg rounded-full flex items-center justify-center mb-3">
+      <div className="w-14 h-14 bg-secondary-green-hover text-white font-bold text-lg rounded-full flex items-center justify-center mb-3">
         {tenant.avatarInitials}
       </div>
       <h3 className="text-sm font-bold text-gray-800">Blessing Bamise</h3>

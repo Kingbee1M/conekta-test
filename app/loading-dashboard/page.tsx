@@ -27,6 +27,7 @@ export default function LoadingDashboard() {
 
   const isListerRole = activeRole === RoleEnum.LISTER;
   const isCustomerRole = activeRole === RoleEnum.CUSTOMER;
+  const isAdminRole = activeRole === RoleEnum.ADMIN || activeRole === RoleEnum.SUPER_ADMIN;
 
   // Clear opposing role data to prevent cross-role data leaks
   useEffect(() => {
@@ -59,9 +60,10 @@ export default function LoadingDashboard() {
     ? customerQueryResult
     : null;
 
+  // For Admin roles, we don't depend on lister/customer profile queries
   const isLoading = activeQuery ? activeQuery.isLoading : false;
   const isError = activeQuery ? activeQuery.isError : false;
-  const isSuccess = activeQuery ? activeQuery.isSuccess : false;
+  const isSuccess = activeQuery ? activeQuery.isSuccess : isAdminRole;
 
   // Selected profile based on role context
   const activeProfile = isListerRole
@@ -83,14 +85,16 @@ export default function LoadingDashboard() {
 
     const firstName = activeProfile?.first_name;
     const lastName = activeProfile?.last_name;
-    const fullName = session?.user?.profile?.full_name;
+    const fullName = session?.user?.profile?.full_name || session?.user?.email;
 
-    const hasName = Boolean(firstName || lastName || fullName);
+    // For Admin users without separate profile objects, fall back to session user identity
+    const hasName = isAdminRole ? Boolean(session?.user) : Boolean(firstName || lastName || fullName);
 
     // 3. SUCCESS PATHWAY: Route based on verified profile & role context
-    if ((isSuccess || activeProfile) && hasName) {
-      if (activeRole === RoleEnum.ADMIN || activeRole === RoleEnum.SUPER_ADMIN) {
-        router.replace('/overview');
+    if ((isSuccess || activeProfile || isAdminRole) && hasName) {
+      console.log('Verification success, initializing navigation...');
+      if (isAdminRole) {
+        router.replace('/admin/overview');
       } else if (activeRole === RoleEnum.LISTER) {
         router.replace('/lister-dashboard');
       } else if (activeRole === RoleEnum.CUSTOMER) {
@@ -114,6 +118,7 @@ export default function LoadingDashboard() {
     isError,
     isSuccess,
     activeRole,
+    isAdminRole,
     rawRole,
     router,
   ]);
@@ -121,7 +126,7 @@ export default function LoadingDashboard() {
   return (
     <div className="relative w-full min-h-screen flex flex-col items-center justify-center bg-app-background overflow-hidden px-4">
       {/* Background Glowing Gradients */}
-      <div className="absolute -top-32 -left-32 w-96 h-96 bg-[#2a8545]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-32 -left-32 w-96 h-96 bg-primary-green/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-primary-fixed/20 rounded-full blur-3xl pointer-events-none" />
 
       {/* Main Glassmorphic Loading Card */}
@@ -129,8 +134,8 @@ export default function LoadingDashboard() {
         
         {/* Animated Spinner Icon Container */}
         <div className="relative flex items-center justify-center">
-          <div className="w-16 h-16 border-4 border-gray-100 border-t-[#2a8545] rounded-full animate-spin" />
-          <div className="absolute inset-0 w-16 h-16 border-4 border-[#80da90]/30 rounded-full animate-ping opacity-25" />
+          <div className="w-16 h-16 border-4 border-gray-100 border-t-primary-green rounded-full animate-spin" />
+          <div className="absolute inset-0 w-16 h-16 border-4 border-primary-fixed-dim/30 rounded-full animate-ping opacity-25" />
         </div>
 
         {/* Dynamic Status Message */}
@@ -149,9 +154,9 @@ export default function LoadingDashboard() {
 
         {/* Contextual Active Role Badge */}
         {activeRole && (
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-active-link border border-[#2a8545]/20 rounded-full">
-            <span className="w-2 h-2 rounded-full bg-[#2a8545] animate-pulse" />
-            <span className="text-[11px] font-semibold text-[#2a8545] uppercase tracking-wider">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-active-link border border-primary-green/20 rounded-full">
+            <span className="w-2 h-2 rounded-full bg-primary-green animate-pulse" />
+            <span className="text-[11px] font-semibold text-primary-green uppercase tracking-wider">
               {activeRole} MODE
             </span>
           </div>

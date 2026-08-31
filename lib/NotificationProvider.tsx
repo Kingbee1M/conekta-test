@@ -67,9 +67,11 @@ export interface Toast {
 
 interface NotificationContextType {
   toasts: Toast[];
+
   addToast: (
     toast: Omit<Toast, 'id'>
   ) => void;
+
   removeToast: (
     id: string
   ) => void;
@@ -86,39 +88,71 @@ const NotificationContext =
 
 const variantStyles = {
   success: {
-    border: 'border-emerald-200',
-    accent: 'bg-[#00AC72]',
+    border:
+      'border-emerald-200',
+
+    accent:
+      'bg-[#00AC72]',
+
     icon: (
-      <MdCheckCircleOutline className="w-5 h-5 text-[#00AC72] shrink-0" />
+      <MdCheckCircleOutline
+        className="w-5 h-5 text-[#00AC72] shrink-0"
+      />
     ),
-    titleColor: 'text-gray-900',
+
+    titleColor:
+      'text-gray-900',
   },
 
   error: {
-    border: 'border-red-200',
-    accent: 'bg-red-500',
+    border:
+      'border-red-200',
+
+    accent:
+      'bg-red-500',
+
     icon: (
-      <MdOutlineCancel className="w-5 h-5 text-red-500 shrink-0" />
+      <MdOutlineCancel
+        className="w-5 h-5 text-red-500 shrink-0"
+      />
     ),
-    titleColor: 'text-gray-900',
+
+    titleColor:
+      'text-gray-900',
   },
 
   warning: {
-    border: 'border-amber-200',
-    accent: 'bg-amber-500',
+    border:
+      'border-amber-200',
+
+    accent:
+      'bg-amber-500',
+
     icon: (
-      <FiAlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />
+      <FiAlertTriangle
+        className="w-5 h-5 text-amber-500 shrink-0"
+      />
     ),
-    titleColor: 'text-gray-900',
+
+    titleColor:
+      'text-gray-900',
   },
 
   default: {
-    border: 'border-gray-200',
-    accent: 'bg-gray-800',
+    border:
+      'border-gray-200',
+
+    accent:
+      'bg-gray-800',
+
     icon: (
-      <LuInfo className="w-5 h-5 text-gray-700 shrink-0" />
+      <LuInfo
+        className="w-5 h-5 text-gray-700 shrink-0"
+      />
     ),
-    titleColor: 'text-gray-900',
+
+    titleColor:
+      'text-gray-900',
   },
 };
 
@@ -149,9 +183,9 @@ export function NotificationProvider({
     useRef<(() => void) | null>(null);
 
   const reconnectTimeoutRef =
-    useRef<ReturnType<typeof setTimeout> | number| null>(
-      null
-    );
+    useRef<
+      ReturnType<typeof setTimeout> | null
+    >(null);
 
   const reconnectAttemptsRef =
     useRef(0);
@@ -249,20 +283,14 @@ export function NotificationProvider({
       (
         message: NotificationSocketMessage
       ) => {
-        console.log(
-          '[Notifications] Incoming message:',
-          message
-        );
+        
 
         if (
           message.event !==
             'notification.created' ||
           !message.notification
         ) {
-          console.log(
-            '[Notifications] Ignoring event:',
-            message.event
-          );
+          
 
           return;
         }
@@ -270,7 +298,10 @@ export function NotificationProvider({
         const notification =
           message.notification;
 
-        /* Refresh notification queries. */
+        /*
+         * Tell RTK Query that notification
+         * data should be refreshed.
+         */
         dispatch(
           notificationApi.util.invalidateTags([
             'Notifications',
@@ -278,7 +309,9 @@ export function NotificationProvider({
           ])
         );
 
-        /* Play notification sound. */
+        /*
+         * Play notification sound.
+         */
         try {
           playNotificationSound();
         } catch (error) {
@@ -288,16 +321,21 @@ export function NotificationProvider({
           );
         }
 
-        /* Show toast. */
+        /*
+         * Display toast.
+         */
         addToast({
           title:
             notification.title,
+
           description:
             notification.message,
+
           variant:
             getToastVariant(
               notification.type
             ),
+
           duration: 6000,
         });
       },
@@ -321,8 +359,8 @@ export function NotificationProvider({
       }
 
       /*
-       * Don't keep retrying after the backend has
-       * explicitly rejected authentication.
+       * Stop retrying if the backend explicitly
+       * rejected authentication.
        */
       if (
         authErrorRef.current
@@ -335,7 +373,7 @@ export function NotificationProvider({
       }
 
       /*
-       * Use the socket service as the source of truth.
+       * First check the socket service.
        */
       const existingSocket =
         getNotificationSocketInstance();
@@ -356,7 +394,7 @@ export function NotificationProvider({
       }
 
       /*
-       * Also check our local reference.
+       * Then check our local reference.
        */
       if (
         socketRef.current &&
@@ -370,9 +408,6 @@ export function NotificationProvider({
         return;
       }
 
-      console.log(
-        '[Notifications] Attempting WebSocket connection...'
-      );
 
       intentionalDisconnectRef.current =
         false;
@@ -383,9 +418,6 @@ export function NotificationProvider({
         );
 
       if (!socket) {
-        console.warn(
-          '[Notifications] Could not create WebSocket.'
-        );
 
         return;
       }
@@ -393,19 +425,15 @@ export function NotificationProvider({
       socketRef.current =
         socket;
 
-      /*
-       * The socket service already handles
-       * onmessage/onopen/onerror/onclose.
-       *
-       * These listeners only handle Provider-specific
-       * behavior.
-       */
+      /* ------------------------------------------------------------------ */
+      /* OPEN                                                               */
+      /* ------------------------------------------------------------------ */
 
       socket.addEventListener(
         'open',
         () => {
           /*
-           * Ignore an old/stale socket.
+           * Ignore stale sockets.
            */
           if (
             socketRef.current !==
@@ -414,18 +442,13 @@ export function NotificationProvider({
             return;
           }
 
-          console.log(
-            '%c[Notifications] WebSocket connected successfully!',
-            'color: #00AC72; font-weight: bold;'
-          );
-
           reconnectAttemptsRef.current =
             0;
 
-          errorToastShownRef.current =
+          authErrorRef.current =
             false;
 
-          authErrorRef.current =
+          errorToastShownRef.current =
             false;
 
           addToast({
@@ -443,6 +466,10 @@ export function NotificationProvider({
         }
       );
 
+      /* ------------------------------------------------------------------ */
+      /* ERROR                                                              */
+      /* ------------------------------------------------------------------ */
+
       socket.addEventListener(
         'error',
         (error) => {
@@ -453,12 +480,16 @@ export function NotificationProvider({
         }
       );
 
+      /* ------------------------------------------------------------------ */
+      /* CLOSE                                                              */
+      /* ------------------------------------------------------------------ */
+
       socket.addEventListener(
         'close',
         (event) => {
           /*
-           * Only clear our ref if this is
-           * still our current socket.
+           * Only clear our reference if this
+           * is still the active socket.
            */
           if (
             socketRef.current ===
@@ -468,20 +499,9 @@ export function NotificationProvider({
               null;
           }
 
-          console.log(
-            '[Notifications] WebSocket closed:',
-            {
-              code:
-                event.code,
-              reason:
-                event.reason,
-              wasClean:
-                event.wasClean,
-            }
-          );
 
           /*
-           * 4001 means authentication failed.
+           * 4001 = authentication rejected.
            */
           if (
             event.code === 4001
@@ -489,9 +509,6 @@ export function NotificationProvider({
             authErrorRef.current =
               true;
 
-            console.error(
-              '[Notifications] Authentication rejected by server (4001).'
-            );
 
             if (
               !errorToastShownRef.current
@@ -517,8 +534,8 @@ export function NotificationProvider({
           }
 
           /*
-           * Don't reconnect when this is
-           * an intentional shutdown.
+           * Don't reconnect after an intentional
+           * disconnect or provider unmount.
            */
           if (
             intentionalDisconnectRef.current ||
@@ -546,7 +563,7 @@ export function NotificationProvider({
             1;
 
           /*
-           * 2s, 4s, 6s...
+           * 2s → 4s → 6s → ...
            * Maximum 30 seconds.
            */
           const delay =
@@ -556,34 +573,15 @@ export function NotificationProvider({
               30000
             );
 
-          console.log(
-            `[Notifications] Reconnecting in ${
-              delay / 1000
-            }s...`
-          );
+        
 
-          reconnectTimeoutRef.current =
-            window.setTimeout(() => {
-              reconnectTimeoutRef.current =
-                null;
+          if (reconnectTimeoutRef.current !== null) {
+  window.clearTimeout(
+    reconnectTimeoutRef.current
+  );
 
-              if (
-                isUnmountedRef.current ||
-                intentionalDisconnectRef.current
-              ) {
-                return;
-              }
-
-              /*
-               * DO NOT call connectSocket()
-               * directly here.
-               *
-               * Use the ref so the React Compiler
-               * doesn't report a declaration-order
-               * / immutability violation.
-               */
-              connectSocketRef.current?.();
-            }, delay);
+  reconnectTimeoutRef.current = null;
+}
         }
       );
     }, [
@@ -592,35 +590,18 @@ export function NotificationProvider({
     ]);
 
   /* ------------------------------------------------------------------------ */
-  /* Keep reconnect ref synchronized                                          */
+  /* Keep reconnect callback synchronized                                     */
   /* ------------------------------------------------------------------------ */
 
   useEffect(() => {
-  isUnmountedRef.current = false;
-  intentionalDisconnectRef.current = false;
-  authErrorRef.current = false;
+    connectSocketRef.current =
+      connectSocket;
 
-  // Initiate connection
-  connectSocket();
-
-  return () => {
-  isUnmountedRef.current = true;
-  intentionalDisconnectRef.current = true;
-
-  if (reconnectTimeoutRef.current !== null) {
-    window.clearTimeout(reconnectTimeoutRef.current);
-    reconnectTimeoutRef.current = null;
-  }
-
-  const currentSocket = getNotificationSocketInstance();
-
-  // ONLY close if the connection was fully opened.
-  // Aborting during CONNECTING triggers an instant 1006 error during React Strict Mode double-invoke.
-  if (currentSocket && currentSocket.readyState === WebSocket.OPEN) {
-    disconnectNotificationSocket();
-  }
-};
-}, [])
+    return () => {
+      connectSocketRef.current =
+        null;
+    };
+  }, [connectSocket]);
 
   /* ------------------------------------------------------------------------ */
   /* WebSocket lifecycle                                                      */
@@ -637,14 +618,11 @@ export function NotificationProvider({
       false;
 
     /*
-     * Establish the connection.
+     * Establish exactly one connection.
      */
     connectSocket();
 
     return () => {
-      console.log(
-        '[Notifications] Provider cleanup.'
-      );
 
       isUnmountedRef.current =
         true;
@@ -668,7 +646,7 @@ export function NotificationProvider({
       }
 
       /*
-       * Close active socket.
+       * Disconnect the socket.
        */
       disconnectNotificationSocket();
 
@@ -724,9 +702,7 @@ export function NotificationProvider({
 
                   {toast.description && (
                     <p className="text-[11px] text-gray-500 font-medium leading-relaxed mt-0.5">
-                      {
-                        toast.description
-                      }
+                      {toast.description}
                     </p>
                   )}
                 </div>
