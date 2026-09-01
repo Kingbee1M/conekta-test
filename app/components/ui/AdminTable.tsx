@@ -2,28 +2,16 @@
 
 import { useState } from 'react';
 import EmployeePortal from '../admin/EmployeePortal';
-
-export interface AdminUser {
-  uuid: string;
-  user_uuid: string;
-  email: string;
-  first_name: string;
-  middle_name?: string;
-  last_name: string;
-  phone_number: string;
-  date_of_birth?: string;
-  role_name: string;
-  created_at: string;
-  updated_at: string;
-}
+import { AdminUserListItem } from '@/shared/service/admin/types/adminUsersTypes';
+import { getRoleBadgeConfig } from '@/shared/enums/roles.enum';
 
 interface AdminTableProps {
-  admins: AdminUser[];
+  admins: AdminUserListItem[];
 }
 
 export default function AdminTable({ admins }: AdminTableProps) {
-  // Store the active employee/admin UUID instead of a boolean flag
-  const [selectedUuid, setSelectedUuid] = useState<string | null>(null);
+  // Store the active employee profile_uuid instead of a generic ID/boolean
+  const [selectedProfileUuid, setSelectedProfileUuid] = useState<string | null>(null);
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'N/A';
@@ -49,7 +37,6 @@ export default function AdminTable({ admins }: AdminTableProps) {
           <tr className="bg-gray-50/80 border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
             <th className="py-3 px-4">Employee</th>
             <th className="py-3 px-4">Email</th>
-            <th className="py-3 px-4">Phone</th>
             <th className="py-3 px-4">Role</th>
             <th className="py-3 px-4">Created Date</th>
             <th className="py-3 px-4 text-right">Actions</th>
@@ -57,12 +44,14 @@ export default function AdminTable({ admins }: AdminTableProps) {
         </thead>
         <tbody className="divide-y divide-gray-100">
           {admins.map((admin) => {
-            const adminId = admin.uuid || admin.user_uuid;
             const fullName = `${admin.first_name || ''} ${admin.last_name || ''}`.trim() || 'Unnamed Admin';
             const avatarInitial = admin.first_name?.[0] || admin.email?.[0] || 'A';
+            
+            // Reusable role badge helper from roles.enum.ts
+            const roleBadge = getRoleBadgeConfig(admin.role_name);
 
             return (
-              <tr key={adminId} className="hover:bg-gray-50/60 transition-colors">
+              <tr key={admin.profile_uuid} className="hover:bg-gray-50/60 transition-colors">
                 {/* Employee */}
                 <td className="py-3.5 px-4">
                   <div className="flex items-center gap-3">
@@ -76,13 +65,12 @@ export default function AdminTable({ admins }: AdminTableProps) {
                 {/* Email */}
                 <td className="py-3.5 px-4 text-gray-600 font-medium">{admin.email || 'N/A'}</td>
 
-                {/* Phone */}
-                <td className="py-3.5 px-4 text-gray-600">{admin.phone_number || 'N/A'}</td>
-
                 {/* Role */}
                 <td className="py-3.5 px-4">
-                  <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-purple-50 text-purple-700 border border-purple-200 capitalize">
-                    {admin.role_name || 'Staff'}
+                  <span
+                    className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold border capitalize ${roleBadge.styles}`}
+                  >
+                    {roleBadge.label}
                   </span>
                 </td>
 
@@ -93,7 +81,7 @@ export default function AdminTable({ admins }: AdminTableProps) {
                 <td className="py-3.5 px-4 text-right">
                   <button 
                     className="text-xs font-semibold text-[#00AC72] hover:underline cursor-pointer" 
-                    onClick={() => setSelectedUuid(adminId)}
+                    onClick={() => setSelectedProfileUuid(admin.profile_uuid)}
                   >
                     Manage Member
                   </button>
@@ -104,12 +92,12 @@ export default function AdminTable({ admins }: AdminTableProps) {
         </tbody>
       </table>
 
-      {/* Render single portal outside the map loop */}
-      {selectedUuid && (
+      {/* Render single portal outside the map loop, passing profile_uuid */}
+      {selectedProfileUuid && (
         <EmployeePortal 
-          uuid={selectedUuid} 
-          isOpen={Boolean(selectedUuid)} 
-          onClose={() => setSelectedUuid(null)} 
+          uuid={selectedProfileUuid} 
+          isOpen={Boolean(selectedProfileUuid)} 
+          onClose={() => setSelectedProfileUuid(null)} 
         />
       )}
     </>

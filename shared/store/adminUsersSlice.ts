@@ -1,14 +1,19 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { adminUserApiSlice } from '@/shared/service/admin/adminUsers.services';
-import { 
-  AdminUser, 
-  PaginatedAdminUserResponse, 
-  FetchAdminUsersQueryParams 
+import {
+  AdminUserListItem,
+  AdminUserDetail,
+  AdminUsersSummary,
+  PaginatedAdminUserResponse,
+  FetchAdminUsersQueryParams,
+  CreateAdminUserPayload,
 } from '@/shared/service/admin/types/adminUsersTypes';
 
 interface AdminUserState {
-  admins: AdminUser[];
+  // Table listing state
+  admins: AdminUserListItem[];
+  summary: AdminUsersSummary | null;
   count: number;
   next: string | null;
   previous: string | null;
@@ -17,10 +22,15 @@ interface AdminUserState {
   loading: boolean;
   error: string | null;
 
-  // Added state for single admin employee
-  selectedAdmin: AdminUser | null;
+  // Single admin employee state
+  selectedAdmin: AdminUserDetail | null;
   singleLoading: boolean;
   singleError: string | null;
+
+  // Create admin employee state
+  createLoading: boolean;
+  createError: string | null;
+  createSuccess: boolean;
 }
 
 interface CustomServerError {
@@ -28,8 +38,15 @@ interface CustomServerError {
   [key: string]: unknown;
 }
 
+// Payload interface extending CreateAdminUserPayload to optionally allow explicit page params
+export type CreateAdminUserThunkArgs = CreateAdminUserPayload & {
+  page?: number;
+  pageSize?: number;
+};
+
 const initialState: AdminUserState = {
   admins: [],
+  summary: null,
   count: 0,
   next: null,
   previous: null,
@@ -38,10 +55,13 @@ const initialState: AdminUserState = {
   loading: false,
   error: null,
 
-  // Initial single admin employee state
   selectedAdmin: null,
   singleLoading: false,
   singleError: null,
+
+  createLoading: false,
+  createError: null,
+  createSuccess: false,
 };
 
 export const fetchAdminUsers = createAsyncThunk<
@@ -83,9 +103,8 @@ export const fetchAdminUsers = createAsyncThunk<
   }
 );
 
-// Added async thunk to fetch single admin user by UUID
 export const fetchAdminUserByUuid = createAsyncThunk<
-  AdminUser,
+  AdminUserDetail,
   string,
   { rejectValue: string }
 >(
@@ -108,9 +127,9 @@ export const fetchAdminUserByUuid = createAsyncThunk<
       if (resultAction.data) {
         const rawData = resultAction.data as unknown as Record<string, unknown>;
         if (rawData.data && typeof rawData.data === 'object') {
-          return rawData.data as AdminUser;
+          return rawData.data as AdminUserDetail;
         }
-        return resultAction.data as unknown as AdminUser;
+        return resultAction.data as unknown as AdminUserDetail;
       }
 
       return rejectWithValue('No data returned');
@@ -119,6 +138,63 @@ export const fetchAdminUserByUuid = createAsyncThunk<
         return rejectWithValue(err.message);
       }
       return rejectWithValue('An unexpected error occurred');
+    }
+  }
+);
+
+export const createAdminUser = createAsyncThunk<
+  AdminUserDetail,
+  CreateAdminUserThunkArgs,
+  { rejectValue: string }
+>(
+  'admins/createAdminUser',
+  async (payloadWithParams, { rejectWithValue, dispatch, getState }) => {
+    try {
+      // Extract page / pageSize if passed explicitly, separated from API body payload
+      const { page: argPage, pageSize: argPageSize, ...payload } = payloadWithParams;
+
+      const promise = dispatch(
+        adminUserApiSlice.endpoints.createAdminUser.initiate(payload as CreateAdminUserPayload)
+      );
+
+      const resultAction = await promise;
+      promise.reset();
+
+      if ('error' in resultAction && resultAction.error) {
+        const error = resultAction.error as FetchBaseQueryError | undefined;
+        const customData = error?.data as CustomServerError | undefined;
+        return rejectWithValue(customData?.message || 'Failed to create admin account');
+      }
+
+      if (resultAction.data) {
+        // Safely extract slice state from store with fallbacks
+        const rootState = getState() as Record<string, unknown>;
+        const adminSliceState = (rootState.admins || rootState.adminUser || {}) as Partial<AdminUserState>;
+
+        const pageToFetch = argPage ?? adminSliceState.currentPage ?? 1;
+        const pageSizeToFetch = argPageSize ?? adminSliceState.pageSize ?? 10;
+
+        // Refresh the admin table list on success
+        dispatch(
+          fetchAdminUsers({
+            page: pageToFetch,
+            page_size: pageSizeToFetch,
+          })
+        );
+
+        const rawData = resultAction.data as unknown as Record<string, unknown>;
+        if (rawData.data && typeof rawData.data === 'object') {
+          return rawData.data as AdminUserDetail;
+        }
+        return resultAction.data as unknown as AdminUserDetail;
+      }
+
+      return rejectWithValue('No data returned from creation endpoint');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        return rejectWithValue(err.message);
+      }
+      return rejectWithValue('An unexpected error occurred during creation');
     }
   }
 );
@@ -136,55 +212,56 @@ const adminUserSlice = createSlice({
     },
     clearAdminState: (state) => {
       state.admins = [];
+      state.summary = null;
+      state.count = 0;
+      state.next = null;
+      state.previous = null;
       state.error = null;
     },
-    // Added reducer to clear selected single admin employee state
     clearSelectedAdmin: (state) => {
       state.selectedAdmin = null;
       state.singleError = null;
     },
+    resetCreateAdminState: (state) => {
+      state.createLoading = false;
+      state.createError = null;
+      state.createSuccess = false;
+    },
   },
   extraReducers: (builder) => {
     builder
-      /* Existing fetchAdminUsers cases */
+      /* fetchAdminUsers cases */
       .addCase(fetchAdminUsers.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(fetchAdminUsers.fulfilled, (state, action) => {
         state.loading = false;
-        const payload = action.payload as unknown as Record<string, unknown>;
+        const payload = action.payload;
 
-        if (Array.isArray(action.payload?.results)) {
-          state.admins = action.payload.results;
-          state.count = action.payload.count ?? action.payload.results.length;
-          state.next = action.payload.next ?? null;
-          state.previous = action.payload.previous ?? null;
-        } else if (payload?.data && typeof payload.data === 'object' && Array.isArray((payload.data as Record<string, unknown>).results)) {
-          const nested = payload.data as PaginatedAdminUserResponse;
-          state.admins = nested.results;
-          state.count = nested.count ?? nested.results.length;
-          state.next = nested.next ?? null;
-          state.previous = nested.previous ?? null;
-        } else if (Array.isArray(payload?.data)) {
-          state.admins = payload.data as AdminUser[];
-          state.count = (payload.count as number) ?? state.admins.length;
-        } else if (Array.isArray(action.payload)) {
-          state.admins = action.payload as unknown as AdminUser[];
-          state.count = state.admins.length;
+        if (payload && Array.isArray(payload.results)) {
+          state.admins = payload.results;
+          state.summary = payload.summary ?? null;
+          state.count = payload.count ?? payload.results.length;
+          state.next = payload.next ?? null;
+          state.previous = payload.previous ?? null;
         } else {
           state.admins = [];
+          state.summary = null;
           state.count = 0;
+          state.next = null;
+          state.previous = null;
         }
       })
       .addCase(fetchAdminUsers.rejected, (state, action) => {
         state.loading = false;
-        state.error = typeof action.payload === 'string' 
-          ? action.payload 
-          : action.error.message || 'Failed to fetch admin users';
+        state.error =
+          typeof action.payload === 'string'
+            ? action.payload
+            : action.error.message || 'Failed to fetch admin users';
       })
 
-      /* Added fetchAdminUserByUuid cases */
+      /* fetchAdminUserByUuid cases */
       .addCase(fetchAdminUserByUuid.pending, (state) => {
         state.singleLoading = true;
         state.singleError = null;
@@ -195,12 +272,38 @@ const adminUserSlice = createSlice({
       })
       .addCase(fetchAdminUserByUuid.rejected, (state, action) => {
         state.singleLoading = false;
-        state.singleError = typeof action.payload === 'string' 
-          ? action.payload 
-          : action.error.message || 'Failed to fetch admin user details';
+        state.singleError =
+          typeof action.payload === 'string'
+            ? action.payload
+            : action.error.message || 'Failed to fetch admin user details';
+      })
+
+      /* createAdminUser cases */
+      .addCase(createAdminUser.pending, (state) => {
+        state.createLoading = true;
+        state.createError = null;
+        state.createSuccess = false;
+      })
+      .addCase(createAdminUser.fulfilled, (state) => {
+        state.createLoading = false;
+        state.createSuccess = true;
+      })
+      .addCase(createAdminUser.rejected, (state, action) => {
+        state.createLoading = false;
+        state.createError =
+          typeof action.payload === 'string'
+            ? action.payload
+            : action.error.message || 'Failed to create admin user';
       });
   },
 });
 
-export const { setAdminPage, setAdminPageSize, clearAdminState, clearSelectedAdmin } = adminUserSlice.actions;
+export const {
+  setAdminPage,
+  setAdminPageSize,
+  clearAdminState,
+  clearSelectedAdmin,
+  resetCreateAdminState,
+} = adminUserSlice.actions;
+
 export default adminUserSlice.reducer;

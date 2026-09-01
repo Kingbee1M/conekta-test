@@ -170,7 +170,6 @@ export default function AdminSideNav() {
 
           {/* Bottom Footer Actions */}
           <div className="flex flex-col gap-1 pt-6 border-t border-white/10 mt-6">
-            {bottomNav.map(renderNavLink)}
 
             {/* Red Hover Logout Button */}
             <button

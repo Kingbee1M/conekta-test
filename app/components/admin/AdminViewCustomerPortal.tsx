@@ -21,12 +21,12 @@ import {
   LuGlobe,
   LuHash,
   LuClock,
-  LuBuilding,
-  LuFlag
+  LuFlag,
+  LuBriefcase,
+  LuShieldAlert,
+  LuUsers,
+  LuDollarSign
 } from 'react-icons/lu';
-
-// --- Region Enums & Mapping ---
-
 
 interface AdminViewCustomerPortalProps {
   uuid: string;
@@ -40,7 +40,6 @@ const statusOptions: ComboboxOption[] = [
   { label: 'Suspended', value: 'suspended' },
 ];
 
-// Helper options list generated from state Enum
 const stateOptions: ComboboxOption[] = Object.values(NigeriaStateEnum).map((state) => ({
   label: state,
   value: state,
@@ -79,13 +78,25 @@ export default function AdminViewCustomerPortal({ uuid, isOpen, onClose }: Admin
     address: '',
     postal_code: '',
     active_status: 'active',
+    ref_no: '',
+    occupation: '',
+    monthly_income: '',
+    employer_name: '',
+    employer_address: '',
+    employer_phone: '',
+    emergency_contact_name: '',
+    emergency_contact_phone: '',
+    emergency_contact_relationship: '',
+    guarantor_name: '',
+    guarantor_phone: '',
+    guarantor_email: '',
+    guarantor_address: '',
+    guarantor_relationship: '',
   });
 
-  // Calculate dynamic LGA options based on selected state
   const lgaOptions: ComboboxOption[] = useMemo(() => {
     if (!formData.state) return [];
     
-    // Find matching state key in enum
     const matchedState = Object.values(NigeriaStateEnum).find(
       (s) => s.toLowerCase() === formData.state.toLowerCase()
     );
@@ -115,6 +126,20 @@ export default function AdminViewCustomerPortal({ uuid, isOpen, onClose }: Admin
           address: selectedCustomer.address || '',
           postal_code: selectedCustomer.postal_code || '',
           active_status: selectedCustomer.active_status || 'active',
+          ref_no: selectedCustomer.ref_no || '',
+          occupation: selectedCustomer.occupation || '',
+          monthly_income: selectedCustomer.monthly_income ? String(selectedCustomer.monthly_income) : '',
+          employer_name: selectedCustomer.employer_name || '',
+          employer_address: selectedCustomer.employer_address || '',
+          employer_phone: selectedCustomer.employer_phone || '',
+          emergency_contact_name: selectedCustomer.emergency_contact_name || '',
+          emergency_contact_phone: selectedCustomer.emergency_contact_phone || '',
+          emergency_contact_relationship: selectedCustomer.emergency_contact_relationship || '',
+          guarantor_name: selectedCustomer.guarantor_name || '',
+          guarantor_phone: selectedCustomer.guarantor_phone || '',
+          guarantor_email: selectedCustomer.guarantor_email || '',
+          guarantor_address: selectedCustomer.guarantor_address || '',
+          guarantor_relationship: selectedCustomer.guarantor_relationship || '',
         });
       });
     }
@@ -169,7 +194,6 @@ export default function AdminViewCustomerPortal({ uuid, isOpen, onClose }: Admin
     setFormData((prev) => {
       const updated = { ...prev, [name]: stringValue };
 
-      // Reset LGA if state changes and the current LGA is not valid for the new state
       if (name === 'state') {
         const matchedState = Object.values(NigeriaStateEnum).find(
           (s) => s.toLowerCase() === stringValue.toLowerCase()
@@ -203,7 +227,6 @@ export default function AdminViewCustomerPortal({ uuid, isOpen, onClose }: Admin
 
   const portalContent = (
     <div className="fixed inset-0 z-9999 flex justify-end">
-      {/* Backdrop */}
       <div 
         onClick={onClose}
         className={`fixed inset-0 bg-primary-green/20 backdrop-blur-md transition-opacity duration-300 ease-out ${
@@ -211,7 +234,6 @@ export default function AdminViewCustomerPortal({ uuid, isOpen, onClose }: Admin
         }`}
       />
 
-      {/* Drawer Panel */}
       <div
         className={`relative z-10 w-full max-w-xl bg-white h-full shadow-2xl flex flex-col border-l border-slate-200 transition-transform duration-300 ease-in-out ${
           animate ? 'translate-x-0' : 'translate-x-full'
@@ -250,15 +272,64 @@ export default function AdminViewCustomerPortal({ uuid, isOpen, onClose }: Admin
         {/* Content Body */}
         <div className="p-6 overflow-y-auto flex-1 bg-white">
           {singleLoading ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-3">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-800" />
-              <p className="text-xs font-medium text-slate-400">Fetching customer record...</p>
+          <div className="flex flex-col items-center justify-center py-16 px-4">
+            {/* Animated Spinner with Pulsing Aura */}
+            <div className="relative flex items-center justify-center mb-6">
+              <div className="absolute w-16 h-16 rounded-full bg-emerald-500/10 animate-ping duration-1000" />
+              <div className="w-12 h-12 rounded-full border-3 border-slate-100 border-t-slate-800 border-r-slate-800 animate-spin" />
+              <div className="absolute w-6 h-6 rounded-full bg-slate-900/5 backdrop-blur-xs flex items-center justify-center">
+                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              </div>
             </div>
-          ) : singleError ? (
-            <div className="p-4 bg-rose-50 border border-rose-200 rounded-lg text-rose-700 text-xs text-center">
-              {singleError}
+
+            {/* Text Loader with Dynamic Dots */}
+            <div className="text-center space-y-1">
+              <h4 className="text-sm font-semibold text-slate-800 tracking-tight flex items-center justify-center gap-1">
+                Fetching Customer Record
+                <span className="inline-flex overflow-hidden w-4 text-slate-400 animate-pulse">...</span>
+              </h4>
+              <p className="text-xs text-slate-400">Pulling latest profile and KYC metadata</p>
             </div>
-          ) : customer ? (
+
+            {/* Subtle Skeleton Loader Preview */}
+            <div className="w-full max-w-xs mt-8 space-y-3 p-4 rounded-xl bg-slate-50/60 border border-slate-100">
+              <div className="h-3 bg-slate-200/70 rounded-full w-3/4 animate-pulse" />
+              <div className="h-3 bg-slate-200/50 rounded-full w-1/2 animate-pulse" />
+              <div className="h-3 bg-slate-200/30 rounded-full w-5/6 animate-pulse" />
+            </div>
+          </div>
+        ) : singleError ? (
+          <div className="py-12 px-4 flex flex-col items-center justify-center">
+            {/* Animated Error Card */}
+            <div className="w-full max-w-md p-6 bg-linear-to-b from-rose-50/80 to-white border border-rose-100 rounded-2xl shadow-xs text-center flex flex-col items-center transform transition-all animate-in fade-in zoom-in-95 duration-200">
+              
+              {/* Pulse Warning Icon Badge */}
+              <div className="relative mb-4">
+                <div className="absolute -inset-1 rounded-full bg-rose-200/60 animate-pulse" />
+                <div className="relative w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center border border-rose-200 shadow-xs">
+                  <LuShieldAlert size={22} className="animate-bounce" />
+                </div>
+              </div>
+
+              <h4 className="text-sm font-bold text-slate-900 mb-1">Failed to Load Profile</h4>
+              <p className="text-xs text-slate-500 max-w-xs mb-5 leading-relaxed">
+                {singleError || 'An unexpected error occurred while fetching customer records from the database.'}
+              </p>
+
+              {/* Action Buttons */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => uuid && dispatch(fetchCustomerByUuid(uuid))}
+                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg transition-all shadow-xs flex items-center gap-1.5 active:scale-95"
+                >
+                  <LuClock size={13} />
+                  Retry Request
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : customer ? (
             isEditing ? (
               /* --- EDIT MODE --- */
               <form id="edit-customer-form" onSubmit={handleSaveSubmit} className="space-y-6">
@@ -397,7 +468,6 @@ export default function AdminViewCustomerPortal({ uuid, isOpen, onClose }: Admin
                       </div>
                     </div>
 
-                    {/* State Combobox */}
                     <div>
                       <Combobox
                         label="State"
@@ -410,7 +480,6 @@ export default function AdminViewCustomerPortal({ uuid, isOpen, onClose }: Admin
                       />
                     </div>
 
-                    {/* Dynamic LGA Combobox */}
                     <div>
                       <Combobox
                         label="LGA"
@@ -470,6 +539,225 @@ export default function AdminViewCustomerPortal({ uuid, isOpen, onClose }: Admin
                     </div>
                   </div>
                 </div>
+
+                {/* Employment Information */}
+                <div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 pb-2 border-b border-slate-100 mb-4">
+                    Employment Details
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="outerDiv w-full">
+                      <label className="text-xs font-semibold text-slate-600 mb-1 block" htmlFor="occupation">Occupation</label>
+                      <div className="inputDiv flex items-center border border-slate-200 p-2 rounded gap-2 focus-within:border-slate-800">
+                        <LuBriefcase className="text-slate-400 shrink-0" size={16} />
+                        <input
+                          type="text"
+                          id="occupation"
+                          name="occupation"
+                          value={formData.occupation}
+                          onChange={handleInputChange}
+                          className="w-full text-xs outline-none bg-transparent"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="outerDiv w-full">
+                      <label className="text-xs font-semibold text-slate-600 mb-1 block" htmlFor="monthly_income">Monthly Income</label>
+                      <div className="inputDiv flex items-center border border-slate-200 p-2 rounded gap-2 focus-within:border-slate-800">
+                        <LuDollarSign className="text-slate-400 shrink-0" size={16} />
+                        <input
+                          type="number"
+                          id="monthly_income"
+                          name="monthly_income"
+                          value={formData.monthly_income}
+                          onChange={handleInputChange}
+                          className="w-full text-xs outline-none bg-transparent"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="outerDiv w-full">
+                      <label className="text-xs font-semibold text-slate-600 mb-1 block" htmlFor="employer_name">Employer Name</label>
+                      <div className="inputDiv flex items-center border border-slate-200 p-2 rounded gap-2 focus-within:border-slate-800">
+                        <LuBriefcase className="text-slate-400 shrink-0" size={16} />
+                        <input
+                          type="text"
+                          id="employer_name"
+                          name="employer_name"
+                          value={formData.employer_name}
+                          onChange={handleInputChange}
+                          className="w-full text-xs outline-none bg-transparent"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="outerDiv w-full">
+                      <label className="text-xs font-semibold text-slate-600 mb-1 block" htmlFor="employer_phone">Employer Phone</label>
+                      <div className="inputDiv flex items-center border border-slate-200 p-2 rounded gap-2 focus-within:border-slate-800">
+                        <LuPhone className="text-slate-400 shrink-0" size={16} />
+                        <input
+                          type="text"
+                          id="employer_phone"
+                          name="employer_phone"
+                          value={formData.employer_phone}
+                          onChange={handleInputChange}
+                          className="w-full text-xs outline-none bg-transparent"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="outerDiv col-span-2 w-full">
+                      <label className="text-xs font-semibold text-slate-600 mb-1 block" htmlFor="employer_address">Employer Address</label>
+                      <div className="inputDiv flex items-center border border-slate-200 p-2 rounded gap-2 focus-within:border-slate-800">
+                        <LuMapPin className="text-slate-400 shrink-0" size={16} />
+                        <input
+                          type="text"
+                          id="employer_address"
+                          name="employer_address"
+                          value={formData.employer_address}
+                          onChange={handleInputChange}
+                          className="w-full text-xs outline-none bg-transparent"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Emergency Contact */}
+                <div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 pb-2 border-b border-slate-100 mb-4">
+                    Emergency Contact
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="outerDiv w-full">
+                      <label className="text-xs font-semibold text-slate-600 mb-1 block" htmlFor="emergency_contact_name">Name</label>
+                      <div className="inputDiv flex items-center border border-slate-200 p-2 rounded gap-2 focus-within:border-slate-800">
+                        <LuShieldAlert className="text-slate-400 shrink-0" size={16} />
+                        <input
+                          type="text"
+                          id="emergency_contact_name"
+                          name="emergency_contact_name"
+                          value={formData.emergency_contact_name}
+                          onChange={handleInputChange}
+                          className="w-full text-xs outline-none bg-transparent"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="outerDiv w-full">
+                      <label className="text-xs font-semibold text-slate-600 mb-1 block" htmlFor="emergency_contact_phone">Phone</label>
+                      <div className="inputDiv flex items-center border border-slate-200 p-2 rounded gap-2 focus-within:border-slate-800">
+                        <LuPhone className="text-slate-400 shrink-0" size={16} />
+                        <input
+                          type="text"
+                          id="emergency_contact_phone"
+                          name="emergency_contact_phone"
+                          value={formData.emergency_contact_phone}
+                          onChange={handleInputChange}
+                          className="w-full text-xs outline-none bg-transparent"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="outerDiv col-span-2 w-full">
+                      <label className="text-xs font-semibold text-slate-600 mb-1 block" htmlFor="emergency_contact_relationship">Relationship</label>
+                      <div className="inputDiv flex items-center border border-slate-200 p-2 rounded gap-2 focus-within:border-slate-800">
+                        <LuUser className="text-slate-400 shrink-0" size={16} />
+                        <input
+                          type="text"
+                          id="emergency_contact_relationship"
+                          name="emergency_contact_relationship"
+                          value={formData.emergency_contact_relationship}
+                          onChange={handleInputChange}
+                          className="w-full text-xs outline-none bg-transparent"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Guarantor Info */}
+                <div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 pb-2 border-b border-slate-100 mb-4">
+                    Guarantor Details
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="outerDiv w-full">
+                      <label className="text-xs font-semibold text-slate-600 mb-1 block" htmlFor="guarantor_name">Name</label>
+                      <div className="inputDiv flex items-center border border-slate-200 p-2 rounded gap-2 focus-within:border-slate-800">
+                        <LuUsers className="text-slate-400 shrink-0" size={16} />
+                        <input
+                          type="text"
+                          id="guarantor_name"
+                          name="guarantor_name"
+                          value={formData.guarantor_name}
+                          onChange={handleInputChange}
+                          className="w-full text-xs outline-none bg-transparent"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="outerDiv w-full">
+                      <label className="text-xs font-semibold text-slate-600 mb-1 block" htmlFor="guarantor_phone">Phone</label>
+                      <div className="inputDiv flex items-center border border-slate-200 p-2 rounded gap-2 focus-within:border-slate-800">
+                        <LuPhone className="text-slate-400 shrink-0" size={16} />
+                        <input
+                          type="text"
+                          id="guarantor_phone"
+                          name="guarantor_phone"
+                          value={formData.guarantor_phone}
+                          onChange={handleInputChange}
+                          className="w-full text-xs outline-none bg-transparent"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="outerDiv w-full">
+                      <label className="text-xs font-semibold text-slate-600 mb-1 block" htmlFor="guarantor_email">Email</label>
+                      <div className="inputDiv flex items-center border border-slate-200 p-2 rounded gap-2 focus-within:border-slate-800">
+                        <LuMail className="text-slate-400 shrink-0" size={16} />
+                        <input
+                          type="email"
+                          id="guarantor_email"
+                          name="guarantor_email"
+                          value={formData.guarantor_email}
+                          onChange={handleInputChange}
+                          className="w-full text-xs outline-none bg-transparent"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="outerDiv w-full">
+                      <label className="text-xs font-semibold text-slate-600 mb-1 block" htmlFor="guarantor_relationship">Relationship</label>
+                      <div className="inputDiv flex items-center border border-slate-200 p-2 rounded gap-2 focus-within:border-slate-800">
+                        <LuUser className="text-slate-400 shrink-0" size={16} />
+                        <input
+                          type="text"
+                          id="guarantor_relationship"
+                          name="guarantor_relationship"
+                          value={formData.guarantor_relationship}
+                          onChange={handleInputChange}
+                          className="w-full text-xs outline-none bg-transparent"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="outerDiv col-span-2 w-full">
+                      <label className="text-xs font-semibold text-slate-600 mb-1 block" htmlFor="guarantor_address">Address</label>
+                      <div className="inputDiv flex items-center border border-slate-200 p-2 rounded gap-2 focus-within:border-slate-800">
+                        <LuMapPin className="text-slate-400 shrink-0" size={16} />
+                        <input
+                          type="text"
+                          id="guarantor_address"
+                          name="guarantor_address"
+                          value={formData.guarantor_address}
+                          onChange={handleInputChange}
+                          className="w-full text-xs outline-none bg-transparent"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </form>
             ) : (
               /* --- VIEW MODE --- */
@@ -498,14 +786,18 @@ export default function AdminViewCustomerPortal({ uuid, isOpen, onClose }: Admin
                 {/* Account Identifiers */}
                 <div className="pb-4 border-b border-slate-100 space-y-2 text-xs">
                   <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide block">Account References</span>
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-3 gap-2">
                     <div className="p-2.5 bg-slate-50/50 rounded-lg border border-slate-100">
                       <span className="text-[10px] text-slate-400 block font-medium">Customer UUID</span>
-                      <span className="font-mono text-slate-700 font-medium truncate block">{customer.uuid || '—'}</span>
+                      <span className="font-mono text-slate-700 font-medium truncate block">{customer.uuid || customer.profile_uuid || '—'}</span>
                     </div>
                     <div className="p-2.5 bg-slate-50/50 rounded-lg border border-slate-100">
                       <span className="text-[10px] text-slate-400 block font-medium">User UUID</span>
                       <span className="font-mono text-slate-700 font-medium truncate block">{customer.user_uuid || '—'}</span>
+                    </div>
+                    <div className="p-2.5 bg-slate-50/50 rounded-lg border border-slate-100">
+                      <span className="text-[10px] text-slate-400 block font-medium">Ref No.</span>
+                      <span className="font-mono text-slate-700 font-medium truncate block">{customer.ref_no || '—'}</span>
                     </div>
                   </div>
                 </div>
@@ -563,7 +855,135 @@ export default function AdminViewCustomerPortal({ uuid, isOpen, onClose }: Admin
                   </div>
                 </div>
 
-                {/* System Timestamps */}
+                {/* Employment Information */}
+                <div className="pb-4 border-b border-slate-100 space-y-3">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide block">Employment & Financials</span>
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div className="flex items-center gap-2.5">
+                      <LuBriefcase className="text-slate-400 shrink-0" size={15} />
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase">Occupation</p>
+                        <p className="font-semibold text-slate-800">{customer.occupation || '—'}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      <LuDollarSign className="text-slate-400 shrink-0" size={15} />
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase">Monthly Income</p>
+                        <p className="font-semibold text-slate-800">
+                          {customer.monthly_income ? customer.monthly_income.toLocaleString() : '—'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      <LuBriefcase className="text-slate-400 shrink-0" size={15} />
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase">Employer</p>
+                        <p className="font-semibold text-slate-800">{customer.employer_name || '—'}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      <LuPhone className="text-slate-400 shrink-0" size={15} />
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase">Employer Phone</p>
+                        <p className="font-semibold text-slate-800">{customer.employer_phone || '—'}</p>
+                      </div>
+                    </div>
+
+                    {customer.employer_address && (
+                      <div className="col-span-2 flex items-start gap-2 text-xs">
+                        <LuMapPin className="text-slate-400 mt-0.5 shrink-0" size={15} />
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase">Employer Address</p>
+                          <p className="font-medium text-slate-800">{customer.employer_address}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Emergency Contact */}
+                <div className="pb-4 border-b border-slate-100 space-y-3">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide block">Emergency Contact</span>
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div className="flex items-center gap-2.5">
+                      <LuShieldAlert className="text-slate-400 shrink-0" size={15} />
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase">Contact Name</p>
+                        <p className="font-semibold text-slate-800">{customer.emergency_contact_name || '—'}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      <LuPhone className="text-slate-400 shrink-0" size={15} />
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase">Phone</p>
+                        <p className="font-semibold text-slate-800">{customer.emergency_contact_phone || '—'}</p>
+                      </div>
+                    </div>
+
+                    <div className="col-span-2 flex items-center gap-2.5">
+                      <LuUser className="text-slate-400 shrink-0" size={15} />
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase">Relationship</p>
+                        <p className="font-semibold text-slate-800">{customer.emergency_contact_relationship || '—'}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Guarantor Details */}
+                <div className="pb-4 border-b border-slate-100 space-y-3">
+                  <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide block">Guarantor Details</span>
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div className="flex items-center gap-2.5">
+                      <LuUsers className="text-slate-400 shrink-0" size={15} />
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase">Guarantor Name</p>
+                        <p className="font-semibold text-slate-800">{customer.guarantor_name || '—'}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      <LuPhone className="text-slate-400 shrink-0" size={15} />
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase">Phone</p>
+                        <p className="font-semibold text-slate-800">{customer.guarantor_phone || '—'}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      <LuMail className="text-slate-400 shrink-0" size={15} />
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase">Email</p>
+                        <p className="font-semibold text-slate-800">{customer.guarantor_email || '—'}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2.5">
+                      <LuUser className="text-slate-400 shrink-0" size={15} />
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase">Relationship</p>
+                        <p className="font-semibold text-slate-800">{customer.guarantor_relationship || '—'}</p>
+                      </div>
+                    </div>
+
+                    {customer.guarantor_address && (
+                      <div className="col-span-2 flex items-start gap-2 text-xs">
+                        <LuMapPin className="text-slate-400 mt-0.5 shrink-0" size={15} />
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase">Address</p>
+                          <p className="font-medium text-slate-800">{customer.guarantor_address}</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* System History */}
                 <div className="space-y-3 text-xs">
                   <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide block">System History</span>
                   <div className="grid grid-cols-2 gap-4 text-slate-500">

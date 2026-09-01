@@ -2,22 +2,10 @@
 
 import { useState } from 'react';
 import AdminViewListerPortal from '../admin/AdminViewListerPortal';
-
-export interface ListerUser {
-  uuid: string;
-  user_uuid: string;
-  email: string;
-  first_name: string;
-  middle_name?: string;
-  last_name: string;
-  phone_number: string;
-  active_status: string;
-  created_at: string;
-  updated_at: string;
-}
+import { ListerTableRecord } from '@/shared/service/admin/types/listerTypes';
 
 interface ListerTableProps {
-  listers: ListerUser[];
+  listers: ListerTableRecord[];
 }
 
 export default function ListerTable({ listers }: ListerTableProps) {
@@ -32,6 +20,7 @@ export default function ListerTable({ listers }: ListerTableProps) {
         return 'bg-amber-100 text-amber-700';
       case 'inactive':
       case 'deactivated':
+      case 'suspended':
         return 'bg-rose-100 text-rose-700';
       default:
         return 'bg-gray-100 text-gray-700';
@@ -62,7 +51,6 @@ export default function ListerTable({ listers }: ListerTableProps) {
           <tr className="bg-gray-50/80 border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
             <th className="py-3 px-4">Lister Name</th>
             <th className="py-3 px-4">Email</th>
-            <th className="py-3 px-4">Phone</th>
             <th className="py-3 px-4">Status</th>
             <th className="py-3 px-4">Registered Date</th>
             <th className="py-3 px-4 text-right">Actions</th>
@@ -70,7 +58,7 @@ export default function ListerTable({ listers }: ListerTableProps) {
         </thead>
         <tbody className="divide-y divide-gray-100">
           {listers.map((lister) => {
-            const listerId = lister.uuid || lister.user_uuid;
+            const listerId = lister.profile_uuid || lister.user_uuid;
             const fullName = `${lister.first_name || ''} ${lister.last_name || ''}`.trim() || 'Unnamed Lister';
             const avatarInitial = lister.first_name?.[0] || lister.email?.[0] || 'L';
 
@@ -88,9 +76,6 @@ export default function ListerTable({ listers }: ListerTableProps) {
 
                 {/* Email */}
                 <td className="py-3.5 px-4 text-gray-600 font-medium">{lister.email || 'N/A'}</td>
-
-                {/* Phone */}
-                <td className="py-3.5 px-4 text-gray-600">{lister.phone_number || 'N/A'}</td>
 
                 {/* Active Status */}
                 <td className="py-3.5 px-4">
@@ -112,7 +97,7 @@ export default function ListerTable({ listers }: ListerTableProps) {
                     onClick={() => setSelectedUuid(listerId)}
                     className="text-xs font-semibold text-[#00AC72] hover:underline cursor-pointer"
                   >
-                    View Listings
+                    View Listers
                   </button>
                 </td>
               </tr>
