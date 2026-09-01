@@ -13,8 +13,10 @@ import { fetchListings, setListingPage } from '@/shared/store/adminListingSlice'
 
 // Import entity UI components
 import CustomerTable from '../ui/CustomerTable';
-import AdminTable, { AdminUser } from '../ui/AdminTable';
-import ListerTable, { ListerUser } from '../ui/ListerTable';
+import { AdminUserListItem } from '@/shared/service/admin/types/adminUsersTypes';
+import AdminTable from '../ui/AdminTable';
+import { ListerTableRecord } from '@/shared/service/admin/types/listerTypes';
+import ListerTable from '../ui/ListerTable';
 import ListingTable, { PropertyListing } from '../ui/ListingTable';
 import { CustomerProfile } from '@/shared/service/admin/types/customerTypes';
 
@@ -206,11 +208,11 @@ export default function DataTable({
       case 'customers':
         return <CustomerTable customers={filteredData as CustomerProfile[]} />;
       case 'listers':
-        return <ListerTable listers={filteredData as unknown as ListerUser[]} />;
+        return <ListerTable listers={filteredData as unknown as ListerTableRecord[]} />;
       case 'properties':
         return <ListingTable listings={filteredData as unknown as PropertyListing[]} />;
       case 'admins':
-        return <AdminTable admins={filteredData as unknown as AdminUser[]} />;
+        return <AdminTable admins={filteredData as unknown as AdminUserListItem[]} />;
       default:
         return (
           <div className="p-8 text-center text-gray-400 text-xs">
