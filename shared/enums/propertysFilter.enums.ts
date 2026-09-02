@@ -1,11 +1,11 @@
-export enum PropertyFilter {
-  ALL = 'all',
-  AVAILABLE = 'available',
-  SOLD = 'sold',
-  DEACTIVATED = 'deactivated',
-  RENTED = 'rented'
+export enum PropertyCategoryFilter {
+  ALL = 'ALL',
+  RESIDENTIAL = 'RESIDENTIAL',
+  COMMERCIAL = 'COMMERCIAL',
+  SHORT_LET = 'SHORT_LET',
+  LAND = 'LAND',
 }
 
 export interface filterTypes {
-  filter: PropertyFilter;
+  filter: PropertyCategoryFilter;
 }

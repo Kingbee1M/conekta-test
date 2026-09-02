@@ -4,7 +4,6 @@ import { use, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-
 import {
   useGetListingByUuidQuery,
   UpdateListingPayload,
@@ -14,6 +13,7 @@ import {
 
 import { useUploadMediaMutation } from '@/shared/service/media.services';
 import DeleteListingPortal from '@/app/components/ui/DeleteListingPortal';
+import CustomSelect from '@/app/components/ui/CustomSelect';
 
 import { PaymentFrequencyEnum } from '@/shared/enums/paymentFreqency.enums';
 import { AmenitiesEnum } from '@/shared/enums/amenities.enums';
@@ -40,11 +40,11 @@ import {
   FiUploadCloud,
   FiImage,
   FiLoader,
-  FiChevronDown,
   FiCheck,
 } from 'react-icons/fi';
 
 import { BiBed, BiBath } from 'react-icons/bi';
+import { NigeriaStateEnum, NIGERIA_LGA_MAP } from '@/shared/enums/nigeriaRegions.enums';
 
 interface PageProps {
   params: Promise<{ listView: string }>;
@@ -215,27 +215,23 @@ function SelectField({
   onChange: (value: string) => void;
   options: string[];
 }) {
+  const formattedOptions = options.map((opt) => ({
+    value: opt,
+    label: <span className="capitalize">{opt.replace(/_/g, ' ')}</span>,
+  }));
+
   return (
     <label className="block">
       <span className="block text-xs font-semibold text-gray-600 mb-2">
         {label}
       </span>
 
-      <div className="relative">
-        <select
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="appearance-none w-full h-11 pl-3.5 pr-10 rounded-xl border border-gray-200 bg-white text-sm text-gray-900 outline-none focus:border-primary-green focus:ring-4 focus:ring-primary-green/5 transition-all capitalize"
-        >
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {option.replace(/_/g, ' ')}
-            </option>
-          ))}
-        </select>
-
-        <FiChevronDown className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-      </div>
+      <CustomSelect
+        variant="boxed"
+        options={formattedOptions}
+        selected={value}
+        onChange={onChange}
+      />
     </label>
   );
 }
@@ -274,12 +270,13 @@ export default function PropertyDetailView({ params }: PageProps) {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   /* Description */
+  const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
   /* Location */
   const [street, setStreet] = useState('');
   const [city, setCity] = useState('');
-  const [stateName, setStateName] = useState('');
+  const [stateName, setStateName] = useState<NigeriaStateEnum | ''>('');
   const [lga, setLga] = useState('');
 
   /* Property details */
@@ -307,6 +304,26 @@ export default function PropertyDetailView({ params }: PageProps) {
   const [localImages, setLocalImages] = useState<LocalImage[]>([]);
   const [uploadingImages, setUploadingImages] = useState(false);
 
+  /* Options for Nigeria States */
+  const stateOptions = useMemo(() => {
+    return Object.values(NigeriaStateEnum).map((val) => ({
+      value: val,
+      label: val,
+    }));
+  }, []);
+
+  /* Options for LGAs based on selected state */
+  const lgaOptions = useMemo(() => {
+    if (!stateName) return [];
+
+    const lgas = (NIGERIA_LGA_MAP as Record<string, string[]>)[stateName] || [];
+
+    return lgas.map((lgaName: string) => ({
+      value: lgaName,
+      label: lgaName,
+    }));
+  }, [stateName]);
+
   /* ========================================================
      INITIAL VALUES
   ======================================================== */
@@ -317,6 +334,10 @@ export default function PropertyDetailView({ params }: PageProps) {
     setSaveError(null);
     setSaveSuccess(null);
 
+    if (section === 'title') {
+      setTitle(propertyData.title || '');
+    }
+
     if (section === 'description') {
       setDescription(propertyData.description || '');
     }
@@ -324,7 +345,13 @@ export default function PropertyDetailView({ params }: PageProps) {
     if (section === 'location') {
       setStreet(propertyData.location?.street || propertyData.street || '');
       setCity(propertyData.location?.city || propertyData.city || '');
-      setStateName(propertyData.location?.state || propertyData.state || '');
+      
+      const rawState = propertyData.location?.state || propertyData.state || '';
+      const matchedState = Object.values(NigeriaStateEnum).find(
+        (s) => s.toLowerCase() === rawState.toLowerCase()
+      ) || '';
+
+      setStateName(matchedState as NigeriaStateEnum);
       setLga(propertyData.location?.lga || propertyData.lga || '');
     }
 
@@ -419,6 +446,10 @@ export default function PropertyDetailView({ params }: PageProps) {
      SAVERS
   ======================================================== */
 
+  const saveTitle = () => {
+    patchListing('Title', { title: title.trim() });
+  };
+
   const saveDescription = () => {
     patchListing('Description', { description });
   };
@@ -466,19 +497,35 @@ export default function PropertyDetailView({ params }: PageProps) {
      IMAGE HANDLERS
   ======================================================== */
 
+  const MAX_IMAGES = 3;
+
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const files = Array.from(event.target.files || []);
     if (!files.length) return;
 
+    if (localImages.length >= MAX_IMAGES) {
+      setSaveError(`You can only upload a maximum of ${MAX_IMAGES} images.`);
+      event.target.value = '';
+      return;
+    }
+
+    const availableSlots = MAX_IMAGES - localImages.length;
+    const filesToUpload = files.slice(0, availableSlots);
+
+    if (files.length > availableSlots) {
+      setSaveError(`Only ${availableSlots} more image(s) can be added. Maximum limit is ${MAX_IMAGES}.`);
+    } else {
+      setSaveError(null);
+    }
+
     try {
       setUploadingImages(true);
-      setSaveError(null);
 
       const uploadedImages: LocalImage[] = [];
 
-      for (const file of files) {
+      for (const file of filesToUpload) {
         const response = await uploadMedia({
           file,
           media_type: MediaType.IMAGE,
@@ -496,7 +543,14 @@ export default function PropertyDetailView({ params }: PageProps) {
         });
       }
 
-      setLocalImages((current) => [...current, ...uploadedImages]);
+      setLocalImages((current) => {
+        const combined = [...current, ...uploadedImages];
+        const hasPrimary = combined.some((img) => img.is_primary);
+        if (!hasPrimary && combined.length > 0) {
+          combined[0].is_primary = true;
+        }
+        return combined;
+      });
     } catch (error) {
       console.error('Failed to upload images:', error);
       setSaveError('One or more images could not be uploaded. Please try again.');
@@ -509,9 +563,14 @@ export default function PropertyDetailView({ params }: PageProps) {
   const removeImage = (id: string) => {
     setLocalImages((current) => {
       const remaining = current.filter((image) => image.id !== id);
+
       if (remaining.length > 0 && !remaining.some((image) => image.is_primary)) {
-        remaining[0].is_primary = true;
+        return remaining.map((image, index) => ({
+          ...image,
+          is_primary: index === 0,
+        }));
       }
+
       return remaining;
     });
   };
@@ -526,6 +585,11 @@ export default function PropertyDetailView({ params }: PageProps) {
   };
 
   const saveImages = () => {
+    if (localImages.length === 0) {
+      setSaveError('Please upload at least one image before saving.');
+      return;
+    }
+
     const primaryIndex = localImages.findIndex((image) => image.is_primary);
 
     patchListing('Photos', {
@@ -643,7 +707,7 @@ export default function PropertyDetailView({ params }: PageProps) {
               <div className="h-12 w-2/3 bg-gray-200 rounded-xl" />
               <div className="h-4 w-1/3 bg-gray-200 rounded" />
             </div>
-            <div className="grid grid-cols-12 gap-3 h-[450px]">
+            <div className="grid grid-cols-12 gap-3 h-112.5">
               <div className="col-span-8 bg-gray-200 rounded-2xl" />
               <div className="col-span-4 grid grid-rows-2 gap-3">
                 <div className="bg-gray-200 rounded-2xl" />
@@ -821,6 +885,30 @@ export default function PropertyDetailView({ params }: PageProps) {
           </div>
         </section>
 
+        {/* TITLE */}
+        <EditableSection
+          eyebrow="Listing content"
+          title="Listing title"
+          editing={editingSection === 'title'}
+          saving={isUpdating}
+          onEdit={() => startEditing('title')}
+          onSave={saveTitle}
+          onCancel={stopEditing}
+        >
+          {editingSection === 'title' ? (
+            <InputField
+              label="Title"
+              value={title}
+              onChange={setTitle}
+              placeholder="e.g. Modern 3-bedroom apartment in Lekki"
+            />
+          ) : (
+            <p className="text-sm text-gray-800">
+              {propertyData.title || 'Untitled Property'}
+            </p>
+          )}
+        </EditableSection>
+
         {/* PHOTOS */}
         <EditableSection
           eyebrow="Listing media"
@@ -837,7 +925,7 @@ export default function PropertyDetailView({ params }: PageProps) {
                 {localImages.map((image) => (
                   <div
                     key={image.id}
-                    className="relative aspect-[4/3] rounded-xl overflow-hidden bg-gray-100 group"
+                    className="relative aspect-4/3 rounded-xl overflow-hidden bg-gray-100 group"
                   >
                     <Image
                       fill
@@ -854,7 +942,7 @@ export default function PropertyDetailView({ params }: PageProps) {
                       </div>
                     )}
 
-                    <div className="absolute inset-x-0 bottom-0 p-2 bg-gradient-to-t from-black/70 to-transparent pt-8 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="absolute inset-x-0 bottom-0 p-2 bg-linear-to-t from-black/70 to-transparent pt-8 opacity-0 group-hover:opacity-100 transition-opacity">
                       <div className="flex gap-1.5">
                         {!image.is_primary && (
                           <button
@@ -880,45 +968,46 @@ export default function PropertyDetailView({ params }: PageProps) {
                   </div>
                 ))}
 
-                <label className="aspect-[4/3] rounded-xl border-2 border-dashed border-gray-200 hover:border-primary-green hover:bg-primary-green/[0.02] flex flex-col items-center justify-center cursor-pointer transition-all">
-                  {uploadingImages ? (
-                    <FiLoader className="text-xl text-primary-green animate-spin" />
-                  ) : (
-                    <>
-                      <div className="w-10 h-10 rounded-xl bg-primary-green/8 text-primary-green flex items-center justify-center mb-2">
-                        <FiUploadCloud />
-                      </div>
+                {localImages.length < 3 && (
+                  <label className="aspect-4/3 rounded-xl border-2 border-dashed border-gray-200 hover:border-primary-green hover:bg-primary-green/2 flex flex-col items-center justify-center cursor-pointer transition-all">
+                    {uploadingImages ? (
+                      <FiLoader className="text-xl text-primary-green animate-spin" />
+                    ) : (
+                      <>
+                        <div className="w-10 h-10 rounded-xl bg-primary-green/8 text-primary-green flex items-center justify-center mb-2">
+                          <FiUploadCloud />
+                        </div>
 
-                      <span className="text-xs font-semibold text-gray-700">
-                        Add photos
-                      </span>
+                        <span className="text-xs font-semibold text-gray-700">
+                          Add photos
+                        </span>
 
-                      <span className="text-[10px] text-gray-400 mt-1">
-                        JPG, PNG or WEBP
-                      </span>
-                    </>
-                  )}
+                        <span className="text-[10px] text-gray-400 mt-1">
+                          JPG, PNG or WEBP (Max 3)
+                        </span>
+                      </>
+                    )}
 
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageUpload}
-                    className="hidden"
-                    disabled={uploadingImages}
-                  />
-                </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      disabled={uploadingImages || localImages.length >= 3}
+                    />
+                  </label>
+                )}
               </div>
 
               <p className="text-xs text-gray-400 mt-4">
-                Upload new photos, remove existing ones, or select a photo as
-                the primary image.
+                Upload up to 3 photos, remove existing ones, or select a photo as the primary image.
               </p>
             </div>
           ) : (
             <div>
               {propertyData.media && propertyData.media.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5 h-[350px] sm:h-[440px]">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-2.5 h-87.5 sm:h-110">
                   <div className="relative md:col-span-8 overflow-hidden rounded-2xl bg-gray-200 group">
                     {primaryImage && (
                       <Image
@@ -1134,13 +1223,33 @@ export default function PropertyDetailView({ params }: PageProps) {
 
                   <InputField label="City" value={city} onChange={setCity} />
 
-                  <InputField
-                    label="State"
-                    value={stateName}
-                    onChange={setStateName}
-                  />
+                  <label className="block">
+                    <span className="block text-xs font-semibold text-gray-600 mb-2">
+                      State
+                    </span>
+                    <CustomSelect
+                      variant="boxed"
+                      options={stateOptions}
+                      selected={stateName}
+                      onChange={(selectedState) => {
+                        setStateName(selectedState as NigeriaStateEnum);
+                        setLga('');
+                      }}
+                    />
+                  </label>
 
-                  <InputField label="LGA" value={lga} onChange={setLga} />
+                  <label className="block">
+                    <span className="block text-xs font-semibold text-gray-600 mb-2">
+                      LGA
+                    </span>
+                    <CustomSelect
+                      variant="boxed"
+                      options={lgaOptions}
+                      selected={lga}
+                      disabled={!stateName || lgaOptions.length === 0}
+                      onChange={(selectedLga) => setLga(selectedLga)}
+                    />
+                  </label>
                 </div>
               ) : (
                 <div className="rounded-xl border border-gray-100 bg-gray-50/70 p-4">
@@ -1332,7 +1441,7 @@ export default function PropertyDetailView({ params }: PageProps) {
                   <button
                     type="button"
                     onClick={addFee}
-                    className="w-full h-11 rounded-xl border border-dashed border-gray-200 text-xs font-semibold text-gray-500 hover:border-primary-green hover:text-primary-green hover:bg-primary-green/[0.02] transition-all flex items-center justify-center gap-2"
+                    className="w-full h-11 rounded-xl border border-dashed border-gray-200 text-xs font-semibold text-gray-500 hover:border-primary-green hover:text-primary-green hover:bg-primary-green/2 transition-all flex items-center justify-center gap-2"
                   >
                     <FiPlus />
                     Add fee

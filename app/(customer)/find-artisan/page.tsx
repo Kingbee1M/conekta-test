@@ -7,7 +7,7 @@ import CustomSelect from '@/app/components/ui/CustomSelect';
 
 export default function FindArtisansPage() {
   // Configured local state array ready for future API ingestion
-  const [artisans, setArtisans] = useState<Artisan[]>([
+  const [artisans] = useState<Artisan[]>([
     {
       id: 'art-1',
       name: 'Emeka Nwosu',
@@ -90,7 +90,7 @@ export default function FindArtisansPage() {
 
   return (
     <main className="min-h-screen bg-[#FBFCFB] py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-[1440px] mx-auto flex flex-col gap-6">
+      <div className="max-w-360 mx-auto flex flex-col gap-6">
         
         {/* Title Headline Blocks */}
         <div>
