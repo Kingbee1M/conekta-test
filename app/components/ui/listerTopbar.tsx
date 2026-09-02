@@ -4,17 +4,19 @@ import { CiSearch } from "react-icons/ci";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import Link from 'next/link';
 import { IoChevronDownSharp } from "react-icons/io5";
-import { FlatUserData } from '@/types';
 
 
 export default function ListerTopBar () {
-    const { listerProfile } = useSelector((state: RootState) => state.auth);
-    const { session } = useSelector((state: RootState) => state.auth);
-    const firstName = listerProfile?.first_name;
-    const lastName = listerProfile?.last_name;
-    
-    const currentName = firstName || lastName ? `${firstName} ${lastName}`.trim() : '';
-    const initial = currentName.trim().charAt(0).toUpperCase() || '?';
+    const { listerProfile, session } = useSelector((state: RootState) => state.auth);
+    const profileName = [listerProfile?.first_name, listerProfile?.last_name]
+        .filter(Boolean)
+        .join(' ')
+        .trim();
+    const currentName = profileName || session?.user?.profile?.full_name || '';
+    const nameParts = currentName.split(/\s+/).filter(Boolean);
+    const initial = nameParts.length > 1
+        ? `${nameParts[0][0]}${nameParts[nameParts.length - 1][0]}`.toUpperCase()
+        : currentName.charAt(0).toUpperCase() || '?';
     const role = session?.active_role || 'Lister';
     return (
         <header className='w-full hidden md:flex md:flex-row justify-between'>

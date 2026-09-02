@@ -7,6 +7,7 @@ import { RootState } from '@/shared/store/store';
 import { SubmissionStatusEnum } from '@/shared/enums/kycEnums/submissionStatus.enum';
 import { DocumentTypeEnum, DocumentTypeLabels } from '@/shared/enums/kycEnums/documentType.enum';
 import { DocumentSideEnum } from '@/shared/enums/kycEnums/documentSide.enum';
+import { MediaType } from '@/shared/enums/media-type.enum';
 import { KycRequirementItem, KycRequirement } from '@/shared/service/publicKyc/publicKYCtypes';
 import Navbar from '../components/ui/navbar';
 import HelpPortal from '../components/ui/helpPortal';
@@ -19,32 +20,12 @@ import {
 import { useUploadMediaMutation } from '@/shared/service/media.services';
 import { getDocumentTypeOptions, documentTypeFromLabel } from '@/shared/enums/kycEnums/kycEnumHelpers';
 
-const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-const findMediaUuid = (value: unknown): string | null => {
-  if (!value || typeof value !== 'object') return null;
-
-  const record = value as Record<string, unknown>;
-  for (const key of ['media_uuid', 'uuid', 'id']) {
-    const candidate = record[key];
-    if (typeof candidate === 'string' && UUID_PATTERN.test(candidate)) {
-      return candidate;
-    }
-  }
-
-  for (const nestedValue of Object.values(record)) {
-    const uuid = findMediaUuid(nestedValue);
-    if (uuid) return uuid;
-  }
-
-  return null;
-};
-
 export default function VerifyAccount() {
   // 1. Query Hooks - Fetch data on mount
   const { isLoading: isProfileLoading, error: profileError } = useGetMyKycProfileQuery();
   const { isLoading: isReqLoading, error: requirementsError } = useGetKycRequirementsQuery();
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
+
   // 2. Redux State Selectors
   const { profile, requirements, isLoading: isReduxLoading, error: reduxError } = useSelector(
     (state: RootState) => state.publicKyc
@@ -67,7 +48,7 @@ export default function VerifyAccount() {
   // Combine all loading states
   const isLoading = isProfileLoading || isReqLoading || isReduxLoading;
   
-  // Combine all errors - properly stringify if needed
+  // Combine all errors
   const allErrors = (() => {
     if (typeof reduxError === 'string') return reduxError;
     if (typeof actionError === 'string') return actionError;
@@ -92,7 +73,6 @@ export default function VerifyAccount() {
   }, [profileError, requirementsError]);
 
   const handleDocTypeChange = (reqKey: string, label: string) => {
-    // Convert display label to enum value for storage
     const enumValue = documentTypeFromLabel(label);
     if (enumValue) {
       setSelectedDocTypes((prev) => ({ ...prev, [reqKey]: enumValue }));
@@ -125,7 +105,7 @@ export default function VerifyAccount() {
     ? Math.round((submittedCount / totalRequirements) * 100) 
     : 0;
 
-  // Check if all active requirements have been submitted.
+  // Check if all active requirements have been submitted
   const isReadyForFinalSubmission = requirementItems.length > 0 && requirementItems.every(
     isRequirementSubmitted
   );
@@ -161,25 +141,29 @@ export default function VerifyAccount() {
     }
 
     try {
-      // 1. Upload the original browser File as multipart/form-data.
+      // 1. Map type to MediaType enum and upload
+      const mediaType = file.type === 'application/pdf' ? MediaType.DOCUMENT : MediaType.IMAGE;
+      
       const response = await uploadMedia({
         file,
-        media_type: file.type === 'application/pdf' ? 'document' : 'image',
+        media_type: mediaType,
       }).unwrap();
-      const mediaResult = findMediaUuid(response);
-      if (!mediaResult) {
-        console.error('Media upload response did not contain a UUID:', response);
-        throw new Error('The file uploaded, but the server did not return its media UUID. Please contact support.');
+
+      const mediaId = response.data?.id;
+
+      if (!mediaId) {
+        console.error('Media upload response did not contain an ID:', response);
+        throw new Error('The file uploaded, but the server did not return its media ID. Please contact support.');
       }
 
-      // 2. Submit KYC document with proper structure
+      // 2. Submit KYC document using response media ID
       const submitResult = await submitKycDocument({
         requirement_name: requirement.name,
         documents: [
           {
             document_type: docType as DocumentTypeEnum,
             document_side: DocumentSideEnum.FRONT,
-            media_uuid: mediaResult,
+            media_uuid: mediaId,
           },
         ],
       }).unwrap();
@@ -519,14 +503,14 @@ export default function VerifyAccount() {
               If your verification document was rejected or you have questions about specific requirements, contact our support team.
             </p>
             <button
-            onClick={()=>setIsOpen(!isOpen)}
+              onClick={() => setIsOpen(!isOpen)}
               type="button"
               className="w-full py-3 px-4 bg-primary-green hover:bg-primary-green-hover text-white font-bold text-xs rounded-2xl transition shadow"
             >
               Contact Support
             </button>
             {isOpen && (
-              <HelpPortal isOpen={isOpen} onClose={()=>setIsOpen(false)} />
+              <HelpPortal isOpen={isOpen} onClose={() => setIsOpen(false)} />
             )}
           </div>
         </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useSyncExternalStore, ChangeEvent, FormEvent } from 'react';
+import { useEffect, useState, useSyncExternalStore, ChangeEvent, FormEvent, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { 
@@ -17,9 +17,10 @@ import {
   LuCalendar, 
   LuPencil, 
   LuSave, 
-  LuArrowLeft 
+  LuArrowLeft,
+  LuRefreshCw,
 } from 'react-icons/lu';
-
+import { AlertTriangle } from 'lucide-react';
 interface EmployeePortalProps {
   uuid: string;
   isOpen: boolean;
@@ -63,6 +64,13 @@ export default function EmployeePortal({ uuid, isOpen, onClose }: EmployeePortal
     date_of_birth: '',
   });
 
+  // Retry handler for error state
+  const handleRetry = useCallback(() => {
+    if (uuid) {
+      dispatch(fetchAdminUserByUuid(uuid));
+    }
+  }, [dispatch, uuid]);
+
   // Safely hydrate form data asynchronously without triggering synchronous cascading renders
   useEffect(() => {
     if (selectedAdmin) {
@@ -73,7 +81,7 @@ export default function EmployeePortal({ uuid, isOpen, onClose }: EmployeePortal
           last_name: selectedAdmin.last_name || '',
           email: selectedAdmin.email || '',
           phone_number: selectedAdmin.phone_number || '',
-          role_name: selectedAdmin.role_name || '',
+          role_name: selectedAdmin.role || '',
           nationality: selectedAdmin.nationality || '',
           country: selectedAdmin.country || '',
           state: selectedAdmin.state || '',
@@ -161,7 +169,7 @@ export default function EmployeePortal({ uuid, isOpen, onClose }: EmployeePortal
           </div>
           
           <div className="flex items-center gap-2">
-            {!isEditing && selectedAdmin && (
+            {!isEditing && selectedAdmin && !singleLoading && !singleError && (
               <button
                 onClick={() => setIsEditing(true)}
                 className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-primary-green/10 text-primary-green hover:bg-primary-green/20 transition-colors"
@@ -182,13 +190,52 @@ export default function EmployeePortal({ uuid, isOpen, onClose }: EmployeePortal
         {/* Body Container */}
         <div className="p-6 overflow-y-auto flex-1 bg-gray-50/30">
           {singleLoading ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-3">
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-green" />
-              <p className="text-sm font-medium text-gray-500">Loading details...</p>
+            /* --- ANIMATED LOADING STATE --- */
+            <div className="space-y-6 animate-pulse">
+              <div className="bg-slate-100 p-4 rounded-xl border border-slate-200/60 flex items-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-slate-200 shrink-0" />
+                <div className="space-y-2 flex-1">
+                  <div className="h-4 bg-slate-200 rounded w-1/2" />
+                  <div className="h-3 bg-slate-200 rounded w-1/3" />
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <div className="h-3 bg-slate-200 rounded w-1/4" />
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="h-12 bg-slate-100 rounded-lg border border-slate-200/50" />
+                  <div className="h-12 bg-slate-100 rounded-lg border border-slate-200/50" />
+                </div>
+              </div>
+
+              <div className="space-y-3 pt-4">
+                <div className="h-3 bg-slate-200 rounded w-1/3" />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="h-8 bg-slate-100 rounded" />
+                  <div className="h-8 bg-slate-100 rounded" />
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center justify-center pt-8 gap-2">
+                <LuRefreshCw className="animate-spin text-slate-400" size={20} />
+                <p className="text-xs font-medium text-slate-400">Fetching employee record...</p>
+              </div>
             </div>
           ) : singleError ? (
-            <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 text-sm text-center">
-              {singleError}
+            /* --- ANIMATED ERROR STATE --- */
+            <div className="py-12 px-4 flex flex-col items-center justify-center text-center">
+              <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-100 text-rose-500 flex items-center justify-center mb-3 animate-bounce">
+                <AlertTriangle size={24} />
+              </div>
+              <h3 className="text-sm font-bold text-slate-800 mb-1">Failed to load profile</h3>
+              <p className="text-xs text-slate-500 max-w-xs mb-4">{singleError}</p>
+              <button
+                onClick={handleRetry}
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-md transition-all shadow-sm active:scale-95"
+              >
+                <LuRefreshCw size={13} />
+                Try Again
+              </button>
             </div>
           ) : selectedAdmin ? (
             isEditing ? (
@@ -364,7 +411,7 @@ export default function EmployeePortal({ uuid, isOpen, onClose }: EmployeePortal
                     <p className="text-xs text-gray-500 truncate mt-0.5">{selectedAdmin.email}</p>
                     <span className="inline-flex items-center gap-1 mt-2 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-primary-green/10 text-primary-green border border-primary-green/20">
                       <LuShieldCheck size={12} />
-                      {selectedAdmin.role_name || 'Admin'}
+                      {selectedAdmin.role || 'Admin'}
                     </span>
                   </div>
                 </div>

@@ -128,8 +128,8 @@ export default function SidebarCard({ tenant, activeTab, setActiveTab }: Sidebar
       <div className="w-14 h-14 bg-secondary-green-hover text-white font-bold text-lg rounded-full flex items-center justify-center mb-3">
         {tenant.avatarInitials}
       </div>
-      <h3 className="text-sm font-bold text-gray-800">Blessing Bamise</h3>
-      <p className="text-[11px] text-gray-400 mb-2 truncate max-w-full">Blessing Bamise@useconekta.com</p>
+      <h3 className="text-sm font-bold text-gray-800">{tenant.name}</h3>
+      <p className="text-[11px] text-gray-400 mb-2 truncate max-w-full">{tenant.email}</p>
       
       {/* Dynamic KYC Status Badge */}
       {getKycBadge()}

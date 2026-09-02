@@ -33,6 +33,13 @@ export default function ListerClientLayout({ children }: ListerClientLayoutProps
 
   // 4. Trigger 404 if authenticated but role is not lister
   if (session && activeRole !== 'lister') {
+    console.group('🔍 Lister Layout Authorization Error');
+    console.log('isAuthenticated:', isAuthenticated);
+    console.log('Full session object:', session);
+    console.log('Raw active_role:', session?.active_role);
+    console.log('Evaluated activeRole:', activeRole);
+    console.groupEnd();
+
     notFound();
   }
 

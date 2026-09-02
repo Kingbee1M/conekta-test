@@ -110,20 +110,12 @@ export const connectNotificationSocket = (
         WebSocket.CONNECTING
     )
   ) {
-    console.log(
-      "[Notifications] Reusing existing WebSocket."
-    );
-
     return activeSocket;
   }
 
   isExplicitlyClosing = false;
 
   const url = getNotificationSocketUrl();
-
-  console.log(
-    "[Notifications] Connecting to WebSocket..."
-  );
 
   /*
    * The browser handles the HttpOnly cookie
@@ -133,54 +125,26 @@ export const connectNotificationSocket = (
 
   activeSocket = socket;
 
-  socket.onopen = () => {
-    console.log(
-      "[Notifications] WebSocket connected."
-    );
-  };
+  socket.onopen = () => {};
 
   socket.onmessage = (event) => {
     try {
       const message: NotificationSocketMessage =
         JSON.parse(event.data);
 
-      console.log(
-        "[Notifications] Received:",
-        message
-      );
-
       onMessage?.(message);
-    } catch (error) {
-      console.error(
-        "[Notifications] Failed to parse message:",
-        error
-      );
+    } catch {
+      // JSON parse error handled silently
     }
   };
 
-  socket.onerror = (error) => {
+  socket.onerror = () => {
     if (isExplicitlyClosing) {
       return;
     }
-
-    console.error(
-      "[Notifications] WebSocket error:",
-      error
-    );
   };
 
-  socket.onclose = (event) => {
-    if (!isExplicitlyClosing) {
-      console.log(
-        "[Notifications] WebSocket closed:",
-        {
-          code: event.code,
-          reason: event.reason,
-          wasClean: event.wasClean,
-        }
-      );
-    }
-
+  socket.onclose = () => {
     if (activeSocket === socket) {
       activeSocket = null;
     }
@@ -230,10 +194,6 @@ export const sendSocketMessage = (
     activeSocket.readyState !==
       WebSocket.OPEN
   ) {
-    console.warn(
-      "[Notifications] WebSocket is not connected."
-    );
-
     return false;
   }
 
@@ -243,12 +203,7 @@ export const sendSocketMessage = (
     );
 
     return true;
-  } catch (error) {
-    console.error(
-      "[Notifications] Failed to send WebSocket message:",
-      error
-    );
-
+  } catch {
     return false;
   }
 };

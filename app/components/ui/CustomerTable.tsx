@@ -1,11 +1,20 @@
 'use client';
 
 import React, { useState } from 'react';
-import { CustomerProfile } from '@/shared/service/admin/types/customerTypes';
 import AdminViewCustomerPortal from '../admin/AdminViewCustomerPortal';
 
+export interface TableCustomerProfile {
+  profile_uuid: string;
+  user_uuid: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  active_status: 'active' | 'inactive' | 'suspended' | string;
+  created_at: string;
+}
+
 interface CustomerTableProps {
-  customers: CustomerProfile[];
+  customers: TableCustomerProfile[];
 }
 
 export default function CustomerTable({ customers }: CustomerTableProps) {
@@ -30,6 +39,7 @@ export default function CustomerTable({ customers }: CustomerTableProps) {
         return 'bg-amber-100 text-amber-700';
       case 'inactive':
       case 'deactivated':
+      case 'suspended':
         return 'bg-rose-100 text-rose-700';
       default:
         return 'bg-gray-100 text-gray-700';
@@ -60,7 +70,6 @@ export default function CustomerTable({ customers }: CustomerTableProps) {
           <tr className="bg-gray-50/80 border-b border-gray-100 text-[11px] font-bold text-gray-400 uppercase tracking-wider">
             <th className="py-3 px-4">Customer</th>
             <th className="py-3 px-4">Email</th>
-            <th className="py-3 px-4">Phone</th>
             <th className="py-3 px-4">Status</th>
             <th className="py-3 px-4">Joined Date</th>
             <th className="py-3 px-4 text-right">Actions</th>
@@ -70,7 +79,7 @@ export default function CustomerTable({ customers }: CustomerTableProps) {
           {customers.map((c) => {
             const fullName = `${c.first_name || ''} ${c.last_name || ''}`.trim() || 'Unnamed User';
             const avatarInitial = c.first_name?.[0] || c.email?.[0] || 'U';
-            const customerUuid = c.uuid || c.user_uuid;
+            const customerUuid = c.profile_uuid || c.user_uuid;
 
             return (
               <tr key={customerUuid} className="hover:bg-gray-50/60 transition-colors">
@@ -86,9 +95,6 @@ export default function CustomerTable({ customers }: CustomerTableProps) {
 
                 {/* Email */}
                 <td className="py-3.5 px-4 text-gray-600 font-medium">{c.email || 'N/A'}</td>
-
-                {/* Phone */}
-                <td className="py-3.5 px-4 text-gray-600">{c.phone_number || 'N/A'}</td>
 
                 {/* Status */}
                 <td className="py-3.5 px-4">

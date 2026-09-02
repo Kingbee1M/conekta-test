@@ -302,6 +302,7 @@
   color: #F3F3F5;
 }
 
+/* Shaking animation */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20%, 60% { transform: translateX(-5px); }
@@ -309,10 +310,15 @@
 }
 
 .input-error {
-  border: 2px solid #e11d48 !important; /* Rose error border */
+  border: 1px solid #e11d48 !important; /* Rose-600 to match Tailwind red-500 */
   animation: shake 0.3s ease-in-out;
 }
 
+/* Optional: Keep the red glow when focused to maintain accessibility */
+.input-error:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(254, 226, 226, 1); /* Tailwind red-200 */
+}
 .chat-bubble-tail {
   position: relative;
 }

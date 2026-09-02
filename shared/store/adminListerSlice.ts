@@ -1,10 +1,16 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import { listerApiSlice } from '../service/admin/lister.service';
-import { ListerProfile, PaginatedListerResponse, FetchListersQueryParams } from '@/shared/service/admin/types/listerTypes';
+import { 
+  ListerProfile, 
+  ListerTableRecord,
+  PaginatedListerResponse, 
+  SingleListerResponse,
+  FetchListersQueryParams 
+} from '@/shared/service/admin/types/listerTypes';
 
 interface ListerState {
-  listers: ListerProfile[];
+  listers: ListerTableRecord[] | ListerProfile[];
   selectedLister: ListerProfile | null;
   count: number;
   next: string | null;
@@ -93,7 +99,13 @@ export const fetchListerByUuid = createAsyncThunk<
       }
 
       if (resultAction.data) {
-        return resultAction.data as ListerProfile;
+        const res = resultAction.data as SingleListerResponse | ListerProfile;
+        
+        if ('data' in res && res.data) {
+          return res.data; // Safely extracts inner ListerProfile if wrapped in SingleListerResponse
+        }
+
+        return res as ListerProfile;
       }
 
       return rejectWithValue('No lister data returned');
@@ -165,6 +177,7 @@ const listerSlice = createSlice({
         state.loading = false;
         state.error = action.payload ?? 'Failed to fetch listers';
       })
+
       // Fetch Single Lister
       .addCase(fetchListerByUuid.pending, (state) => {
         state.singleLoading = true;

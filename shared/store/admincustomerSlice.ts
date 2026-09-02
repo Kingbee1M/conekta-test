@@ -94,7 +94,7 @@ export const fetchCustomerByUuid = createAsyncThunk<
 
       const resultAction = await promise;
       promise.unsubscribe();
-
+      console.log("user uuid", uuid)
       if ('error' in resultAction && resultAction.error) {
         const error = resultAction.error as FetchBaseQueryError | undefined;
         const customData = error?.data as CustomServerError | undefined;

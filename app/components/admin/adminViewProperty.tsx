@@ -28,7 +28,8 @@ import {
   LuCalendar,
   LuImage,
   LuVideo,
-  LuShieldCheck
+  LuShieldCheck,
+  LuShieldAlert
 } from 'react-icons/lu';
 
 interface AdminViewPropertyPortalProps {
@@ -212,13 +213,62 @@ export default function AdminViewPropertyPortal({ uuid, isOpen, onClose }: Admin
         {/* Content */}
         <div className="p-6 overflow-y-auto flex-1 bg-white">
           {singleLoading ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-3">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-green" />
-              <p className="text-xs font-medium text-slate-400">Fetching record details...</p>
+            <div className="flex flex-col items-center justify-center py-16 px-4">
+              {/* Animated Spinner with Pulsing Aura */}
+              <div className="relative flex items-center justify-center mb-6">
+                <div className="absolute w-16 h-16 rounded-full bg-emerald-500/10 animate-ping duration-1000" />
+                <div className="w-12 h-12 rounded-full border-3 border-slate-100 border-t-slate-800 border-r-slate-800 animate-spin" />
+                <div className="absolute w-6 h-6 rounded-full bg-slate-900/5 backdrop-blur-xs flex items-center justify-center">
+                  <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                </div>
+              </div>
+
+              {/* Text Loader with Dynamic Dots */}
+              <div className="text-center space-y-1">
+                <h4 className="text-sm font-semibold text-slate-800 tracking-tight flex items-center justify-center gap-1">
+                  Fetching Lister Record
+                  <span className="inline-flex overflow-hidden w-4 text-slate-400 animate-pulse">...</span>
+                </h4>
+                <p className="text-xs text-slate-400">Pulling property lister profile and verification metadata</p>
+              </div>
+
+              {/* Subtle Skeleton Loader Preview */}
+              <div className="w-full max-w-xs mt-8 space-y-3 p-4 rounded-xl bg-slate-50/60 border border-slate-100">
+                <div className="h-3 bg-slate-200/70 rounded-full w-3/4 animate-pulse" />
+                <div className="h-3 bg-slate-200/50 rounded-full w-1/2 animate-pulse" />
+                <div className="h-3 bg-slate-200/30 rounded-full w-5/6 animate-pulse" />
+              </div>
             </div>
           ) : singleError ? (
-            <div className="p-4 bg-rose-50 border border-rose-200 rounded-lg text-rose-700 text-xs text-center">
-              {singleError}
+            <div className="py-12 px-4 flex flex-col items-center justify-center">
+              {/* Animated Error Card */}
+              <div className="w-full max-w-md p-6 bg-gradient-to-b from-rose-50/80 to-white border border-rose-100 rounded-2xl shadow-xs text-center flex flex-col items-center transform transition-all animate-in fade-in zoom-in-95 duration-200">
+                
+                {/* Pulse Warning Icon Badge */}
+                <div className="relative mb-4">
+                  <div className="absolute -inset-1 rounded-full bg-rose-200/60 animate-pulse" />
+                  <div className="relative w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center border border-rose-200 shadow-xs">
+                    <LuShieldAlert size={22} className="animate-bounce" />
+                  </div>
+                </div>
+
+                <h4 className="text-sm font-bold text-slate-900 mb-1">Failed to Load Lister Profile</h4>
+                <p className="text-xs text-slate-500 max-w-xs mb-5 leading-relaxed">
+                  {singleError || 'An unexpected error occurred while fetching lister records.'}
+                </p>
+
+                {/* Action Buttons */}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => uuid && dispatch(fetchAdminPropertyByUuid(uuid))}
+                    className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg transition-all shadow-xs flex items-center gap-1.5 active:scale-95 cursor-pointer"
+                  >
+                    <LuClock size={13} />
+                    Retry Request
+                  </button>
+                </div>
+              </div>
             </div>
           ) : property ? (
             isEditing ? (
