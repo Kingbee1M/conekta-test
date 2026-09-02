@@ -7,7 +7,6 @@ import { RootState } from '@/shared/store/store';
 import { motion, useAnimation, PanInfo } from 'framer-motion';
 import { IoChatbubble } from 'react-icons/io5';
 import { RoleEnum } from '@/shared/enums/roles.enum';
-import CustomSelect from './CustomSelect';
 import HelpPortal from './helpPortal';
 
 interface CustomerClientLayoutProps {
@@ -19,13 +18,12 @@ export default function CustomerClientLayout({ children }: CustomerClientLayoutP
   const helpButtonControls = useAnimation();
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
-  const [isInvestorModalOpen, setIsInvestorModalOpen] = useState(false);
   const [isHelpOpen, setIsHelpOpen] = useState(false);
-  const [themeColor, setThemeColor] = useState('#00AC72');
+  const themeColor = '#00AC72';
 
-  const { session, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { session, isAuthenticated, status } = useSelector((state: RootState) => state.auth);
 
-  const activeRole = session?.active_role?.toLowerCase();
+  const activeRole = session?.active_role?.trim().toLowerCase();
   const isAuthorized = isAuthenticated && session && activeRole === RoleEnum.CUSTOMER;
 
   useEffect(() => {
@@ -35,8 +33,11 @@ export default function CustomerClientLayout({ children }: CustomerClientLayoutP
     }
   }, [session, isAuthenticated, router]);
 
-  // If the user is logged in BUT has the wrong role, trigger 404
-  if (session && activeRole !== RoleEnum.CUSTOMER) {
+  // Wait for persisted auth to settle before treating a role as unauthorized.
+  const authResolved = status === 'succeeded';
+
+  // If the resolved session has the wrong role, trigger 404.
+  if (authResolved && isAuthenticated && session && activeRole !== RoleEnum.CUSTOMER) {
     notFound();
   }
 

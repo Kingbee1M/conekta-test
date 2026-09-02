@@ -7,11 +7,11 @@ interface AdminClientLayoutProps {
   children: ReactNode;
 }
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({ children }: AdminClientLayoutProps) {
   return (
-    <div className="min-h-screen bg-gray-50/60 pl-[200px]">
+    <div className="min-h-screen bg-gray-50/60 pl-50">
       {/* 1. Fixed Sidebar Container */}
-      <aside className="fixed top-0 left-0 z-40 h-screen w-[200px] border-r border-gray-200 bg-white">
+      <aside className="fixed top-0 left-0 z-40 h-screen w-50 border-r border-gray-200 bg-white">
         {/* AdminSideNav can safely use w-full inside here */}
         <AdminSideNav />
       </aside>
