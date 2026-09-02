@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
 import {
   KycProfileData,
   KycRequirement,
@@ -18,6 +18,27 @@ const initialState: PublicKycState = {
   isLoading: false,
   error: null,
 };
+
+const {
+  getMyKycProfile,
+  getKycRequirements,
+  submitKycDocuments,
+  submitKycProfile,
+} = publicKycApiSlice.endpoints;
+
+const isKycPending = isAnyOf(
+  getMyKycProfile.matchPending,
+  getKycRequirements.matchPending,
+  submitKycDocuments.matchPending,
+  submitKycProfile.matchPending
+);
+
+const isKycRejected = isAnyOf(
+  getMyKycProfile.matchRejected,
+  getKycRequirements.matchRejected,
+  submitKycDocuments.matchRejected,
+  submitKycProfile.matchRejected
+);
 
 export const publicKycSlice = createSlice({
   name: 'publicKyc',
@@ -39,78 +60,66 @@ export const publicKycSlice = createSlice({
   extraReducers: (builder) => {
     builder
       // 1. Store profile when getMyKycProfile succeeds
-      .addMatcher(
-        publicKycApiSlice.endpoints.getMyKycProfile.matchFulfilled,
-        (state, { payload }) => {
-          if (payload.data) {
-            state.profile = payload.data;
-          }
-          state.isLoading = false;
+      .addMatcher(getMyKycProfile.matchFulfilled, (state, { payload }) => {
+        if (payload.data) {
+          state.profile = payload.data;
         }
-      )
+        state.isLoading = false;
+      })
       // 2. Store requirements when getKycRequirements succeeds
-      .addMatcher(
-        publicKycApiSlice.endpoints.getKycRequirements.matchFulfilled,
-        (state, { payload }) => {
-          if (payload.data) {
-            state.requirements = payload.data;
-          }
-          state.isLoading = false;
+      .addMatcher(getKycRequirements.matchFulfilled, (state, { payload }) => {
+        if (payload.data) {
+          state.requirements = payload.data;
         }
-      )
+        state.isLoading = false;
+      })
       // 3. Update requirement submission when submitKycDocuments succeeds
-      .addMatcher(
-        publicKycApiSlice.endpoints.submitKycDocuments.matchFulfilled,
-        (state, { payload }) => {
-          if (payload.data && state.profile?.requirements) {
-            const { requirement_uuid, submission } = payload.data;
-            const index = state.profile.requirements.findIndex(
-              (item) => item.requirement.requirement_uuid === requirement_uuid
-            );
+      .addMatcher(submitKycDocuments.matchFulfilled, (state, { payload }) => {
+        if (payload.data && state.profile?.requirements) {
+          const { requirement_uuid, submission } = payload.data;
+          const index = state.profile.requirements.findIndex(
+            (item) => item.requirement.requirement_uuid === requirement_uuid
+          );
 
-            if (index !== -1) {
-              state.profile.requirements[index].submission = submission;
-            }
+          if (index !== -1) {
+            state.profile.requirements[index].submission = submission;
           }
-          state.isLoading = false;
         }
-      )
+        state.isLoading = false;
+      })
       // 4. Update profile when submitKycProfile succeeds
-      .addMatcher(
-        publicKycApiSlice.endpoints.submitKycProfile.matchFulfilled,
-        (state, { payload }) => {
-          if (payload.data) {
-            state.profile = payload.data;
-          }
-          state.isLoading = false;
+      .addMatcher(submitKycProfile.matchFulfilled, (state, { payload }) => {
+        if (payload.data) {
+          state.profile = payload.data;
         }
-      )
-      // Set loading state on pending API calls
-      .addMatcher(
-        (action) =>
-          action.type.startsWith('api/') && action.type.endsWith('/pending'),
-        (state) => {
-          state.isLoading = true;
-          state.error = null;
+        state.isLoading = false;
+      })
+      // Set loading state on KYC pending calls
+      .addMatcher(isKycPending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      // Handle rejected state across KYC endpoints safely
+      .addMatcher(isKycRejected, (state, action) => {
+        state.isLoading = false;
+
+        let errorMsg = 'An error occurred';
+
+        if (
+          action.payload &&
+          'data' in action.payload &&
+          typeof action.payload.data === 'object' &&
+          action.payload.data !== null &&
+          'message' in action.payload.data &&
+          typeof (action.payload.data as { message?: string }).message === 'string'
+        ) {
+          errorMsg = (action.payload.data as { message: string }).message;
+        } else if (action.error?.message) {
+          errorMsg = action.error.message;
         }
-      )
-      // Handle rejected state across KYC endpoints
-      .addMatcher(
-        (action) =>
-          action.type.startsWith('api/') && action.type.endsWith('/rejected'),
-        (state, action: { payload?: { data?: { message?: string } }; error?: { message?: string } }) => {
-          state.isLoading = false;
-          // Better error extraction
-          let errorMsg = 'An error occurred';
-          if (action.payload?.data?.message) {
-            errorMsg = action.payload.data.message;
-          } else if (action.error?.message) {
-            errorMsg = action.error.message;
-          }
-          state.error = errorMsg;
-          console.error('[publicKycSlice] API Error:', { action, error: errorMsg });
-        }
-      );
+
+        state.error = errorMsg;
+      });
   },
 });
 

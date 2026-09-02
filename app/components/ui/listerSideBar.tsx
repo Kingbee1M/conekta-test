@@ -46,7 +46,7 @@ export default function ListerSideBar({ onItemClick }: ListerSideBarProps) {
     const links = [
         { title: 'Dashboard', link: `/lister-dashboard`, icon: link1, isInbox: false, exact: true },
         { title: 'Properties', link: `/properties`, icon: link6, isInbox: false },
-        { title: 'Analytics', link: `/analytics`, icon: link3, isInbox: false },
+        // { title: 'Analytics', link: `/analytics`, icon: link3, isInbox: false },
         { title: 'Rented Listings', link: `/rented-listings`, icon: link2, isInbox: false },
         { title: 'Inbox', link: `/inbox`, icon: link4, isInbox: true },
         { title: 'My Profile', link: `/my-profile`, icon: link5, isInbox: false },

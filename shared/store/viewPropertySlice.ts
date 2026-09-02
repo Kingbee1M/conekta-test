@@ -9,10 +9,22 @@ export interface ViewPropertyState {
   description: string;
   published_at: string;
   ref_no: string;
+  currency: string;
   purpose: string;
+  property_type: string;
+  category: string;
+  structure: string;
+  street: string;
+  city: string;
+  state: string;
+  lga: string;
+  amenities: string[];
   property_info: {
     bedrooms: number | null;
     bathrooms: number | null;
+    toilets: number | null;
+    parking_spaces: number | null;
+    square_meters: string | number | null;
     structure: string;
   } | null;
   location: {
@@ -32,6 +44,7 @@ export interface ViewPropertyState {
   verification_status: string;
   listing_status: string;
   media: Array<{
+    id: string;
     name: string;
     url: string;
     media_type: string;

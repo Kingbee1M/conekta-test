@@ -173,7 +173,7 @@ export function NotificationProvider({
   const dispatch = useDispatch();
 
   /* ------------------------------------------------------------------------ */
-  /* Refs                                                                    */
+  /* Refs                                                                     */
   /* ------------------------------------------------------------------------ */
 
   const socketRef =
@@ -283,15 +283,11 @@ export function NotificationProvider({
       (
         message: NotificationSocketMessage
       ) => {
-        
-
         if (
           message.event !==
             'notification.created' ||
           !message.notification
         ) {
-          
-
           return;
         }
 
@@ -314,11 +310,8 @@ export function NotificationProvider({
          */
         try {
           playNotificationSound();
-        } catch (error) {
-          console.warn(
-            '[Audio] Could not play notification sound:',
-            error
-          );
+        } catch {
+          // Audio playback suppressed or failed silently
         }
 
         /*
@@ -365,10 +358,6 @@ export function NotificationProvider({
       if (
         authErrorRef.current
       ) {
-        console.warn(
-          '[Notifications] Authentication failed. Waiting for a new session.'
-        );
-
         return;
       }
 
@@ -408,7 +397,6 @@ export function NotificationProvider({
         return;
       }
 
-
       intentionalDisconnectRef.current =
         false;
 
@@ -418,7 +406,6 @@ export function NotificationProvider({
         );
 
       if (!socket) {
-
         return;
       }
 
@@ -472,12 +459,7 @@ export function NotificationProvider({
 
       socket.addEventListener(
         'error',
-        (error) => {
-          console.error(
-            '[Notifications] Provider WebSocket error:',
-            error
-          );
-        }
+        () => {}
       );
 
       /* ------------------------------------------------------------------ */
@@ -499,7 +481,6 @@ export function NotificationProvider({
               null;
           }
 
-
           /*
            * 4001 = authentication rejected.
            */
@@ -508,7 +489,6 @@ export function NotificationProvider({
           ) {
             authErrorRef.current =
               true;
-
 
             if (
               !errorToastShownRef.current
@@ -566,22 +546,13 @@ export function NotificationProvider({
            * 2s → 4s → 6s → ...
            * Maximum 30 seconds.
            */
-          const delay =
-            Math.min(
-              reconnectAttemptsRef.current *
-                2000,
-              30000
+          if (reconnectTimeoutRef.current !== null) {
+            window.clearTimeout(
+              reconnectTimeoutRef.current
             );
 
-        
-
-          if (reconnectTimeoutRef.current !== null) {
-  window.clearTimeout(
-    reconnectTimeoutRef.current
-  );
-
-  reconnectTimeoutRef.current = null;
-}
+            reconnectTimeoutRef.current = null;
+          }
         }
       );
     }, [
@@ -623,7 +594,6 @@ export function NotificationProvider({
     connectSocket();
 
     return () => {
-
       isUnmountedRef.current =
         true;
 

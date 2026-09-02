@@ -1,16 +1,15 @@
 import { apiSlice, ApiResponse } from '@/lib/api';
+import { MediaType } from '../enums/media-type.enum';
 
 export interface MediaUploadPayload {
-  file: File;
-  media_type: 'image' | 'document';
+  file: Blob | File;
+  media_type: MediaType;
 }
 
 export interface MediaUploadResponse {
-  media_uuid?: string;
-  uuid?: string;
-  id?: string;
+  id: string;
   url: string;
-  message?: string;
+  status: string;
 }
 
 export const mediaApi = apiSlice.injectEndpoints({

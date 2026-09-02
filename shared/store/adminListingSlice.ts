@@ -51,7 +51,7 @@ export const fetchListings = createAsyncThunk<
 >('adminListing/fetchListings', async (params, { dispatch, rejectWithValue }) => {
 
   const querySubscription = dispatch(
-    listingApiSlice.endpoints.getListings.initiate(params, { forceRefetch: true })
+    listingApiSlice.endpoints.getAdminListings.initiate(params, { forceRefetch: true })
   );
 
   try {
@@ -88,7 +88,7 @@ export const fetchAdminPropertyByUuid = createAsyncThunk<
   { rejectValue: string }
 >('adminListing/fetchAdminPropertyByUuid', async (uuid, { dispatch, rejectWithValue }) => {
   const querySubscription = dispatch(
-    listingApiSlice.endpoints.getListingByUuid.initiate(uuid, { forceRefetch: true })
+    listingApiSlice.endpoints.getAdminListingByUuid.initiate(uuid, { forceRefetch: true })
   );
 
   try {

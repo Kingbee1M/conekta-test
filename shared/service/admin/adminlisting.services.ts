@@ -15,7 +15,7 @@ import { AdminSingleListingResponse } from './types/listingTypes';
 export const listingApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // Get all admin listings
-    getListings: builder.query<AdminListingsResponse, AdminListingsQueryParams | void>({
+    getAdminListings: builder.query<AdminListingsResponse, AdminListingsQueryParams | void>({
       query: (params) => ({
         url: '/admin/listings/',
         method: 'GET',
@@ -37,7 +37,7 @@ export const listingApiSlice = apiSlice.injectEndpoints({
     }),
 
     // Get single listing by UUID (Typed with AdminSingleListingResponse & EmployeeListingDetail)
-    getListingByUuid: builder.query<AdminSingleListingResponse, string>({
+    getAdminListingByUuid: builder.query<AdminSingleListingResponse, string>({
       query: (uuid) => ({
         url: `/admin/listings/${uuid}/`,
         method: 'GET',
@@ -49,8 +49,8 @@ export const listingApiSlice = apiSlice.injectEndpoints({
 });
 
 export const { 
-  useGetListingsQuery, 
-  useLazyGetListingsQuery,
-  useGetListingByUuidQuery,
-  useLazyGetListingByUuidQuery,
+  useGetAdminListingsQuery,
+  useLazyGetAdminListingsQuery,
+  useGetAdminListingByUuidQuery,
+  useLazyGetAdminListingByUuidQuery,
 } = listingApiSlice;

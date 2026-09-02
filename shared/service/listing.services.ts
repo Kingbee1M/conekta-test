@@ -4,7 +4,6 @@ import { PaymentFrequencyEnum } from '../enums/paymentFreqency.enums';
 import { AmenitiesEnum } from '../enums/amenities.enums';
 import { FeeTypeEnum } from '../enums/feeType.enums';
 import { setProperties } from '../store/listingSlice';
-import { setViewProperty } from '../store/viewPropertySlice';
 import { ViewPropertyState } from '../store/viewPropertySlice';
 
 export interface FeeOption {
@@ -38,6 +37,18 @@ export interface CreateListingPayload {
   fees?: FeeOption[];
 }
 
+export type UpdateListingPayload = Partial<CreateListingPayload>;
+
+export interface UpdateListingArgs {
+  uuid: string;
+  payload: UpdateListingPayload;
+}
+
+// Wrapper interface matching API responses that nest listing inside `data`
+export interface SingleListingApiResponse {
+  data: ViewPropertyState;
+}
+
 export const listingApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     
@@ -50,10 +61,10 @@ export const listingApi = apiSlice.injectEndpoints({
       }),
       providesTags: [{ type: 'Listing', id: 'LIST' }],
       
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          if (data.data.results && data.data.results.length > 0) {
+          if (data?.data?.results && data.data.results.length > 0) {
             dispatch(setProperties(data.data.results));
           }
         } catch (error) {
@@ -62,8 +73,7 @@ export const listingApi = apiSlice.injectEndpoints({
       },
     }),
 
-
-    // 3. CREATE NEW LISTING
+    // 2. CREATE NEW LISTING
     createListing: builder.mutation<Listing, CreateListingPayload>({
       query: (body) => ({
         url: '/listings/me/',
@@ -73,32 +83,49 @@ export const listingApi = apiSlice.injectEndpoints({
       invalidatesTags: [{ type: 'Listing', id: 'LIST' }],
     }),
 
-    getListingByUuid: builder.query<PaginatedListingList, string>({
+    // 3. GET LISTING BY UUID
+    getListingByUuid: builder.query<SingleListingApiResponse, string>({
       query: (uuid) => ({
         url: `/listings/me/${uuid}/`,
         method: 'GET',
       }),
       providesTags: (_result, _error, uuid) => [{ type: 'Listing', id: uuid }],
-      
-      async onQueryStarted(uuid, { dispatch, queryFulfilled }) {
-        try {
-          const { data } = await queryFulfilled;
-          const propertyDetails = data.data;
-          
-          dispatch(setViewProperty(propertyDetails as unknown as ViewPropertyState)); 
-        } catch (error) {
-          console.error(`Failed to fetch property details for UUID ${uuid}:`, error);
-        }
-      },
+      keepUnusedDataFor: 0,
+    }),
+
+    // 4. UPDATE LISTING BY UUID (PATCH)
+    updateListingByUuid: builder.mutation<unknown, UpdateListingArgs>({
+      query: ({ uuid, payload }) => ({
+        url: `/listings/me/${uuid}/`,
+        method: 'PATCH',
+        body: payload,
+      }),
+      invalidatesTags: (_result, _error, { uuid }) => [
+        { type: 'Listing', id: uuid },
+        { type: 'Listing', id: 'LIST' },
+      ],
+    }),
+
+    // 5. DELETE LISTING BY UUID (DELETE)
+    deleteListingByUuid: builder.mutation<{ message?: string } | void, string>({
+      query: (uuid) => ({
+        url: `/listings/me/${uuid}/`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: (_result, _error, uuid) => [
+        { type: 'Listing', id: uuid },
+        { type: 'Listing', id: 'LIST' },
+      ],
     }),
   }),
   overrideExisting: false,
 });
 
-
 export const { 
   useGetListingsQuery,
   useLazyGetListingsQuery, 
   useGetListingByUuidQuery,
-  useCreateListingMutation 
+  useCreateListingMutation,
+  useUpdateListingByUuidMutation,
+  useDeleteListingByUuidMutation,
 } = listingApi;
