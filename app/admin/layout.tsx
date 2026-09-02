@@ -13,10 +13,11 @@ interface LayoutProps {
 
 export default function AdminDashboardLayout({ children }: LayoutProps) {
   const router = useRouter();
-  const { session, isAuthenticated } = useAppSelector((state) => state.auth);
+  const { session, isAuthenticated, status } = useAppSelector((state) => state.auth);
 
   const allowedRoles = useMemo(() => [RoleEnum.ADMIN, RoleEnum.SUPER_ADMIN], []);
-  const hasAccess = isAuthenticated && session && allowedRoles.includes(session.active_role);
+  const activeRole = session?.active_role?.trim().toLowerCase() as RoleEnum | undefined;
+  const hasAccess = isAuthenticated && session && activeRole && allowedRoles.includes(activeRole);
 
   useEffect(() => {
     if (!isAuthenticated || !session) {
@@ -24,8 +25,11 @@ export default function AdminDashboardLayout({ children }: LayoutProps) {
     }
   }, [isAuthenticated, session, router]);
 
-  // If session exists but the user lacks the required role, trigger 404
-  if (session && !hasAccess) {
+  // Wait for persisted auth to settle before treating a role as unauthorized.
+  const authResolved = status === 'succeeded';
+
+  // If the resolved session has the wrong role, trigger 404.
+  if (authResolved && isAuthenticated && session && !hasAccess) {
     notFound();
   }
 

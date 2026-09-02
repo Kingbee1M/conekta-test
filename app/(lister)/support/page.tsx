@@ -26,7 +26,7 @@ export default function HelpSupportPage() {
   ];
 
   return (
-    <section className="w-full flex flex-col gap-6 p-1 h-full min-h-screen bg-[#F8FAFC]">
+    <section className="w-full flex flex-col gap-6 p-1 h-full min-h-screen bg-[#F8FAFC] rounded-lg p-4">
       
       {/* 1. TOP HEADER SECTION */}
       <div className="w-full flex flex-col gap-0.5">

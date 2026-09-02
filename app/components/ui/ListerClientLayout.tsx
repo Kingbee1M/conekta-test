@@ -15,13 +15,13 @@ export default function ListerClientLayout({ children }: ListerClientLayoutProps
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // 1. Read from session slice
-  const { session, isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const { session, isAuthenticated, status } = useSelector((state: RootState) => state.auth);
 
   const toggleSidebar = () => setIsMobileOpen(!isMobileOpen);
   const closeSidebar = () => setIsMobileOpen(false);
 
   // 2. Compute authorization status
-  const activeRole = session?.active_role?.toLowerCase();
+  const activeRole = session?.active_role?.trim().toLowerCase();
   const isAuthorized = isAuthenticated && session && activeRole === 'lister';
 
   // 3. Handle login redirect if unauthenticated
@@ -32,7 +32,9 @@ export default function ListerClientLayout({ children }: ListerClientLayoutProps
   }, [session, isAuthenticated, router]);
 
   // 4. Trigger 404 if authenticated but role is not lister
-  if (session && activeRole !== 'lister') {
+  const authResolved = status === 'succeeded';
+
+  if (authResolved && isAuthenticated && session && activeRole !== 'lister') {
     console.group('🔍 Lister Layout Authorization Error');
     console.log('isAuthenticated:', isAuthenticated);
     console.log('Full session object:', session);

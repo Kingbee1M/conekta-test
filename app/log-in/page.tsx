@@ -161,7 +161,7 @@ export default function Login() {
                     <span className="group-hover:text-primary-green text-white">Signing in...</span>
                     </>
                 ) : (
-                    <span>Sign in</span>
+                    <span className="text-white group-hover:text-primary-green!">Sign in</span>
                 )}
                 </button>
 
