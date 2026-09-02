@@ -10,25 +10,24 @@ import { FlatUserData, Listing } from '@/types';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/shared/store/store';
 import Image from 'next/image';
-import { IoChevronDownOutline } from 'react-icons/io5';
+import { IoChevronDownOutline, IoChevronBack, IoChevronForward } from 'react-icons/io5';
 import { SortOption } from '@/types';
 import button1 from '@/public/svg/button-option1.svg';
 import button2 from '@/public/svg/button-option2.svg';
-import { PropertyFilter } from '@/shared/enums/propertysFilter.enums';
+import { PropertyCategoryFilter } from '@/shared/enums/propertysFilter.enums';
 
-import { FaBuildingColumns } from "react-icons/fa6";
-import { BiDoorOpen } from "react-icons/bi";
-import { FaDollarSign } from "react-icons/fa6";
+import { FaBuildingColumns, FaDollarSign } from "react-icons/fa6";
 import { BsFillHouseCheckFill } from "react-icons/bs";
-import { FaHouseCircleXmark } from "react-icons/fa6";
 import { useLazyGetListingsQuery } from '@/shared/service/listing.services';
 import ListerPropertyCard from '@/app/components/lister/ListerPropertyCard';
 import { ListingResult } from '@/shared/service/customer services/customerTypes';
+import { LuKey } from 'react-icons/lu';
 
 export default function Properties() {
     const [openAdd, setOpenAdd] = useState(false);
     const [searchVal, setSearchVal] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
     
     // Auth selectors
     const { listerProfile } = useSelector((state: RootState) => state.auth);
@@ -48,20 +47,27 @@ export default function Properties() {
     const [sortBy, setSortBy] = useState<SortOption>('Newest');
     const sortRef = useRef<HTMLDivElement>(null);
     const [cols, setCols] = useState<3 | 4 | 5>(3);
-    const [handleFilter, setHandleFilter] = useState<PropertyFilter>(PropertyFilter.ALL);
+    const [handleFilter, setHandleFilter] = useState<PropertyCategoryFilter>(PropertyCategoryFilter.ALL);
 
-    const [triggerGetListings, { isLoading, isFetching }] = useLazyGetListingsQuery();
+    // RTK Lazy Query
+    const [triggerGetListings, { data: listingsData, isLoading, isFetching }] = useLazyGetListingsQuery();
 
+    // Debounce search input
     useEffect(() => {
-        const handler = setTimeout(() => setDebouncedSearch(searchVal), 400);
+        const handler = setTimeout(() => {
+            setDebouncedSearch(searchVal);
+            setCurrentPage(1); // Reset page on new search
+        }, 400);
         return () => clearTimeout(handler);
     }, [searchVal]);
 
+    // Fetch listings when page or debounced search changes
     useEffect(() => {
         triggerGetListings({
+            page: currentPage,
             search: debouncedSearch || undefined,
         }, true);
-    }, [debouncedSearch, triggerGetListings]);
+    }, [currentPage, debouncedSearch, triggerGetListings]);
 
     useEffect(() => {
         function handleOutside(e: MouseEvent) {
@@ -74,14 +80,29 @@ export default function Properties() {
     }, []);
 
     const pillNav = [
-        { title: 'All', icon: FaBuildingColumns, filter: PropertyFilter.ALL },
-        { title: 'Available', icon: BiDoorOpen, filter: PropertyFilter.AVAILABLE },
-        { title: 'Sold', icon: FaDollarSign, filter: PropertyFilter.SOLD },
-        { title: 'Rented', icon: BsFillHouseCheckFill, filter: PropertyFilter.RENTED },
-        { title: 'Deactivated', icon: FaHouseCircleXmark, filter: PropertyFilter.DEACTIVATED },
+        { title: 'All Properties', icon: FaBuildingColumns, filter: PropertyCategoryFilter.ALL },
+        { title: 'Residential', icon: BsFillHouseCheckFill, filter: PropertyCategoryFilter.RESIDENTIAL },
+        { title: 'Commercial', icon: FaDollarSign, filter: PropertyCategoryFilter.COMMERCIAL },
+        { title: 'Short Lets', icon: LuKey, filter: PropertyCategoryFilter.SHORT_LET },
     ];
 
     const sortOptions: SortOption[] = ['Newest', 'Price: Low to High', 'Price: High to Low', 'Most Popular'];
+
+    // Pagination Meta Calculation
+    const paginationMeta = useMemo(() => {
+        // Fallbacks based on backend PaginatedListingList response structure
+        const totalCount = listingsData?.data?.count ?? propertiesList?.length ?? 0;
+        const hasNext = Boolean(listingsData?.data?.next);
+        const hasPrevious = Boolean(listingsData?.data?.previous);
+        const totalPages = Math.ceil(totalCount / 10) || 1;
+
+        return {
+            totalCount,
+            hasNext,
+            hasPrevious,
+            totalPages,
+        };
+    }, [listingsData, propertiesList]);
 
     // --- FILTER & SORT PROCESSING ---
     const processedResults = useMemo(() => {
@@ -92,16 +113,26 @@ export default function Properties() {
         // 1. Filter Stage
         const filtered = propertiesList.filter((item: Listing) => {
             if (
-                handleFilter === PropertyFilter.ALL || 
-                String(handleFilter).toLowerCase() === 'all' ||
-                !handleFilter
+                !handleFilter ||
+                handleFilter === PropertyCategoryFilter.ALL ||
+                String(handleFilter).toUpperCase() === 'ALL'
             ) {
-                return true; 
+                return true;
             }
 
-            const rawRecord = item as unknown as Record<string, unknown>;
-            const rawStatus = rawRecord.listing_status || rawRecord.status || rawRecord.state || '';
-            return String(rawStatus).trim().toLowerCase() === String(handleFilter).trim().toLowerCase();
+            const rawRecord = item as unknown as ListingResult;
+            const rawCategory =
+                rawRecord.category ||
+                (rawRecord as Record<string, unknown>).property_category ||
+                '';
+
+            const targetFilter = String(handleFilter).trim().toUpperCase();
+            const currentCategory = String(rawCategory).trim().toUpperCase();
+
+            return (
+                currentCategory === targetFilter ||
+                currentCategory.includes(targetFilter)
+            );
         });
 
         // 2. Sort Stage
@@ -258,7 +289,7 @@ export default function Properties() {
                 </div>
             </div>
 
-            {/* PROPERTY GRID SECTION USING PropertyCard2 */}
+            {/* PROPERTY GRID SECTION */}
             {isDataLoading ? (
                 <div className={`grid ${gridColsClass} gap-5 w-full`}>
                     {Array.from({ length: 6 }).map((_, idx) => (
@@ -266,13 +297,59 @@ export default function Properties() {
                     ))}
                 </div>
             ) : processedResults.length > 0 ? (
-                <div className={`grid ${gridColsClass} gap-5 w-full`}>
-                    {processedResults.map((item) => (
-                        <ListerPropertyCard 
-                            key={item.uuid} 
-                            listing={item as unknown as ListingResult} 
-                        />
-                    ))}
+                <div className="flex flex-col gap-6">
+                    <div className={`grid ${gridColsClass} gap-5 w-full`}>
+                        {processedResults.map((item) => (
+                            <ListerPropertyCard 
+                                key={item.uuid} 
+                                listing={item as unknown as ListingResult} 
+                            />
+                        ))}
+                    </div>
+
+                    {/* PAGINATION CONTROLS */}
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-200/80">
+                        <p className="text-xs text-gray-500">
+                            Showing page <span className="font-semibold text-gray-800">{currentPage}</span> of{' '}
+                            <span className="font-semibold text-gray-800">{paginationMeta.totalPages}</span> ({paginationMeta.totalCount} total items)
+                        </p>
+
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                disabled={currentPage === 1 || isDataLoading}
+                                className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-semibold text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                            >
+                                <IoChevronBack /> Previous
+                            </button>
+
+                            <div className="flex items-center gap-1 px-2">
+                                {Array.from({ length: paginationMeta.totalPages }, (_, i) => i + 1)
+                                    .slice(Math.max(0, currentPage - 3), Math.min(paginationMeta.totalPages, currentPage + 2))
+                                    .map((pageNum) => (
+                                        <button
+                                            key={pageNum}
+                                            onClick={() => setCurrentPage(pageNum)}
+                                            className={`w-7 h-7 text-xs font-bold rounded-lg transition-all ${
+                                                currentPage === pageNum
+                                                    ? 'bg-primary-green text-white'
+                                                    : 'text-gray-600 hover:bg-gray-100'
+                                            }`}
+                                        >
+                                            {pageNum}
+                                        </button>
+                                    ))}
+                            </div>
+
+                            <button
+                                onClick={() => setCurrentPage((prev) => prev + 1)}
+                                disabled={currentPage >= paginationMeta.totalPages || isDataLoading}
+                                className="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-300 text-xs font-semibold text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                            >
+                                Next <IoChevronForward />
+                            </button>
+                        </div>
+                    </div>
                 </div>
             ) : (
                 <div className="w-full flex flex-col items-center justify-center py-16 text-center border border-dashed border-gray-300 rounded-2xl bg-gray-50/50">
