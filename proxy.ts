@@ -18,7 +18,8 @@ export function proxy(request: NextRequest) {
     '/loading-dashboard',
     '/',
     '/admin-login',
-
+    '/about-us',
+    '/how-it-works'
   ];
 
   // Inside your middleware logic

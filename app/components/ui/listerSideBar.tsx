@@ -8,11 +8,12 @@ import { usePathname } from 'next/navigation';
 import { logoutUser } from '@/shared/features/auth/auth.action';
 import { useState } from 'react';
 import Loading from '@/app/loading'; 
-import { FlatUserData } from '@/types';
+
+// Import the RTK Query hook
+import { useGetUnreadCountQuery } from '@/shared/service/notification.socket'; // Update path if needed
 
 import link1 from '@/public/svg/Template.svg'
 import link2 from '@/public/svg/CreditCardOutline.svg'
-import link3 from '@/public/svg/FilterOutline.svg'
 import link4 from '@/public/svg/Icon.svg'
 import link5 from '@/public/svg/iconamoon_profile.svg'
 import link6 from '@/public/svg/ph_building-apartment.svg'
@@ -21,13 +22,16 @@ import help from '@/public/svg/help.svg'
 import logout from '@/public/svg/logout.svg'
 
 interface ListerSideBarProps {
-  onItemClick?: () => void; 
+    onItemClick?: () => void; 
 }
 
 export default function ListerSideBar({ onItemClick }: ListerSideBarProps) {
     const { listerProfile } = useSelector((state: RootState) => state.auth);
     
-    const unreadInboxCount = 5;
+    // Fetch live unread count using RTK Query
+    const { data: unreadData } = useGetUnreadCountQuery();
+    const unreadInboxCount = unreadData?.count ?? 0;
+
     const pathname = usePathname();
 
     const dispatch = useDispatch<AppDispatch>();
@@ -46,7 +50,6 @@ export default function ListerSideBar({ onItemClick }: ListerSideBarProps) {
     const links = [
         { title: 'Dashboard', link: `/lister-dashboard`, icon: link1, isInbox: false, exact: true },
         { title: 'Properties', link: `/properties`, icon: link6, isInbox: false },
-        // { title: 'Analytics', link: `/analytics`, icon: link3, isInbox: false },
         { title: 'Rented Listings', link: `/rented-listings`, icon: link2, isInbox: false },
         { title: 'Inbox', link: `/inbox`, icon: link4, isInbox: true },
         { title: 'My Profile', link: `/my-profile`, icon: link5, isInbox: false },
@@ -117,7 +120,7 @@ export default function ListerSideBar({ onItemClick }: ListerSideBarProps) {
 
                                     {link.isInbox && unreadInboxCount > 0 && (
                                         <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white shadow-sm animate-pulse">
-                                            {unreadInboxCount}
+                                            {unreadInboxCount > 99 ? '99+' : unreadInboxCount}
                                         </span>
                                     )}
                                 </Link>

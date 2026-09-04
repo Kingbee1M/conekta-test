@@ -1,4 +1,4 @@
-import { HomeOverviewData } from "../(customer)/profile/page";
+import { HomeOverviewData } from "./profile/profileTypes";
 
 interface CurrentHomeCardProps {
   home: HomeOverviewData;

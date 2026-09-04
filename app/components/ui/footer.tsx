@@ -12,17 +12,13 @@ export default function Footer() {
         'List Property': '/list-property',
         'Invest': '/invest',
         'Find Artisans': '/artisans',
-        'Help Center': '/help-center',
       },
     },
     {
       'Company': {
-        'About Us': '/about',
+        'About Us': '/about-us',
         'How It Works': '/how-it-works',
-        'Blog': '/blog',
-        'Careers': '/careers',
         'Terms & Privacy': '/terms-privacy',
-        'Contact Us': '/contact',
       },
     },
     {
