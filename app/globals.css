@@ -352,3 +352,42 @@
   background-size: 200% 200%;
   animation: movingGradient 3s ease infinite;
 }
+
+@layer utilities {
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
+.org-chart-section {
+  overflow-x: hidden;
+}
+
+.org-chart-viewport {
+  width: 100%;
+  overflow: hidden;
+}
+
+.org-chart-stage {
+  display: flex;
+  min-width: max-content;
+  justify-content: center;
+}
+
+@media (max-width: 1099px) {
+  .org-chart-stage {
+    zoom: 0.76;
+  }
+}
+
+@media (max-width: 767px) {
+  .org-chart-stage {
+    zoom: 0.44;
+  }
+}

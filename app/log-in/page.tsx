@@ -1,6 +1,6 @@
 'use client'
 
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation" // Updated Import
 import { useAppDispatch } from "@/lib/hooks"
 import { loginUser } from "@/shared/features/auth/auth.action"
 import { useToast } from "../components/ui/ToastProvider"
@@ -16,6 +16,7 @@ import { FiEyeOff, FiEye } from "react-icons/fi"
 import { RoleEnum } from "@/shared/enums/roles.enum"
 import { motion } from "framer-motion"
 import { Loader } from "lucide-react"
+
 const loginSchema = z.object({
     email: z.string().min(1, "Email is required").email("Invalid email format"),
     password: z.string().min(1, "Password is required").min(6, "Password must be at least 6 characters"),
@@ -25,6 +26,9 @@ const loginSchema = z.object({
 export default function Login() {
     const dispatch = useAppDispatch();
     const router = useRouter();
+    const searchParams = useSearchParams(); // Get URL query parameters
+    const callbackUrl = searchParams.get('callbackUrl'); // Extract callbackUrl
+
     const { addToast } = useToast();
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
     const portalOptions = [RoleEnum.CUSTOMER, RoleEnum.LISTER];
@@ -60,7 +64,12 @@ export default function Login() {
                     });
                     
                     setTimeout(() => {
-                        router.replace('/loading-dashboard');
+                        // Forward callbackUrl to loading-dashboard if present
+                        if (callbackUrl) {
+                            router.replace(`/loading-dashboard?callbackUrl=${encodeURIComponent(callbackUrl)}`);
+                        } else {
+                            router.replace('/loading-dashboard');
+                        }
                     }, 2000);
                 } else {
                     addToast({ 
@@ -85,7 +94,7 @@ export default function Login() {
                 <h1 className="font-bold text-xl mt-2">Welcome Back</h1>
                 <p className="mb-5 text-gray-500 text-sm text-center">Sign in to your Conekta account</p>
 
-                {/* Styled Portal Selector with RoleEnum configuration */}
+                {/* Styled Portal Selector */}
                 <div className="w-full mb-6">
                     <label className="text-xs font-semibold mb-2 block text-gray-700">Select Portal</label>
                     <div className="relative flex bg-gray-100 p-1 rounded-xl gap-1 border border-gray-200/40">
@@ -107,10 +116,8 @@ export default function Login() {
                                 onChange={() => formik.setFieldValue('portal', option)}
                             />
                             
-                            {/* Label text indicator */}
                             <span className="relative z-20">{option}</span>
                             
-                            {/* Shared Layout Sliding Backdrop Indicator */}
                             {isActive && (
                                 <motion.div
                                 layoutId="normalLoginPortalSlider"
@@ -125,7 +132,7 @@ export default function Login() {
                     {formik.touched.portal && formik.errors.portal && (
                         <span className="text-[10px] text-red-500 mt-1 block">{formik.errors.portal}</span>
                     )}
-                    </div>
+                </div>
 
                 {/* Email Field */}
                 <div className="outerDiv mb-4 w-full">
@@ -142,7 +149,7 @@ export default function Login() {
                     <label className="text-xs font-semibold" htmlFor="password">Password</label>
                     <div className={`inputDiv flex items-center border p-2 rounded gap-2 ${formik.touched.password && formik.errors.password ? 'border-red-500' : 'border-gray-300'}`}>
                         <CiLock/>
-                        <input type={isPasswordVisible ? "text" : "password"}  id="password" {...formik.getFieldProps('password')} placeholder="••••••••" className="w-full outline-none" />
+                        <input type={isPasswordVisible ? "text" : "password"} id="password" {...formik.getFieldProps('password')} placeholder="••••••••" className="w-full outline-none" />
                         <button type="button" onClick={() => setIsPasswordVisible(!isPasswordVisible)}>
                             {isPasswordVisible ? <FiEye /> : <FiEyeOff />}
                         </button>
@@ -174,7 +181,7 @@ export default function Login() {
                     <button type="button" className="flex items-center gap-2 border border-gray-300 py-3 flex-1 justify-center rounded-xl text-xs font-bold hover:bg-gray-50"><FaFacebook className="text-blue-600"/>Facebook</button>
                 </div>
                 
-                <p className="mt-5">Don&apos;t have an account? <Link href="/get-started" className="text-sm text-tertiary-green">Create one</Link></p>
+                <p className="mt-5">Don&apos;t have an account? <Link href="/sign-up" className="text-sm text-primary-green hover:underline">Create one</Link></p>
             </form>
         </section>
     )

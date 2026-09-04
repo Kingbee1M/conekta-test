@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation'; // Updated Import
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/shared/store/store';
 import {
@@ -14,6 +14,8 @@ import { RoleEnum } from '@/shared/enums/roles.enum';
 
 export default function LoadingDashboard() {
   const router = useRouter();
+  const searchParams = useSearchParams(); // Get URL query parameters
+  const callbackUrl = searchParams.get('callbackUrl'); // Extract callbackUrl
   const dispatch = useDispatch();
 
   const { session, customerProfile, listerProfile } = useSelector(
@@ -29,7 +31,6 @@ export default function LoadingDashboard() {
   const isCustomerRole = activeRole === RoleEnum.CUSTOMER;
   const isAdminRole = activeRole === RoleEnum.ADMIN || activeRole === RoleEnum.SUPER_ADMIN;
 
-  // Clear opposing role data to prevent cross-role data leaks
   useEffect(() => {
     if (isListerRole) {
       dispatch(setCustomerProfile(null as unknown as CustomerProfile));
@@ -38,34 +39,28 @@ export default function LoadingDashboard() {
     }
   }, [isListerRole, isCustomerRole, dispatch]);
 
-  // Execute customer query if activeRole === CUSTOMER
   const customerQueryResult = useGetCustomerProfileMeQuery(undefined, {
     skip: !isCustomerRole || !session,
   });
 
-  // Execute lister query if activeRole === LISTER
   const listerQueryResult = useGetListerProfileMeQuery(undefined, {
     skip: !isListerRole || !session,
   });
 
-  // Prefetch KYC profile into Redux store slice automatically
   useGetMyKycProfileQuery(undefined, {
     skip: !session,
   });
 
-  // Extract active query execution status based on current active role
   const activeQuery = isListerRole
     ? listerQueryResult
     : isCustomerRole
     ? customerQueryResult
     : null;
 
-  // For Admin roles, we don't depend on lister/customer profile queries
   const isLoading = activeQuery ? activeQuery.isLoading : false;
   const isError = activeQuery ? activeQuery.isError : false;
   const isSuccess = activeQuery ? activeQuery.isSuccess : isAdminRole;
 
-  // Selected profile based on role context
   const activeProfile = isListerRole
     ? listerProfile
     : isCustomerRole
@@ -73,10 +68,8 @@ export default function LoadingDashboard() {
     : null;
 
   useEffect(() => {
-    // 1. Wait until session check or API fetch completes
     if (isLoading) return;
 
-    // 2. FAILURE PATHWAY: Token invalid, missing session, or error fetching
     if (isError || !session) {
       console.warn('🚨 Network issue, expired token, or session verification rejected.');
       router.replace('/log-in');
@@ -87,12 +80,18 @@ export default function LoadingDashboard() {
     const lastName = activeProfile?.last_name;
     const fullName = session?.user?.profile?.full_name || session?.user?.email;
 
-    // For Admin users without separate profile objects, fall back to session user identity
     const hasName = isAdminRole ? Boolean(session?.user) : Boolean(firstName || lastName || fullName);
 
-    // 3. SUCCESS PATHWAY: Route based on verified profile & role context
     if ((isSuccess || activeProfile || isAdminRole) && hasName) {
       console.log('Verification success, initializing navigation...');
+
+      // 🚨 Redirect to callbackUrl if available
+      if (callbackUrl) {
+        router.replace(callbackUrl);
+        return;
+      }
+
+      // Default role navigation fallbacks
       if (isAdminRole) {
         router.replace('/admin/overview');
       } else if (activeRole === RoleEnum.LISTER) {
@@ -106,7 +105,6 @@ export default function LoadingDashboard() {
       return;
     }
 
-    // 4. MISSING NAME DATA FALLBACK
     if (isSuccess && !hasName) {
       console.error('🚨 Profile missing name parameters.');
       router.replace('/log-in');
@@ -120,25 +118,21 @@ export default function LoadingDashboard() {
     activeRole,
     isAdminRole,
     rawRole,
+    callbackUrl,
     router,
   ]);
 
   return (
     <div className="relative w-full min-h-screen flex flex-col items-center justify-center bg-app-background overflow-hidden px-4">
-      {/* Background Glowing Gradients */}
       <div className="absolute -top-32 -left-32 w-96 h-96 bg-primary-green/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-primary-fixed/20 rounded-full blur-3xl pointer-events-none" />
 
-      {/* Main Glassmorphic Loading Card */}
       <div className="relative z-10 w-full max-w-sm p-8 bg-white/80 backdrop-blur-xl border border-gray-100 rounded-3xl shadow-xl shadow-gray-200/50 flex flex-col items-center text-center space-y-6">
-        
-        {/* Animated Spinner Icon Container */}
         <div className="relative flex items-center justify-center">
           <div className="w-16 h-16 border-4 border-gray-100 border-t-primary-green rounded-full animate-spin" />
           <div className="absolute inset-0 w-16 h-16 border-4 border-primary-fixed-dim/30 rounded-full animate-ping opacity-25" />
         </div>
 
-        {/* Dynamic Status Message */}
         <div className="space-y-2">
           <h2 className="text-lg font-bold text-text-primary tracking-tight">
             {isLoading ? 'Verifying Session' : 'Preparing Your Workspace'}
@@ -152,7 +146,6 @@ export default function LoadingDashboard() {
           </p>
         </div>
 
-        {/* Contextual Active Role Badge */}
         {activeRole && (
           <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-active-link border border-primary-green/20 rounded-full">
             <span className="w-2 h-2 rounded-full bg-primary-green animate-pulse" />

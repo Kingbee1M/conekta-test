@@ -1,4 +1,4 @@
-import { TransactionItem } from '../(customer)/profile/page';
+import { TransactionItem } from './profile/profileTypes';
 import { LuFileText } from 'react-icons/lu';
 
 interface RecentTransactionsCardProps {

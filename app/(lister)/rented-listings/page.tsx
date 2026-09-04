@@ -296,7 +296,7 @@ export default function RentedListings({ listings = DEFAULT_RENTED_LISTINGS }: R
   }, [listings, activeFilter, searchQuery]);
 
   return (
-    <div className="w-full min-h-screen bg-[#F4F6F4]/60 p-6 md:p-10 space-y-8 animate-fade-in">
+    <div className="w-full min-h-screen bg-[#F4F6F4]/60 md:p-10 space-y-8 animate-fade-in">
       {/* 1. TOP BAR INTEGRATION */}
       <div className="flex justify-end">
         <ListerTopBar />

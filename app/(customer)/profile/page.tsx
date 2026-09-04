@@ -4,46 +4,22 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { RootState } from '@/shared/store/store';
 import SidebarCard from '@/app/components/SideBarCard';
-import StatCards from '@/app/components/StatsCard';
-import CurrentHomeCard from '@/app/components/CurrentHomeCard';
-import RecentTransactionsCard from '@/app/components/RecentTransactionCard';
-import QuickActionsCard from '@/app/components/QuickActionCard';
-
-// Temporary explicit TypeScript interfaces for presentation logic
-export interface TenantProfileData {
-  name: string;
-  email: string;
-  avatarInitials: string;
-  isVerified: boolean;
-}
-
-export interface HomeOverviewData {
-  title: string;
-  address: string;
-  status: 'Active' | 'Pending' | 'Expired';
-  rentPaidMonths: number;
-  totalRentMonths: number;
-  nextPaymentDue: string;
-  rentAmountNumeric: number;
-}
-
-export interface TransactionItem {
-  id: string;
-  title: string;
-  date: string;
-  amount: number;
-  status: 'completed' | 'pending' | 'failed';
-  type: 'rental' | 'property' | 'artisan';
-}
+import ProfileDashboard from '@/app/components/profile/ProfileDashboard';
+import TransactionsView from '@/app/components/profile/TransactionsView';
+import CommentsView from '@/app/components/profile/CommentsView';
+import LikedListingsView from '@/app/components/profile/LikedListingsView';
+import SupportView from '@/app/components/profile/SupportView';
+import { HomeOverviewData, LikedListing, ListingComment, ProfileTab, TenantProfileData, TransactionItem } from '@/app/components/profile/profileTypes';
 
 export default function TenantProfileContainer() {
   const router = useRouter();
 
   // Pull profile state from existing slice context
   const { customerProfile } = useSelector((state: RootState) => state.auth);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'transactions' | 'saved' | 'notifications' | 'support' | 'settings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<ProfileTab>('dashboard');
 
   // 1. Fallback presentation schemas populated dynamically or via mock metrics
   const firstName = customerProfile?.first_name || "Chioma";
@@ -71,6 +47,16 @@ export default function TenantProfileContainer() {
     { id: "TX-001", title: "Affordable 2 Bedroom Flat in Ajah", date: "3/1/2026", amount: 450000, status: "completed", type: "rental" },
     { id: "TX-002", title: "Luxury 3 Bedroom Apartment in Lekki Phase 1", date: "2/28/2026", amount: 500000, status: "completed", type: "property" },
     { id: "TX-003", title: "Plumbing Service", date: "3/5/2026", amount: 25000, status: "completed", type: "artisan" }
+  ];
+
+  const likedListings: LikedListing[] = [
+    { id: 'liked-001', title: 'Modern 3 Bedroom Terrace', location: 'Lekki Phase 1, Lagos', price: '₦3.2m/year', image: '/webp/white-house.webp', likedAt: '2 days ago' },
+    { id: 'liked-002', title: 'Sunlit 2 Bedroom Apartment', location: 'Yaba, Lagos', price: '₦1.8m/year', image: '/webp/snow-house.webp', likedAt: 'last week' },
+  ];
+
+  const listingComments: ListingComment[] = [
+    { id: 'comment-001', listingTitle: 'Affordable 2 Bedroom Flat in Ajah', comment: 'Is the service charge included in the yearly rent?', date: 'Mar 6, 2026', status: 'Awaiting reply' },
+    { id: 'comment-002', listingTitle: 'Luxury 3 Bedroom Apartment in Lekki Phase 1', comment: 'The natural light in this living room is beautiful.', date: 'Feb 28, 2026', status: 'Published' },
   ];
 
   // Handle Back Navigation
@@ -102,7 +88,7 @@ export default function TenantProfileContainer() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gray-50/50 px-4 md:px-10 py-8">
+    <div className="w-full min-h-screen bg-gray-50/50 px-4 md:px-10 py-8 mt-10">
       {/* Back Button Action Header */}
       <div className="mb-4">
         <button
@@ -131,18 +117,22 @@ export default function TenantProfileContainer() {
         </div>
 
         {/* WORKSPACE REGION */}
-        <div className="lg:col-span-3 flex flex-col gap-6">
-          {/* STATS OVERVIEW DECK */}
-          <StatCards activeRentalsCount={1} rentPaidYtd={450000} savedPropertiesCount={3} />
-
-          {/* CURRENT OCCUPIED ASSET CONTROL CARD */}
-          <CurrentHomeCard home={currentHome} onPaymentTrigger={handleMockPaymentInitiation} />
-
-          {/* HISTORICAL LEDGER TRACKING SUMMARY */}
-          <RecentTransactionsCard transactions={dynamicTransactions} onViewAllTrigger={() => setActiveTab('transactions')} />
-
-          {/* WORKSPACE QUICK DEEP-LINKS SHORTCUTS */}
-          <QuickActionsCard onActionSelect={(actionKey) => console.log(`Executing dashboard routing shortcut: ${actionKey}`)} />
+        <div className="lg:col-span-3 min-w-0">
+          <AnimatePresence mode="wait" initial={false}>
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.22, ease: 'easeOut' }}
+            >
+              {activeTab === 'dashboard' && <ProfileDashboard home={currentHome} transactions={dynamicTransactions} onPaymentTrigger={handleMockPaymentInitiation} onViewTransactions={() => setActiveTab('transactions')} />}
+              {activeTab === 'transactions' && <TransactionsView transactions={dynamicTransactions} />}
+              {activeTab === 'liked' && <LikedListingsView listings={likedListings} />}
+              {activeTab === 'comments' && <CommentsView comments={listingComments} />}
+              {activeTab === 'support' && <SupportView />}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
     </div>

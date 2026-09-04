@@ -7,24 +7,21 @@ import { logoutUser } from '@/shared/features/auth/auth.action';
 import { useToast } from './ui/ToastProvider';
 import { useKycModal } from '@/lib/KycModalContext';
 import { SubmissionStatusEnum } from '@/shared/enums/kycEnums/submissionStatus.enum';
-import { TenantProfileData } from '../(customer)/profile/page';
+import { ProfileTab, TenantProfileData } from './profile/profileTypes';
 import { 
   LuLayoutDashboard, 
   LuReceipt, 
   LuHeart, 
-  LuBell, 
-  LuCircleHelp, 
-  LuSettings,
+  LuMessageCircle,
+  LuCircleHelp,
   LuLogOut,
   LuLoader 
 } from 'react-icons/lu';
 
-type SidebarTab = 'dashboard' | 'transactions' | 'saved' | 'notifications' | 'support' | 'settings';
-
 interface SidebarCardProps {
   tenant: TenantProfileData;
-  activeTab: SidebarTab;
-  setActiveTab: (tab: SidebarTab) => void;
+  activeTab: ProfileTab;
+  setActiveTab: (tab: ProfileTab) => void;
 }
 
 export default function SidebarCard({ tenant, activeTab, setActiveTab }: SidebarCardProps) {
@@ -94,13 +91,12 @@ export default function SidebarCard({ tenant, activeTab, setActiveTab }: Sidebar
     }
   };
 
-  const menus: { id: SidebarTab; name: string; icon: typeof LuLayoutDashboard }[] = [
+  const menus: { id: ProfileTab; name: string; icon: typeof LuLayoutDashboard }[] = [
     { id: 'dashboard', name: 'Dashboard', icon: LuLayoutDashboard },
     { id: 'transactions', name: 'Transactions', icon: LuReceipt },
-    { id: 'saved', name: 'Saved Properties', icon: LuHeart },
-    { id: 'notifications', name: 'Notifications', icon: LuBell },
+    { id: 'liked', name: 'Liked Listings', icon: LuHeart },
+    { id: 'comments', name: 'My Comments', icon: LuMessageCircle },
     { id: 'support', name: 'Support', icon: LuCircleHelp },
-    { id: 'settings', name: 'Settings', icon: LuSettings },
   ];
 
   const handleLogout = async () => {
