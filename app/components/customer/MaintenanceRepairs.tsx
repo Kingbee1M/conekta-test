@@ -59,7 +59,7 @@ export default function MaintenanceRepairs() {
           </div>
 
           <Link
-            href="/maintenance/new"
+            href="/artisans"
             className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full bg-artisan-orange hover:bg-artisan-orange/90 text-white text-xs font-bold shadow-sm transition-colors w-fit"
           >
             <FiPlus className="w-3.5 h-3.5" />
