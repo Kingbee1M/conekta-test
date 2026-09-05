@@ -113,7 +113,7 @@ export const KycModalProvider: React.FC<{ children: React.ReactNode }> = ({ chil
                 <button
                   type="button"
                   onClick={handleNavigateToVerification}
-                  className="w-full py-3.5 px-6 rounded-xl font-semibold text-white bg-[#2a8545] hover:bg-[#80da90] hover:text-text-primary transition-all duration-200 shadow-md shadow-[#2a8545]/20 active:scale-[0.98]"
+                  className="w-full py-3.5 px-6 rounded-xl font-semibold text-white bg-primary-green hover:bg-primary-fixed-dim hover:text-text-primary transition-all duration-200 shadow-md shadow-primary-green/20 active:scale-[0.98]"
                 >
                   Verify Account Now
                 </button>

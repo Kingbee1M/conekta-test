@@ -11,6 +11,7 @@
   "dependencies": {
     "@google/genai": "^2.17.0",
     "@google/generative-ai": "^0.24.1",
+    "@react-pdf/renderer": "^4.9.0",
     "@reduxjs/toolkit": "^2.11.2",
     "@vis.gl/react-google-maps": "^1.9.0",
     "add": "^2.0.9",
@@ -22,6 +23,7 @@
     "file-saver": "^2.0.5",
     "formik": "^2.4.9",
     "framer-motion": "^12.38.0",
+    "html-to-image": "^1.11.13",
     "jszip": "^3.10.1",
     "lucide-react": "^1.6.0",
     "next": "16.2.1",

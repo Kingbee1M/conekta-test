@@ -19,10 +19,10 @@ export default function Navbar() {
 
   const navs = [
     { title: 'Discover', link: '/discover' },
-    { title: 'Finance', link: '/find-artisan' },
+    { title: 'Finance', link: '/finance' },
     { title: 'Manage', link: '/housing-hub' },
-    { title: 'Impact', link: '/housing-hub' },
-    { title: 'Invest', link: '/housing-hub' },
+    { title: 'Impact', link: '/impact' },
+    // { title: 'Invest', link: '/housing-hub' },
   ]
 
   return (

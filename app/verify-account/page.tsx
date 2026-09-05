@@ -406,7 +406,7 @@ export default function VerifyAccount() {
                               type="button"
                               disabled={!selectedDocTypes[reqKey] || !selectedFiles[reqKey] || submittingRequirement === reqKey}
                               onClick={() => handleDocumentSubmit(reqKey, requirement.name, requirement)}
-                              className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-primary-green hover:bg-primary-green-hover hover:text-text-primary text-white text-xs font-bold transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed sm:ml-auto"
+                              className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-primary-green hover:bg-primary-green-hover hover:text-tertiary-green text-white text-xs font-bold transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed sm:ml-auto"
                             >
                               {submittingRequirement === reqKey ? (
                                 <>
@@ -481,7 +481,7 @@ export default function VerifyAccount() {
                   type="button"
                   disabled={isSubmittingProfile || !isReadyForFinalSubmission}
                   onClick={handleProfileSubmit}
-                  className="w-full py-3.5 px-4 bg-primary-green hover:bg-primary-green-hover disabled:hover:bg-primary-green text-white hover:text-text-primary font-bold text-xs rounded-2xl transition shadow disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full py-3.5 px-4 bg-primary-green hover:bg-primary-green-hover disabled:hover:bg-primary-green text-white hover:text-tertiary-green font-bold text-xs rounded-2xl transition shadow disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmittingProfile ? (
                     <>
