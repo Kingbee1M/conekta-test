@@ -110,12 +110,9 @@ export default function HomeWelcomeSection({
 }: HomeWelcomeSectionProps) {
   const [showCalendarHover, setShowCalendarHover] = useState(false);
 
-  const authProfile = useAppSelector((state: RootState) => state.auth?.customerProfile);
   const authSession = useAppSelector((state: RootState) => state.auth?.session);
 
-  const fallbackName = authSession?.user?.profile?.full_name?.split(' ')[0];
-  const derivedFirstName = authProfile?.first_name || fallbackName || 'User';
-  const displayName = customUserName || derivedFirstName;
+  const displayName = authSession?.user?.profile?.full_name || 'Please add a name';
 
   const carouselImages = tenancy?.galleryImages && tenancy.galleryImages.length > 0 
     ? tenancy.galleryImages 
@@ -139,7 +136,7 @@ export default function HomeWelcomeSection({
               {currentDateFormatted}
             </span>
             <h1 className="text-3xl md:text-4xl font-extrabold" style={{ color: 'var(--color-text-primary, #262626)' }}>
-              Good day, <span className="italic font-normal text-primary-green"> Blessing Bamise.</span>
+              Good day, <span className="italic font-normal text-primary-green"> {displayName}.</span>
             </h1>
             <p className="text-sm md:text-base mt-1" style={{ color: 'var(--color-secondary-color, #5f5e5e)' }}>
               {tenancy

@@ -19,7 +19,9 @@ export function proxy(request: NextRequest) {
     '/',
     '/admin-login',
     '/about-us',
-    '/how-it-works'
+    '/how-it-works',
+    'blog',
+    'terms-and-policy'
   ];
 
   // Inside your middleware logic

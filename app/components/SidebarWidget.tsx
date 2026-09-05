@@ -1,8 +1,12 @@
 'use client';
 
-import { LuCalendar, LuTrendingUp } from 'react-icons/lu';
-import ScheduleVisitPortal from './ScheduleVisit';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { LuCalendar, LuTrendingUp } from 'react-icons/lu';
+import { RootState } from '@/shared/store/store';
+import { useKycModal } from '@/lib/KycModalContext';
+import { SubmissionStatusEnum } from '@/shared/enums/kycEnums/submissionStatus.enum';
+import ScheduleVisitPortal from './ScheduleVisit';
 
 interface SidebarWidgetProps {
   basePrice: string;
@@ -11,11 +15,26 @@ interface SidebarWidgetProps {
 
 export default function SidebarWidget({ basePrice, paymentFrequency }: SidebarWidgetProps) {
   const parsedPrice = parseFloat(basePrice) || 0;
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false);
+
+  // 1. Hook into KYC state & context
+  const { openModal } = useKycModal();
+  const { profile: kycProfile } = useSelector((state: RootState) => state.publicKyc);
+  const kycStatus = kycProfile?.status ?? SubmissionStatusEnum.NOT_STARTED;
+
   // Format price into millions easily (e.g. 4500000 -> ₦4.5M)
   const formattedPriceInM = parsedPrice >= 1000000 
     ? `₦${(parsedPrice / 1000000).toFixed(1)}M` 
     : `₦${parsedPrice.toLocaleString()}`;
+
+  // 2. Intercept schedule action based on KYC status
+  const handleScheduleVisit = () => {
+    if (kycStatus !== SubmissionStatusEnum.APPROVED) {
+      openModal();
+      return;
+    }
+    setIsOpen(true);
+  };
 
   return (
     <aside className="w-full flex flex-col gap-6 sticky top-24">
@@ -33,25 +52,18 @@ export default function SidebarWidget({ basePrice, paymentFrequency }: SidebarWi
 
         {/* Call to Actions */}
         <div className="flex flex-col gap-3">
-          {/* <button
-            type="button"
-            className="w-full py-4 bg-[#257448] hover:bg-[#1d5d39] text-white font-bold rounded-2xl shadow-sm hover:shadow-md transition active:scale-[0.98] text-sm"
-          >
-            View Payment Plans
-          </button> */}
-          
           <button
             type="button"
-            onClick={()=>setIsOpen(true)}
-            className="w-full py-4 bg-primary-green text-white hover:bg-primary-green-hover font-bold rounded-2xl border border-gray-200 shadow-sm transition active:scale-[0.98] text-sm flex items-center justify-center gap-2"
+            onClick={handleScheduleVisit}
+            className="w-full py-4 bg-primary-green text-white hover:bg-primary-green-hover font-bold rounded-2xl border border-gray-200 shadow-sm transition active:scale-[0.98] text-sm flex items-center justify-center gap-2 cursor-pointer"
           >
             <LuCalendar className="text-lg text-white shrink-0" />
             Schedule Visit
           </button>
 
-         {isOpen && (
-          <ScheduleVisitPortal onClose={() => setIsOpen(false)} />
-        )}
+          {isOpen && (
+            <ScheduleVisitPortal onClose={() => setIsOpen(false)} />
+          )}
         </div>
 
         {/* Payment Methods Checklists */}
@@ -97,7 +109,6 @@ export default function SidebarWidget({ basePrice, paymentFrequency }: SidebarWi
             <span className="text-violet-900">4 / 10</span>
           </div>
 
-          
           <div className="w-full h-2 bg-violet-100 rounded-full overflow-hidden mt-1">
             <div className="h-full bg-violet-600 rounded-full" style={{ width: '40%' }} />
           </div>

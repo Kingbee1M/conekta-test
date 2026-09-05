@@ -19,7 +19,7 @@ export default function RevenueChart() {
   const [filter, setFilter] = useState<'Week' | 'Month' | 'Year'>('Month');
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-xs flex flex-col justify-between h-full min-h-[320px]">
+    <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-xs flex flex-col justify-between h-full min-h-80">
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="text-base font-bold text-gray-900">Revenue Overview</h2>

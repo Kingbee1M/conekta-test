@@ -18,7 +18,8 @@ export default function Footer() {
       'Company': {
         'About Us': '/about-us',
         'How It Works': '/how-it-works',
-        'Terms & Privacy': '/terms-privacy',
+        'Terms & Privacy': '/terms-and-policy',
+        'Blog': '/blog'
       },
     },
     {
