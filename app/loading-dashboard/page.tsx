@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation'; // Updated Import
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/shared/store/store';
 import {
@@ -9,28 +9,58 @@ import {
   useGetListerProfileMeQuery,
 } from '@/shared/service/me.services';
 import { useGetMyKycProfileQuery } from '@/shared/service/publicKyc/publicKYC.services';
-import { CustomerProfile, ListerProfile, setCustomerProfile, setListerProfile } from '@/shared/store/authSlice';
+import {
+  CustomerProfile,
+  ListerProfile,
+  setActiveRole,
+  setCustomerProfile,
+  setListerProfile,
+} from '@/shared/store/authSlice';
 import { RoleEnum } from '@/shared/enums/roles.enum';
 
 export default function LoadingDashboard() {
   const router = useRouter();
-  const searchParams = useSearchParams(); // Get URL query parameters
-  const callbackUrl = searchParams.get('callbackUrl'); // Extract callbackUrl
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl');
+  const targetRoleParam = searchParams.get('targetRole')?.toLowerCase();
   const dispatch = useDispatch();
 
   const { session, customerProfile, listerProfile } = useSelector(
     (state: RootState) => state.auth
   );
 
-  const rawRole = session?.active_role?.toLowerCase();
-  const activeRole: RoleEnum | null = Object.values(RoleEnum).includes(rawRole as RoleEnum)
-    ? (rawRole as RoleEnum)
+  const sessionRole = session?.active_role?.toLowerCase();
+
+  // Validate targetRole from URL parameter first
+  const validTargetRole = Object.values(RoleEnum).includes(
+    targetRoleParam as RoleEnum
+  )
+    ? (targetRoleParam as RoleEnum)
     : null;
+
+  // Validate session role fallback
+  const validSessionRole = Object.values(RoleEnum).includes(
+    sessionRole as RoleEnum
+  )
+    ? (sessionRole as RoleEnum)
+    : null;
+
+  // Effective active role immediately prioritizes targetRole over session state
+  const activeRole: RoleEnum | null = validTargetRole || validSessionRole;
+
+  // Sync Redux activeRole state as a side-effect if targetRole is present
+  useEffect(() => {
+    if (validTargetRole) {
+      dispatch(setActiveRole(validTargetRole));
+    }
+  }, [validTargetRole, dispatch]);
 
   const isListerRole = activeRole === RoleEnum.LISTER;
   const isCustomerRole = activeRole === RoleEnum.CUSTOMER;
-  const isAdminRole = activeRole === RoleEnum.ADMIN || activeRole === RoleEnum.SUPER_ADMIN;
+  const isAdminRole =
+    activeRole === RoleEnum.ADMIN || activeRole === RoleEnum.SUPER_ADMIN;
 
+  // Clear opposing cached profiles on role switch
   useEffect(() => {
     if (isListerRole) {
       dispatch(setCustomerProfile(null as unknown as CustomerProfile));
@@ -39,6 +69,7 @@ export default function LoadingDashboard() {
     }
   }, [isListerRole, isCustomerRole, dispatch]);
 
+  // Execute queries based directly on effective activeRole
   const customerQueryResult = useGetCustomerProfileMeQuery(undefined, {
     skip: !isCustomerRole || !session,
   });
@@ -67,31 +98,35 @@ export default function LoadingDashboard() {
     ? customerProfile
     : null;
 
+  // Navigation Guard Logic
   useEffect(() => {
     if (isLoading) return;
 
     if (isError || !session) {
-      console.warn('🚨 Network issue, expired token, or session verification rejected.');
+      console.warn(
+        '🚨 Network issue, expired token, or session verification rejected.'
+      );
       router.replace('/log-in');
       return;
     }
 
     const firstName = activeProfile?.first_name;
     const lastName = activeProfile?.last_name;
-    const fullName = session?.user?.profile?.full_name || session?.user?.email;
+    const fullName =
+      session?.user?.profile?.full_name || session?.user?.email;
 
-    const hasName = isAdminRole ? Boolean(session?.user) : Boolean(firstName || lastName || fullName);
+    const hasName = isAdminRole
+      ? Boolean(session?.user)
+      : Boolean(firstName || lastName || fullName);
 
     if ((isSuccess || activeProfile || isAdminRole) && hasName) {
       console.log('Verification success, initializing navigation...');
 
-      // 🚨 Redirect to callbackUrl if available
       if (callbackUrl) {
         router.replace(callbackUrl);
         return;
       }
 
-      // Default role navigation fallbacks
       if (isAdminRole) {
         router.replace('/admin/overview');
       } else if (activeRole === RoleEnum.LISTER) {
@@ -99,7 +134,7 @@ export default function LoadingDashboard() {
       } else if (activeRole === RoleEnum.CUSTOMER) {
         router.replace('/home');
       } else {
-        console.warn(`⚠️ Unknown role "${rawRole}", routing to fallback.`);
+        console.warn(`⚠️ Unknown role "${activeRole}", routing to fallback.`);
         router.replace('/unauthorized');
       }
       return;
@@ -117,7 +152,6 @@ export default function LoadingDashboard() {
     isSuccess,
     activeRole,
     isAdminRole,
-    rawRole,
     callbackUrl,
     router,
   ]);

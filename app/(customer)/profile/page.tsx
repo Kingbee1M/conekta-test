@@ -13,6 +13,7 @@ import CommentsView from '@/app/components/profile/CommentsView';
 import LikedListingsView from '@/app/components/profile/LikedListingsView';
 import SupportView from '@/app/components/profile/SupportView';
 import { HomeOverviewData, LikedListing, ListingComment, ProfileTab, TenantProfileData, TransactionItem } from '@/app/components/profile/profileTypes';
+import BecomeLister from '@/app/components/profile/BecomeLister';
 
 export default function TenantProfileContainer() {
   const router = useRouter();
@@ -131,6 +132,7 @@ export default function TenantProfileContainer() {
               {activeTab === 'liked' && <LikedListingsView listings={likedListings} />}
               {activeTab === 'comments' && <CommentsView comments={listingComments} />}
               {activeTab === 'support' && <SupportView />}
+              {activeTab === 'Become a Lister' && <BecomeLister />}
             </motion.div>
           </AnimatePresence>
         </div>

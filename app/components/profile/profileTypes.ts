@@ -1,4 +1,4 @@
-export type ProfileTab = 'dashboard' | 'transactions' | 'liked' | 'comments' | 'support';
+export type ProfileTab = 'dashboard' | 'transactions' | 'liked' | 'comments' | 'support' | 'Become a Lister';
 
 export interface TenantProfileData {
   name: string;

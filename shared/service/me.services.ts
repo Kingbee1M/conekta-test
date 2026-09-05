@@ -49,6 +49,27 @@ export interface UpdateListerProfilePayload {
   postal_code?: string;
 }
 
+export interface CreateListerProfilePayload {
+  profile_uuid?: string;
+  email?: string;
+  first_name?: string;
+  middle_name?: string;
+  last_name?: string;
+  phone_number?: string;
+  date_of_birth?: string;
+  nationality?: string;
+  country?: string;
+  state?: string;
+  lga?: string;
+  address?: string;
+  postal_code?: string;
+  ref_no?: string;
+  active_status?: string;
+  created_at?: string;
+  updated_at?: string;
+  kyc_status?: string;
+}
+
 /* ============================================================
    API SLICE
 ============================================================ */
@@ -127,6 +148,32 @@ export const profileApiSlice = apiSlice.injectEndpoints({
       },
     }),
 
+    // Create / Upgrade Lister Profile
+    createListerProfileMe: builder.mutation<
+      ApiResponse<ListerProfile>,
+      CreateListerProfilePayload
+    >({
+      query: (payload) => ({
+        url: '/listers/profile/me/',
+        method: 'POST',
+        body: payload,
+      }),
+      invalidatesTags: ['User'],
+
+      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data: responseBody } = await queryFulfilled;
+          const newLister = responseBody.data;
+
+          if (newLister) {
+            dispatch(setListerProfile(newLister));
+          }
+        } catch (error) {
+          console.error('Failed to set lister profile in auth state on creation:', error);
+        }
+      },
+    }),
+
     // Update Lister Profile
     updateListerProfileMe: builder.mutation<
       ApiResponse<ListerProfile>,
@@ -162,5 +209,6 @@ export const {
   useUpdateCustomerProfileMeMutation,
   useGetListerProfileMeQuery,
   useLazyGetListerProfileMeQuery,
+  useCreateListerProfileMeMutation,
   useUpdateListerProfileMeMutation,
 } = profileApiSlice;
