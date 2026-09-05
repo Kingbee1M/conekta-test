@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { motion } from 'framer-motion';
 import { AppDispatch, RootState } from '@/shared/store/store';
 import { logoutUser } from '@/shared/features/auth/auth.action';
 import { useToast } from './ui/ToastProvider';
@@ -15,8 +16,9 @@ import {
   LuMessageCircle,
   LuCircleHelp,
   LuLogOut,
-  LuLoader 
+  LuLoader,
 } from 'react-icons/lu';
+import { GrUpgrade } from 'react-icons/gr';
 
 interface SidebarCardProps {
   tenant: TenantProfileData;
@@ -30,20 +32,17 @@ export default function SidebarCard({ tenant, activeTab, setActiveTab }: Sidebar
   const { openModal } = useKycModal();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // Read KYC profile status from Redux store slice
   const { profile: kycProfile } = useSelector(
     (state: RootState) => state.publicKyc
   );
   const kycStatus = kycProfile?.status ?? SubmissionStatusEnum.NOT_STARTED;
-  // Trigger popup modal on load if status is not APPROVED
-  useEffect(() => {
-  // If profile has finished loading (or is explicitly available/initialized)
-  if (kycStatus !== SubmissionStatusEnum.APPROVED) {
-    openModal();
-  }
-}, [kycStatus, openModal]);
 
-  // Helper function to render status badge styles & labels
+  useEffect(() => {
+    if (kycStatus !== SubmissionStatusEnum.APPROVED) {
+      openModal();
+    }
+  }, [kycStatus, openModal]);
+
   const getKycBadge = () => {
     switch (kycStatus) {
       case SubmissionStatusEnum.APPROVED:
@@ -97,6 +96,7 @@ export default function SidebarCard({ tenant, activeTab, setActiveTab }: Sidebar
     { id: 'liked', name: 'Liked Listings', icon: LuHeart },
     { id: 'comments', name: 'My Comments', icon: LuMessageCircle },
     { id: 'support', name: 'Support', icon: LuCircleHelp },
+    { id: 'Become a Lister', name: 'Become a Lister', icon: GrUpgrade },
   ];
 
   const handleLogout = async () => {
@@ -120,14 +120,12 @@ export default function SidebarCard({ tenant, activeTab, setActiveTab }: Sidebar
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-xs flex flex-col items-center text-center">
-      {/* Dynamic Initials Badge */}
       <div className="w-14 h-14 bg-secondary-green-hover text-white font-bold text-lg rounded-full flex items-center justify-center mb-3">
         {tenant.avatarInitials}
       </div>
       <h3 className="text-sm font-bold text-gray-800">{tenant.name}</h3>
       <p className="text-[11px] text-gray-400 mb-2 truncate max-w-full">{tenant.email}</p>
       
-      {/* Dynamic KYC Status Badge */}
       {getKycBadge()}
 
       {/* Nav Actions Links stack */}
@@ -139,14 +137,23 @@ export default function SidebarCard({ tenant, activeTab, setActiveTab }: Sidebar
             <button
               key={menu.id}
               onClick={() => setActiveTab(menu.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
+              className={`relative w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold transition-colors duration-200 cursor-pointer ${
                 isActive 
-                  ? 'bg-secondary-green text-white' 
+                  ? 'text-white' 
                   : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'
               }`}
             >
-              <Icon className={`text-base ${isActive ? 'text-white' : 'text-gray-400'}`} />
-              {menu.name}
+              {/* Animated Pill Background */}
+              {isActive && (
+                <motion.div
+                  layoutId="activeTabPill"
+                  className="absolute inset-0 bg-secondary-green rounded-xl"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                />
+              )}
+
+              <Icon className={`relative z-10 text-base ${isActive ? 'text-white' : 'text-gray-400'}`} />
+              <span className="relative z-10">{menu.name}</span>
             </button>
           );
         })}
