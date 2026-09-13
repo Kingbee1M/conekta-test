@@ -2,10 +2,10 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { ListingResult } from '@/shared/service/customer services/customerTypes';
+import { AllListingResult } from '@/shared/service/customer services/customerTypes';
 
 interface ListingCardProps {
-  listing: ListingResult;
+  listing: AllListingResult;
 }
 
 export default function ListingCard({ listing }: ListingCardProps) {
@@ -25,7 +25,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
     style: 'currency',
     currency: 'NGN',
     maximumFractionDigits: 0,
-  }).format(parseFloat(base_price));
+  }).format(Number(base_price));
 
   // Clean fallback in case state/lga values are stored in lowercase in the database
   const cityState = `${location.city || location.lga}, ${location.state}`;

@@ -87,15 +87,13 @@ export default function ClientbuyProperty() {
   // Filter 2: Listings sorted by highest rating or review score
   // Filter 2: Listings sorted by highest rating or review score
   const topRatedListings = useMemo(() => {
-    return [...listings].sort((a, b) => {
-      const rawA = (a as Record<string, unknown>).rating ?? (a as Record<string, unknown>).average_rating ?? 0;
-      const rawB = (b as Record<string, unknown>).rating ?? (b as Record<string, unknown>).average_rating ?? 0;
-      
-      const ratingA = typeof rawA === 'number' ? rawA : Number(rawA) || 0;
-      const ratingB = typeof rawB === 'number' ? rawB : Number(rawB) || 0;
+    const getRating = (listing: (typeof listings)[number]) => {
+      const record = listing as unknown as Record<string, unknown>;
+      const raw = record.rating ?? record.average_rating ?? 0;
+      return typeof raw === 'number' ? raw : Number(raw) || 0;
+    };
 
-      return ratingB - ratingA;
-    });
+    return [...listings].sort((a, b) => getRating(b) - getRating(a));
   }, [listings]);
 
 

@@ -2,6 +2,7 @@
 
 import { useState, use } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { 
   LuBed, 
@@ -18,16 +19,14 @@ import {
 } from 'react-icons/lu';
 import { FaWhatsapp, FaTelegram, FaTwitter, FaFacebook } from 'react-icons/fa';
 import { IoAlertCircleOutline } from 'react-icons/io5';
-import { PiResizeBold } from 'react-icons/pi';
 import { useGetSingleListingQuery } from '@/shared/service/customer services/customerListing.services';
-import { ListingResult } from '@/shared/service/customer services/customerTypes';
+import { ListingDetail } from '@/shared/service/customer services/customerTypes';
 import MapDisplay, { LocationCoordinates } from '@/app/components/googleMap/MapDisplay';
 
-// Modular Child Components
 import MediaGallery from '@/app/components/MediaGallery';
 import SidebarWidget from '@/app/components/SidebarWidget';
 import TabContent from '@/app/components/TabContent';
-import { usePathname } from 'next/navigation';
+import { PiResizeBold } from 'react-icons/pi';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -54,7 +53,7 @@ const itemVariants: Variants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1.0] as const },
+    transition: { duration: 0.4, ease: [0.25, 0.1, 0.25, 1.0] },
   },
 };
 
@@ -73,22 +72,27 @@ export default function PropertyDetailsClient({ params }: PageProps) {
   const [copied, setCopied] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'features' | 'location'>('overview');
 
-  const currentUrl = typeof window !== 'undefined' 
-    ? window.location.href 
-    : pathname;
+  // Helper to safely get current URL on client-side
+  const getShareableUrl = () => {
+    if (typeof window !== 'undefined') {
+      return window.location.href;
+    }
+    return pathname;
+  };
 
   const { data: listingResponse, isLoading, isError } = useGetSingleListingQuery(activeUuid);
 
-  const listing: ListingResult | undefined =
+  const listing: ListingDetail | undefined =
     listingResponse && typeof listingResponse === 'object' && 'data' in listingResponse
-      ? (listingResponse as unknown as { data: ListingResult }).data
-      : (listingResponse as ListingResult | undefined);
+      ? (listingResponse as unknown as { data: ListingDetail }).data
+      : (listingResponse as ListingDetail | undefined);
 
   const handleShareClick = async () => {
+    const shareUrl = getShareableUrl();
     const shareData = {
       title: listing?.title || 'Property Listing',
       text: `Check out ${listing?.title || 'this property'} on our platform!`,
-      url: currentUrl || (typeof window !== 'undefined' ? window.location.href : ''),
+      url: shareUrl,
     };
 
     if (navigator.share && navigator.canShare?.(shareData)) {
@@ -107,11 +111,11 @@ export default function PropertyDetailsClient({ params }: PageProps) {
   if (isLoading) {
     return (
       <main className="min-h-screen py-6 px-4 sm:px-6 lg:px-8 pt-20">
-        <div className="max-w-360 mx-auto flex flex-col gap-6 animate-pulse">
+        <div className="max-w-7xl mx-auto flex flex-col gap-6 animate-pulse">
           <div className="h-4 w-28 bg-gray-200 rounded-md" />
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 items-start">
             <div className="flex flex-col gap-6 w-full">
-              <div className="w-full h-80 sm:h-105 bg-gray-200 rounded-3xl" />
+              <div className="w-full h-80 sm:h-96 bg-gray-200 rounded-3xl" />
               <div className="w-full bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col gap-3">
                 <div className="flex justify-between items-start gap-4">
                   <div className="h-7 w-3/4 bg-gray-200 rounded-lg" />
@@ -139,7 +143,7 @@ export default function PropertyDetailsClient({ params }: PageProps) {
                 <div className="h-4 w-4/6 bg-gray-200 rounded-md" />
               </div>
             </div>
-            <div className="w-full h-90 bg-gray-200 rounded-3xl" />
+            <div className="w-full h-80 bg-gray-200 rounded-3xl" />
           </div>
         </div>
       </main>
@@ -174,7 +178,7 @@ export default function PropertyDetailsClient({ params }: PageProps) {
 
   const {
     title = 'Property Title',
-    base_price = '',
+    base_price = 0,
     payment_frequency = 'Year',
     location,
     property_info,
@@ -209,6 +213,7 @@ export default function PropertyDetailsClient({ params }: PageProps) {
     ? media.map((item: { url: string }) => item.url)
     : [];
 
+  const currentUrl = getShareableUrl();
   const shareText = `Check out this property: ${title} in ${addressText || 'Lagos'}`;
 
   const copyToClipboard = async () => {
@@ -217,7 +222,7 @@ export default function PropertyDetailsClient({ params }: PageProps) {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback
+      // Clipboard fallback
     }
   };
 
@@ -271,7 +276,6 @@ export default function PropertyDetailsClient({ params }: PageProps) {
       }
     } else {
       await navigator.clipboard.writeText(googleMapsSearchUrl);
-      alert('Location link copied to clipboard!');
     }
   };
 
@@ -281,7 +285,7 @@ export default function PropertyDetailsClient({ params }: PageProps) {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="max-w-360 mx-auto flex flex-col gap-6"
+        className="max-w-7xl mx-auto flex flex-col gap-6"
       >
         <motion.div variants={itemVariants} className="flex items-center">
           <Link
@@ -295,12 +299,12 @@ export default function PropertyDetailsClient({ params }: PageProps) {
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 items-start">
           <div className="flex flex-col gap-6 w-full">
-            {/* Gallery Card Container */}
+            {/* Gallery Container */}
             <motion.div variants={itemVariants} className="bg-white rounded-3xl p-3 shadow-sm border border-gray-100">
               <MediaGallery images={galleryImages} />
             </motion.div>
 
-            {/* Main Header Info Card Container */}
+            {/* Main Info Card */}
             <motion.div 
               variants={itemVariants} 
               className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col gap-4"
@@ -314,7 +318,7 @@ export default function PropertyDetailsClient({ params }: PageProps) {
                   <button
                     type="button"
                     aria-label="Save to favorites"
-                    className="h-9 w-9 border border-gray-200 rounded-xl flex items-center justify-center text-gray-500 hover:text-rose-500 hover:border-rose-100 hover:bg-rose-50/20 transition-all shadow-sm active:scale-95"
+                    className="h-9 w-9 border border-gray-200 rounded-xl flex items-center justify-center text-gray-500 hover:text-rose-500 hover:border-rose-100 hover:bg-rose-50/20 transition-all shadow-sm active:scale-95 cursor-pointer"
                   >
                     <LuHeart className="text-base" />
                   </button>
@@ -349,10 +353,6 @@ export default function PropertyDetailsClient({ params }: PageProps) {
                     <span>{property_info.bathrooms} Bathrooms</span>
                   </div>
                 )}
-                <div className="flex items-center gap-1.5">
-                  <PiResizeBold className="text-lg text-gray-400 shrink-0" />
-                  <span>120 sqm</span>
-                </div>
               </div>
 
               <div className="flex flex-wrap gap-2 pt-1">
@@ -366,9 +366,6 @@ export default function PropertyDetailsClient({ params }: PageProps) {
                 </span>
                 <span className="bg-gray-100 text-gray-500 text-[10px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider">
                   Virtual Tour
-                </span>
-                <span className="bg-violet-100 text-violet-700 text-[10px] font-bold px-3 py-1.5 rounded-lg uppercase tracking-wider">
-                  Investment Available
                 </span>
               </div>
             </motion.div>
@@ -403,7 +400,7 @@ export default function PropertyDetailsClient({ params }: PageProps) {
               })}
             </motion.div>
 
-            {/* Tab Content Card Wrapper */}
+            {/* Tab Content Wrapper */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
@@ -445,7 +442,7 @@ export default function PropertyDetailsClient({ params }: PageProps) {
                       </div>
                     </div>
 
-                    <MapDisplay location={propertyCoordinates} className="w-full h-100 rounded-2xl border border-gray-200 overflow-hidden" />
+                    <MapDisplay location={propertyCoordinates} className="w-full h-96 rounded-2xl border border-gray-200 overflow-hidden" />
                   </div>
                 ) : (
                   <TabContent
@@ -467,12 +464,13 @@ export default function PropertyDetailsClient({ params }: PageProps) {
             <SidebarWidget
               basePrice={base_price}
               paymentFrequency={payment_frequency}
+              listingUuid={activeUuid}
             />
           </motion.div>
         </div>
       </motion.div>
 
-      {/* SHARE MODAL POPUP */}
+      {/* Share Modal Popup */}
       <AnimatePresence>
         {isShareModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -499,7 +497,7 @@ export default function PropertyDetailsClient({ params }: PageProps) {
                 <button
                   type="button"
                   onClick={() => setIsShareModalOpen(false)}
-                  className="p-2 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition"
+                  className="p-2 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition cursor-pointer"
                 >
                   <LuX className="text-lg" />
                 </button>

@@ -1,5 +1,5 @@
 import { apiSlice } from '@/lib/api';
-import { ListingResult, PaginatedListingList } from './customerTypes';
+import { AllListingResult, ListingDetail, PaginatedListingList } from './customerTypes';
 
 export interface FetchCustomerListingsQueryParams {
   amenities?: string;
@@ -48,7 +48,7 @@ export const customerListingApiSlice = apiSlice.injectEndpoints({
       providesTags: ['CustomerListings'],
     }),
 
-    getSingleListing: builder.query<ListingResult, string>({
+    getSingleListing: builder.query<ListingDetail, string>({
       query: (uuid) => ({
         url: `/listings/${uuid}/`,
         method: 'GET',

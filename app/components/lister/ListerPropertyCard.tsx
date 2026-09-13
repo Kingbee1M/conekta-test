@@ -3,18 +3,18 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Bed, Bath, Move, ArrowUpRight } from 'lucide-react';
-import { ListingResult } from '@/shared/service/customer services/customerTypes';
+import { AllListingResult } from '@/shared/service/customer services/customerTypes';
 
 interface PropertyCard2Props {
-  listing: ListingResult;
+  listing: AllListingResult;
 }
 
 export default function ListerPropertyCard({ listing }: PropertyCard2Props) {
   // Safe cast for fallback field checking
-  const rawRecord = listing as Record<string, unknown>;
+  const rawRecord = listing as unknown as Record<string, unknown>;
 
   // Resolve property UUID cleanly across possible payload shapes
-  const propertyUuid = (listing.uuid || listing.id || rawRecord.uuid || rawRecord.id || '') as string;
+  const propertyUuid = (listing.uuid ) as string;
 
   // Safely parse price
   const parsePrice = (priceVal: string | number | undefined): number => {

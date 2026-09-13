@@ -173,6 +173,7 @@ export default function AddPropertyModal({ isOpen, onClose }: AddPropertyModalPr
           ...(values.toilets !== '' && { toilets: Number(values.toilets) }),
           ...(values.parking_spaces !== '' && { parking_spaces: Number(values.parking_spaces) }),
         };
+        console.log(submittedPayload)
 
         await createListing(submittedPayload).unwrap();
         addToast({ title: 'Success', description: 'Property published successfully!', variant: "success", duration: 3000 });

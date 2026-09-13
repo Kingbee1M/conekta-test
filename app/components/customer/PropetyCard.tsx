@@ -4,10 +4,10 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Heart, MapPin } from 'lucide-react';
-import { ListingResult } from '@/shared/service/customer services/customerTypes';
+import { AllListingResult } from '@/shared/service/customer services/customerTypes';
 
 interface PropertyCardProps {
-  listing: ListingResult;
+  listing: AllListingResult;
 }
 
 export default function PropertyCard({ listing }: PropertyCardProps) {

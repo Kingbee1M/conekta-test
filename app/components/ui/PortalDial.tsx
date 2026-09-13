@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { RoleEnum } from '@/shared/enums/roles.enum';
 import { User, Building2, Wrench } from 'lucide-react';
 
@@ -32,6 +32,8 @@ const ROLES_CONFIG = [
 ];
 
 export function PortalDial({ value, onChange }: PortalDialProps) {
+  const [hoveredRole, setHoveredRole] = useState<RoleEnum | null>(null);
+
   const selectedIndex = ROLES_CONFIG.findIndex((item) => item.role === value);
 
   // Each item occupies 120 deg (360 / 3).
@@ -39,6 +41,8 @@ export function PortalDial({ value, onChange }: PortalDialProps) {
 
   const activeConfig = ROLES_CONFIG[selectedIndex] || ROLES_CONFIG[0];
   const ActiveIcon = activeConfig.icon;
+
+  const hoveredConfig = ROLES_CONFIG.find((item) => item.role === hoveredRole);
 
   return (
     <div className="flex flex-col items-center my-2 select-none">
@@ -48,6 +52,27 @@ export function PortalDial({ value, onChange }: PortalDialProps) {
 
       {/* Compact Dial Container */}
       <div className="relative w-32 h-32 flex items-center justify-center">
+        {/* Hover Tooltip Tag */}
+        <AnimatePresence>
+          {hoveredConfig && (
+            <motion.div
+              initial={{ opacity: 0, y: 4, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 4, scale: 0.9 }}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
+              className="absolute -top-7 z-40 px-2.5 py-0.5 rounded-md shadow-md text-[10px] font-bold text-white tracking-wide"
+              style={{ backgroundColor: hoveredConfig.color }}
+            >
+              {hoveredConfig.label}
+              {/* Tooltip pointer arrow */}
+              <div
+                className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rotate-45"
+                style={{ backgroundColor: hoveredConfig.color }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Fixed Outer Indicator Ring */}
         <div className="absolute inset-0 rounded-full border-2 border-dashed border-gray-200 pointer-events-none" />
 
@@ -73,20 +98,30 @@ export function PortalDial({ value, onChange }: PortalDialProps) {
             const y = -Math.cos((angle * Math.PI) / 180) * radius;
 
             const isSelected = config.role === value;
+            const isHovered = config.role === hoveredRole;
+
+            // Determine border & background styles dynamically
+            const  buttonStyle: React.CSSProperties = {
+              transform: `translate(${x}px, ${y}px) rotate(${-angle}deg)`,
+              borderColor: isSelected || isHovered ? config.color : 'transparent',
+            };
+
+            if (isHovered && !isSelected) {
+              buttonStyle.backgroundColor = `${config.color}15`; // 15% opacity background
+            }
 
             return (
               <button
                 key={config.role}
                 type="button"
                 onClick={() => onChange(config.role)}
-                style={{
-                  transform: `translate(${x}px, ${y}px) rotate(${-angle}deg)`,
-                  borderColor: isSelected ? config.color : 'transparent',
-                }}
+                onMouseEnter={() => setHoveredRole(config.role)}
+                onMouseLeave={() => setHoveredRole(null)}
+                style={buttonStyle}
                 className={`absolute w-7 h-7 rounded-full flex items-center justify-center transition-all cursor-pointer ${
                   isSelected
                     ? 'bg-white shadow-xs border-2 scale-105'
-                    : 'bg-gray-200/80 hover:bg-gray-300 text-gray-500 scale-90'
+                    : 'bg-gray-200/80 border hover:scale-100 text-gray-500 scale-90'
                 }`}
               >
                 <motion.div
@@ -95,7 +130,9 @@ export function PortalDial({ value, onChange }: PortalDialProps) {
                 >
                   <Icon
                     size={13}
-                    style={{ color: isSelected ? config.color : undefined }}
+                    style={{
+                      color: isSelected || isHovered ? config.color : undefined,
+                    }}
                   />
                 </motion.div>
               </button>
