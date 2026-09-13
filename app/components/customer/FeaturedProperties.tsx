@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { fetchCustomerListings } from '@/shared/store/customerListingSlice';
-import { ListingResult } from '@/shared/service/customer services/customerTypes';
+import { AllListingResult } from '@/shared/service/customer services/customerTypes';
 import PropertyCard from './PropetyCard';
 
 const UNSPLASH_IMAGES = [
@@ -30,7 +30,7 @@ export default function FeaturedProperties() {
   }, [dispatch]);
 
   const featuredListings = useMemo(() => {
-    const typedListings = (listings || []) as unknown as ListingResult[];
+    const typedListings = (listings || []) as unknown as AllListingResult[];
     
     return typedListings.slice(0, 8).map((listing, index) => ({
       ...listing,

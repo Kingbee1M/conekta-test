@@ -9,7 +9,6 @@ import {
 import { MdCheckCircleOutline, MdOutlineCancel  } from "react-icons/md";
 import { FiAlertTriangle } from "react-icons/fi";
 
-
 const generateId = (): string => {
   if (typeof window !== 'undefined' && window.crypto?.randomUUID) {
     return window.crypto.randomUUID();
@@ -23,6 +22,7 @@ interface Toast {
   description?: string;
   variant?: 'default' | 'success' | 'error' | 'warning';
   duration?: number;
+  playSound?: boolean;
 }
 
 interface ToastContextType {
@@ -39,6 +39,110 @@ function useClientSide() {
   const getServerSnapshot = () => false;
   return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }
+
+// Sound Synthesizer via Web Audio API
+const playToastSound = (variant: Toast['variant'] = 'default') => {
+  if (typeof window === 'undefined') return;
+
+  try {
+    const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AudioCtx) return;
+
+    const ctx = new AudioCtx();
+
+    // Success sound: Uplifting two-tone chime (E5 -> G#5)
+    if (variant === 'success') {
+      const now = ctx.currentTime;
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc1.type = 'sine';
+      osc2.type = 'sine';
+
+      osc1.frequency.setValueAtTime(659.25, now); // E5
+      osc2.frequency.setValueAtTime(830.61, now + 0.08); // G#5
+
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+      osc1.connect(gain);
+      osc2.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc1.start(now);
+      osc1.stop(now + 0.08);
+      osc2.start(now + 0.08);
+      osc2.stop(now + 0.35);
+    }
+
+    // Error sound: Low descending alert drop (A3 -> F3)
+    else if (variant === 'error') {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.exponentialRampToValueAtTime(110, now + 0.2);
+
+      gain.gain.setValueAtTime(0.15, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.25);
+    }
+
+    // Warning sound: Double caution beep (D5)
+    else if (variant === 'warning') {
+      const now = ctx.currentTime;
+      const playBeep = (startTime: number) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(587.33, startTime);
+
+        gain.gain.setValueAtTime(0.12, startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.09);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(startTime);
+        osc.stop(startTime + 0.09);
+      };
+
+      playBeep(now);
+      playBeep(now + 0.12);
+    }
+
+    // Default sound: Soft neutral pop (C5)
+    else {
+      const now = ctx.currentTime;
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.exponentialRampToValueAtTime(350, now + 0.08);
+
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.08);
+    }
+  } catch (e) {
+    console.error('Audio playback error:', e);
+  }
+};
 
 const variantStyles = {
   success: {
@@ -78,6 +182,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const addToast = (toast: Omit<Toast, 'id'>) => {
     const id = generateId();
     const newToast: Toast = { ...toast, id };
+
+    // Play sound on toast trigger unless explicitly disabled
+    if (toast.playSound !== false) {
+      playToastSound(toast.variant);
+    }
 
     setToasts((prev) => [...prev, newToast]);
 

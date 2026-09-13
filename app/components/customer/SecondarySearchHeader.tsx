@@ -435,14 +435,14 @@ export function SecondarySearchHeader({
                         {item.location.lga}, {item.location.state}
                       </p>
                       <div className="flex items-center gap-3 text-[11px] text-slate-500 mt-1">
-                        {item.bedrooms !== undefined && (
+                        {item.property_info.bedrooms !== undefined && (
                           <span className="flex items-center gap-1">
-                            <LuBed className="text-slate-400" /> {item.bedrooms} Beds
+                            <LuBed className="text-slate-400" /> {item.property_info.bedrooms} Beds
                           </span>
                         )}
-                        {item.bathrooms !== undefined && (
+                        {item.property_info.bathrooms !== undefined && (
                           <span className="flex items-center gap-1">
-                            <LuBath className="text-slate-400" /> {item.bathrooms} Baths
+                            <LuBath className="text-slate-400" /> {item.property_info.bathrooms} Baths
                           </span>
                         )}
                       </div>

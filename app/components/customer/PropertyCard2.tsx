@@ -3,10 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Bed, Bath, Move, ArrowUpRight } from 'lucide-react';
-import { ListingResult } from '@/shared/service/customer services/customerTypes';
+import { AllListingResult } from '@/shared/service/customer services/customerTypes';
 
 interface PropertyCard2Props {
-  listing: ListingResult;
+  listing: AllListingResult;
 }
 
 export default function PropertyCard2({ listing }: PropertyCard2Props) {

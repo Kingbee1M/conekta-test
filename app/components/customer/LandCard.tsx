@@ -3,11 +3,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ListingResult } from '@/shared/service/customer services/customerTypes';
+import { AllListingResult } from '@/shared/service/customer services/customerTypes';
 
 
 interface LandCardProps {
-  property: ListingResult;
+  property: AllListingResult;
   priority?: boolean;
 }
 
@@ -32,16 +32,16 @@ export default function LandCard({ property, priority = false }: LandCardProps) 
     return () => observer.disconnect();
   }, [priority, isVisible]);
 
-  const id = property.id || property.uuid || '';
+  const id =  property.uuid || '';
   const title = property.title || 'Untitled Land Plot';
-  const price = property.price ?? property.base_price ?? 0;
+  const price =  property.base_price ?? 0;
   
-  const lga = property.lga || property.location?.lga || 'Epe';
-  const state = property.state || property.location?.state || 'Lagos';
+  const lga =  property.location?.lga || 'Epe';
+  const state =  property.location?.state || 'Lagos';
   
 //   const sizeSqm = property.size_sqm || property.area_sqm || 600;
 //   const badgeText = property.badge_text || property.verification_status || 'Verified survey';
-  const imageSrc = property.cover_image || property.images?.[0] || '/api/placeholder/400/300';
+  const imageSrc = property.cover_image  || '/api/placeholder/400/300';
 
   if (!isVisible) {
     return (

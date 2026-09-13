@@ -13,6 +13,7 @@ import adminUserReducer from './adminUsersSlice';
 import customerListingReducer from './customerListingSlice';
 import publicKYCReducer from './publicKycSlice';
 import notificationReducer from './notification.slice';
+import CustomerCommentsReducer from './customerListingCommentsSlice';
 import { notificationApi } from '@/shared/service/notification.services';
 import { apiSlice } from '@/lib/api';
 import { resetStore } from './actions';
@@ -29,6 +30,7 @@ const appReducer = combineReducers({
   customerListing: customerListingReducer,
   publicKyc: publicKYCReducer,
   notification: notificationReducer,
+  customerListingComments: CustomerCommentsReducer,
   [notificationApi.reducerPath]: notificationApi.reducer, // <-- Add API reducer
   [apiSlice.reducerPath]: apiSlice.reducer, 
 });
@@ -56,6 +58,7 @@ const persistConfig = {
     'adminUsers',
     'customerListing',
     'publicKyc',
+    'customerListingComments',
   ], // Removed 'notification' to prevent persisting temporary UI state & stale cache
 };
 

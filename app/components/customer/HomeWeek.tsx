@@ -7,7 +7,7 @@ import { MapPin } from 'lucide-react';
 
 import { useAppDispatch, useAppSelector } from '@/lib/hooks';
 import { fetchCustomerListings } from '@/shared/store/customerListingSlice';
-import { ListingResult } from '@/shared/service/customer services/customerTypes';
+import { AllListingResult } from '@/shared/service/customer services/customerTypes';
 
 export default function HomeOfTheWeek() {
   const dispatch = useAppDispatch();
@@ -28,12 +28,11 @@ export default function HomeOfTheWeek() {
     return Infinity;
   };
 
-  // Cast listings safely to ListingResult[] and locate the lowest base_price
   const homeOfTheWeek = useMemo(() => {
-    const typedListings = (listings || []) as unknown as ListingResult[];
+    const typedListings = (listings || []) as unknown as AllListingResult[];
     if (!typedListings || typedListings.length === 0) return null;
 
-    return typedListings.reduce<ListingResult | null>((lowest, current) => {
+    return typedListings.reduce<AllListingResult | null>((lowest, current) => {
       if (!lowest) return current;
       const currentPrice = parsePrice(current.base_price);
       const lowestPrice = parsePrice(lowest.base_price);

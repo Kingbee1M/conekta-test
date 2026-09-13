@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect, useCallback, ReactNode } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import type { ListingResult } from '@/shared/service/customer services/customerTypes';
+import type { AllListingResult } from '@/shared/service/customer services/customerTypes';
 import PropertyCard from './PropetyCard';
 import PropertyCard2 from './PropertyCard2';
 import PropertyCard3 from './PropertyCard3';
@@ -48,7 +48,7 @@ const FALLBACK_HOUSE_IMAGES = [
 
 export type CardVariant = 'default' | 'v2' | 'v3' | 'land' | 'auto';
 
-export interface CustomHorizontalScrollProps<T = ListingResult> {
+export interface CustomHorizontalScrollProps<T = AllListingResult> {
   tagline?: string;
   title?: string;
   subtitle?: string;
@@ -58,7 +58,7 @@ export interface CustomHorizontalScrollProps<T = ListingResult> {
   renderItem?: (item: T, index: number) => ReactNode;
 }
 
-export default function CustomHorizontalScroll<T = ListingResult>({
+export default function CustomHorizontalScroll<T = AllListingResult>({
   tagline,
   title,
   subtitle,
@@ -141,8 +141,8 @@ export default function CustomHorizontalScroll<T = ListingResult>({
     return null;
   }
 
-  const getUnsplashImage = (item: ListingResult, index: number) => {
-    const idStr = String(item.id || item.uuid || index);
+  const getUnsplashImage = (item: AllListingResult, index: number) => {
+    const idStr = String( item.uuid || index);
     let hash = 0;
     for (let i = 0; i < idStr.length; i++) {
       hash = idStr.charCodeAt(i) + ((hash << 5) - hash);
@@ -152,13 +152,12 @@ export default function CustomHorizontalScroll<T = ListingResult>({
   };
 
   const renderCardByVariant = (item: T, originalIndex: number) => {
-    const rawListing = item as unknown as ListingResult;
+    const rawListing = item as unknown as AllListingResult;
     const unsplashUrl = getUnsplashImage(rawListing, originalIndex);
 
-    const listingItem: ListingResult = {
+    const listingItem: AllListingResult = {
       ...rawListing,
       cover_image: unsplashUrl,
-      images: [unsplashUrl, ...(rawListing.images || [])],
     };
 
     switch (cardVariant) {
@@ -172,14 +171,9 @@ export default function CustomHorizontalScroll<T = ListingResult>({
         return <PropertyCard listing={listingItem} />;
       case 'auto':
       default: {
-        const raw = listingItem as unknown as Record<string, unknown>;
-        const category = (
-          listingItem.category ||
-          ((raw.property_info as Record<string, unknown> | undefined)?.structure as string) ||
-          ''
-        ).toLowerCase();
+        const propertyType = listingItem.property_info?.structure?.toLowerCase() || '';
 
-        return category.includes('land') ? (
+        return propertyType.includes('land') ? (
           <LandCard property={listingItem} />
         ) : (
           <PropertyCard listing={listingItem} />

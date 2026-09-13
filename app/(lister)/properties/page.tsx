@@ -14,18 +14,13 @@ import { IoChevronDownOutline, IoChevronBack, IoChevronForward } from 'react-ico
 import { SortOption } from '@/types';
 import button1 from '@/public/svg/button-option1.svg';
 import button2 from '@/public/svg/button-option2.svg';
-import { PropertyCategoryFilter } from '@/shared/enums/propertysFilter.enums';
-
-import { FaBuildingColumns, FaDollarSign } from "react-icons/fa6";
-import { BsFillHouseCheckFill } from "react-icons/bs";
 import { useLazyGetListingsQuery } from '@/shared/service/listing.services';
 import ListerPropertyCard from '@/app/components/lister/ListerPropertyCard';
-import { ListingResult } from '@/shared/service/customer services/customerTypes';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { CiSearch } from 'react-icons/ci';
-import { LuKey } from 'react-icons/lu';
 import { useGetUnreadCountQuery } from '@/shared/service/notification.socket';
+import { AllListingResult } from '@/shared/service/customer services/customerTypes';
 
 export default function Properties() {
     const [openAdd, setOpenAdd] = useState(false);
@@ -68,7 +63,6 @@ export default function Properties() {
     const [sortBy, setSortBy] = useState<SortOption>('Newest');
     const sortRef = useRef<HTMLDivElement>(null);
     const [cols, setCols] = useState<3 | 4 | 5>(3);
-    const [handleFilter, setHandleFilter] = useState<PropertyCategoryFilter>(PropertyCategoryFilter.ALL);
     const { data: unreadData } = useGetUnreadCountQuery();
     const unreadCount = unreadData?.count ?? 0;
     // RTK Lazy Query
@@ -101,13 +95,6 @@ export default function Properties() {
         return () => document.removeEventListener('mousedown', handleOutside);
     }, []);
 
-    const pillNav = [
-        { title: 'All Properties', icon: FaBuildingColumns, filter: PropertyCategoryFilter.ALL },
-        { title: 'Residential', icon: BsFillHouseCheckFill, filter: PropertyCategoryFilter.RESIDENTIAL },
-        { title: 'Commercial', icon: FaDollarSign, filter: PropertyCategoryFilter.COMMERCIAL },
-        { title: 'Short Lets', icon: LuKey, filter: PropertyCategoryFilter.SHORT_LET },
-    ];
-
     const sortOptions: SortOption[] = ['Newest', 'Price: Low to High', 'Price: High to Low', 'Most Popular'];
 
     // Pagination Meta Calculation
@@ -126,39 +113,13 @@ export default function Properties() {
         };
     }, [listingsData, propertiesList]);
 
-    // --- FILTER & SORT PROCESSING ---
+    // --- SORT PROCESSING ---
     const processedResults = useMemo(() => {
         if (!propertiesList || !Array.isArray(propertiesList)) {
             return [];
         }
 
-        // 1. Filter Stage
-        const filtered = propertiesList.filter((item: Listing) => {
-            if (
-                !handleFilter ||
-                handleFilter === PropertyCategoryFilter.ALL ||
-                String(handleFilter).toUpperCase() === 'ALL'
-            ) {
-                return true;
-            }
-
-            const rawRecord = item as unknown as ListingResult;
-            const rawCategory =
-                rawRecord.category ||
-                (rawRecord as Record<string, unknown>).property_category ||
-                '';
-
-            const targetFilter = String(handleFilter).trim().toUpperCase();
-            const currentCategory = String(rawCategory).trim().toUpperCase();
-
-            return (
-                currentCategory === targetFilter ||
-                currentCategory.includes(targetFilter)
-            );
-        });
-
-        // 2. Sort Stage
-        const sorted = [...filtered].sort((a: Listing, b: Listing) => {
+        const sorted = [...propertiesList].sort((a: Listing, b: Listing) => {
             const rawA = a as unknown as Record<string, unknown>;
             const rawB = b as unknown as Record<string, unknown>;
 
@@ -185,7 +146,7 @@ export default function Properties() {
         });
 
         return sorted;
-    }, [propertiesList, handleFilter, sortBy]);
+    }, [propertiesList, sortBy]);
 
     // Dynamic grid columns layout map based on selection
     const gridColsClass = {
@@ -411,29 +372,8 @@ export default function Properties() {
                 <AddPropertyModal isOpen={openAdd} onClose={() => setOpenAdd(false)} />
             </div>
 
-            {/* FILTER & SORT TOOLS ROW */}
+            {/* SORT TOOLS ROW */}
             <div className='w-full flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mt-2 lg:mt-5'>
-                {/* PILL NAVIGATIONS */}
-                <div className='w-full lg:w-auto flex gap-2.5 overflow-x-auto no-scrollbar pb-1 -mx-4 px-4 lg:mx-0 lg:px-0 text-sm scroll-smooth snap-x'>
-                    {pillNav.map((pill, index) => {
-                        const isActive = handleFilter === pill.filter;
-                        return (
-                            <button 
-                                onClick={() => setHandleFilter(pill.filter)} 
-                                key={index} 
-                                className={`flex gap-2 px-3.5 py-2 rounded-full items-center transition-all text-xs font-semibold cursor-pointer whitespace-nowrap snap-start ${
-                                    isActive
-                                        ? 'bg-primary-green text-white shadow-sm'
-                                        : 'bg-white border border-gray-200 text-gray-500 hover:text-gray-800 hover:bg-gray-50'
-                                }`}
-                            >
-                                <pill.icon className="text-[13px]" />
-                                <span className={`${isActive ? 'text-white': ''}`}>{pill.title}</span>
-                            </button>
-                        );
-                    })}
-                </div>
-
                 {/* Grid Layout Toggles & Sort Dropdown */}
                 <div className="flex gap-3 justify-between sm:justify-end items-center w-full lg:w-auto">
                     <div className='hidden sm:flex gap-1.5 items-center bg-gray-100 p-1 rounded-lg'>
@@ -494,7 +434,7 @@ export default function Properties() {
                         {processedResults.map((item) => (
                             <ListerPropertyCard 
                                 key={item.uuid} 
-                                listing={item as unknown as ListingResult} 
+                                listing={item as unknown as AllListingResult} 
                             />
                         ))}
                     </div>

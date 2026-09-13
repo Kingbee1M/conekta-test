@@ -18,7 +18,7 @@ import RecentActivityComp from '@/app/components/ui/recentActivites';
 import AddPropertyModal from '@/app/components/ui/addProperty';
 import Image from 'next/image';
 import { useLazyGetListingsQuery } from '@/shared/service/listing.services';
-import { ListingResult } from '@/shared/service/customer services/customerTypes';
+import { AllListingResult } from '@/shared/service/customer services/customerTypes';
 import { FaTimes } from 'react-icons/fa';
 
 const realEstateData = [
@@ -87,7 +87,7 @@ export default function ListerDashboard() {
   }, [isAuthenticated, router, triggerGetListings]);
 
   // Extract latest 3 uploaded listings
-  const latestThreeListings: ListingResult[] = (propertiesList || []).slice(0, 3) as unknown as ListingResult[];
+  const latestThreeListings: AllListingResult[] = (propertiesList || []).slice(0, 3) as unknown as AllListingResult[];
   console.log(latestThreeListings)
   const addPropertyFunc = () => {
     setOpenAdd(!openAdd);
@@ -258,11 +258,11 @@ export default function ListerDashboard() {
                 </thead>
                 <tbody className="divide-y divide-gray-100 text-xs">
                   {latestThreeListings.map((item) => {
-                    const imgUrl = item.cover_image || item.images?.[0] || '/jpg/house1.jpg';
+                    const imgUrl = item.cover_image ;
                     const address = `${item.location.lga}, ${item.location.state}` || 'Lagos, Nigeria';
 
                     return (
-                      <tr key={item.uuid || item.id} className="hover:bg-slate-50/80 transition-colors">
+                      <tr key={item.uuid} className="hover:bg-slate-50/80 transition-colors">
                         {/* Title & Image Column */}
                         <td className="py-3 px-4">
                           <div className="flex items-center gap-3 min-w-50">
@@ -285,27 +285,9 @@ export default function ListerDashboard() {
                           </div>
                         </td>
 
-                        {/* Category Column */}
-                        <td className="py-3 px-4 text-gray-600 font-medium hidden sm:table-cell whitespace-nowrap">
-                          {item.category || item.category || 'Residential'}
-                        </td>
-
                         {/* Price Column */}
                         <td className="py-3 px-4 font-bold text-emerald-700 whitespace-nowrap">
                           {item.currency || '₦'}{Number(item.base_price || 0).toLocaleString()}
-                        </td>
-
-                        {/* Status Column */}
-                        <td className="py-3 px-4 hidden md:table-cell whitespace-nowrap">
-                          <span
-                            className={`inline-block px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                              item.is_active !== false
-                                ? 'bg-emerald-100 text-emerald-700'
-                                : 'bg-rose-100 text-rose-700'
-                            }`}
-                          >
-                            {item.is_active !== false ? 'Active' : 'Inactive'}
-                          </span>
                         </td>
 
                         {/* Action Link Column */}

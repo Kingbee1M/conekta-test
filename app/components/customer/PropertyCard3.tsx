@@ -3,10 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { MapPin } from 'lucide-react';
-import { ListingResult } from '@/shared/service/customer services/customerTypes';
+import { AllListingResult } from '@/shared/service/customer services/customerTypes';
 
 interface PropertyCard3Props {
-  listing: ListingResult;
+  listing: AllListingResult;
 }
 
 export default function PropertyCard3({ listing }: PropertyCard3Props) {
