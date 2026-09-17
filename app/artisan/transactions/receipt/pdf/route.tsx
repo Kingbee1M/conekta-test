@@ -21,9 +21,8 @@ export async function GET(request: NextRequest) {
     const id = searchParams.get('id') ?? '';
     const receipt = getReceiptData(id);
 
-    // Instantiate via React.createElement to satisfy ESLint
+    // Render component to a Buffer
     const pdfElement = React.createElement(ReceiptPDF, { data: receipt }) as React.ReactElement<DocumentProps>;
-
     const pdfBuffer = await renderToBuffer(pdfElement);
 
     return new NextResponse(new Uint8Array(pdfBuffer), {
@@ -35,6 +34,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     console.error('PDF Generation Error:', error);
-    return NextResponse.json({ error: 'Failed to generate PDF' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to generate PDF', details: error instanceof Error ? error.message : String(error) },
+      { status: 500 }
+    );
   }
 }

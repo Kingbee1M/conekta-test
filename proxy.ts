@@ -21,7 +21,8 @@ export function proxy(request: NextRequest) {
     '/about-us',
     '/how-it-works',
     'blog',
-    'terms-and-policy'
+    'terms-and-policy',
+    'payment-system',
   ];
 
   // Inside your middleware logic

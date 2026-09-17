@@ -118,11 +118,11 @@ export default function NotFound() {
           </button>
 
           <Link
-            href="/"
+            href="/log-in"
             className="w-full sm:w-1/2 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#00AC72] hover:bg-[#009663] text-white text-xs font-bold transition-all shadow-lg shadow-emerald-900/20 active:scale-95 cursor-pointer"
           >
             <Home className="w-4 h-4" />
-            Back to Home
+            Back to login
           </Link>
         </motion.div>
 

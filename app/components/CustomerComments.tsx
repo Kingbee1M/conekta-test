@@ -293,7 +293,7 @@ export default function CustomerComments({ listingUuid }: CustomerCommentsProps)
                       )}
                     </div>
 
-                    <p className="text-xs md:text-sm text-gray-800 leading-snug break-words">
+                    <p className="text-xs md:text-sm text-gray-800 leading-snug wrap-break-word">
                       {comment.comment}
                     </p>
 
@@ -354,7 +354,7 @@ export default function CustomerComments({ listingUuid }: CustomerCommentsProps)
                                       {new Date(reply.created_at).toLocaleDateString()}
                                     </span>
                                   </div>
-                                  <p className="text-xs text-gray-700 leading-snug break-words">
+                                  <p className="text-xs text-gray-700 leading-snug wrap-break-word">
                                     {reply.comment}
                                   </p>
                                 </div>
