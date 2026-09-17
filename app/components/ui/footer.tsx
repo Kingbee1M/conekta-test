@@ -19,7 +19,8 @@ export default function Footer() {
         'About Us': '/about-us',
         'How It Works': '/how-it-works',
         'Terms & Privacy': '/terms-and-policy',
-        'Blog': '/blog'
+        'Blog': '/blog',
+        'payment system': '/payment-system'
       },
     },
     {

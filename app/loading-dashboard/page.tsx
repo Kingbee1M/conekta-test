@@ -57,19 +57,21 @@ export default function LoadingDashboard() {
 
   const isListerRole = activeRole === RoleEnum.LISTER;
   const isCustomerRole = activeRole === RoleEnum.CUSTOMER;
+  const isArtisanRole = activeRole === RoleEnum.ARTISAN;
   const isAdminRole =
     activeRole === RoleEnum.ADMIN || activeRole === RoleEnum.SUPER_ADMIN;
 
   // Clear opposing cached profiles on role switch
   useEffect(() => {
-    if (isListerRole) {
+    if (isListerRole || isArtisanRole) {
       dispatch(setCustomerProfile(null as unknown as CustomerProfile));
-    } else if (isCustomerRole) {
+    }
+    if (isCustomerRole || isArtisanRole) {
       dispatch(setListerProfile(null as unknown as ListerProfile));
     }
-  }, [isListerRole, isCustomerRole, dispatch]);
+  }, [isListerRole, isCustomerRole, isArtisanRole, dispatch]);
 
-  // Execute queries based directly on effective activeRole
+  // Execute queries based directly on effective activeRole (Artisan bypasses profile queries)
   const customerQueryResult = useGetCustomerProfileMeQuery(undefined, {
     skip: !isCustomerRole || !session,
   });
@@ -90,7 +92,8 @@ export default function LoadingDashboard() {
 
   const isLoading = activeQuery ? activeQuery.isLoading : false;
   const isError = activeQuery ? activeQuery.isError : false;
-  const isSuccess = activeQuery ? activeQuery.isSuccess : isAdminRole;
+  // Treat Artisan and Admin roles as immediately ready/successful
+  const isSuccess = isArtisanRole || isAdminRole || (activeQuery ? activeQuery.isSuccess : false);
 
   const activeProfile = isListerRole
     ? listerProfile
@@ -115,11 +118,12 @@ export default function LoadingDashboard() {
     const fullName =
       session?.user?.profile?.full_name || session?.user?.email;
 
-    const hasName = isAdminRole
+    // Artisan and Admin rely directly on valid session user data
+    const hasName = isAdminRole || isArtisanRole
       ? Boolean(session?.user)
       : Boolean(firstName || lastName || fullName);
 
-    if ((isSuccess || activeProfile || isAdminRole) && hasName) {
+    if ((isSuccess || activeProfile || isAdminRole || isArtisanRole) && hasName) {
       console.log('Verification success, initializing navigation...');
 
       if (callbackUrl) {
@@ -133,6 +137,8 @@ export default function LoadingDashboard() {
         router.replace('/lister-dashboard');
       } else if (activeRole === RoleEnum.CUSTOMER) {
         router.replace('/home');
+      } else if (activeRole === RoleEnum.ARTISAN) {
+        router.replace('/artisan/profile');
       } else {
         console.warn(`⚠️ Unknown role "${activeRole}", routing to fallback.`);
         router.replace('/unauthorized');
@@ -152,6 +158,7 @@ export default function LoadingDashboard() {
     isSuccess,
     activeRole,
     isAdminRole,
+    isArtisanRole,
     callbackUrl,
     router,
   ]);
@@ -176,6 +183,8 @@ export default function LoadingDashboard() {
               ? 'Loading Lister dashboard settings...'
               : isCustomerRole
               ? 'Fetching account credentials...'
+              : isArtisanRole
+              ? 'Redirecting to Artisan profile...'
               : 'Configuring system environment...'}
           </p>
         </div>
