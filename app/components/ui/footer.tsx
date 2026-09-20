@@ -10,7 +10,6 @@ export default function Footer() {
       'Quick Links': {
         'Find Property': '/discover',
         'List Property': '/list-property',
-        'Invest': '/invest',
         'Find Artisans': '/artisans',
       },
     },

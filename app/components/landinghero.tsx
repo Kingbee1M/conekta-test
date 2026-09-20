@@ -31,7 +31,7 @@ export default function LandingHero() {
                 <div className="w-full md:w-[55%] flex items-start flex-col gap-8 px-4 md:px-0">
                     <div className="flex items-center bg-secondary-green py-1 px-2 rounded-xl gap-2 text-xs ml-5">
                         <Image src={img} alt="house" width={400} height={400} className="w-5"/> 
-                        <p>Building Connected Communities</p>
+                        <p className='text-white'>Building Connected Communities</p>
                     </div>
 
                     <h1 className=" text-4xl md:text-3xl lg:text-4xl md:leading-10">Your Complete Housing Ecosystem in Nigeria</h1>

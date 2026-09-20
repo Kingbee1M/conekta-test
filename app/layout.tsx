@@ -6,7 +6,6 @@ import DevStorageTool from "./components/ui/DevStorageTool";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastProvider } from "./components/ui/ToastProvider";
 import { Hanken_Grotesk, JetBrains_Mono, Poppins } from "next/font/google";
-import NavbarWrapper from "./components/ui/clientNav";
 import NextProgress from "./components/ui/NextProgress";
 import { Suspense } from "react";
 import FooterWrapper from "./components/ui/clientFooter";
@@ -14,6 +13,7 @@ import AuthWatcher from "@/lib/authProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { KycModalProvider } from "@/lib/KycModalContext";
 import { NotificationProvider } from "@/lib/NotificationProvider";
+import LandingNavbar from "./components/ui/landingNav";
 
 const hanken = Hanken_Grotesk({
   variable: "--font-hanken",
@@ -55,7 +55,7 @@ export default function RootLayout({
               <Suspense fallback={null}>
                 <NextProgress />
               </Suspense>
-              <NavbarWrapper />
+              <LandingNavbar/>
               <TooltipProvider>
                 <NotificationProvider>
                 <KycModalProvider>

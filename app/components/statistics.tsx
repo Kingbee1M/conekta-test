@@ -8,7 +8,7 @@ export default function Statistics () {
     { number: 2, suffix: 'B+', prefix: '₦', label: 'Transactions' },
     ];
     return (
-        <section className="w-full py-10 md:py-20 bg-tertiary-green flex justify-around md:gap-10 px-2 md:px-20 my-10">
+        <section className="w-full py-10 md:py-20 bg-primary-green flex justify-around md:gap-10 px-2 md:px-20 my-10">
                 {stats.map((stat) => (
                 <div key={stat.label} className="flex flex-col items-center">
                 <Counter 

@@ -19,7 +19,7 @@ export default function BuiltSecurity() {
     ]
 
     return (
-        <section className="px-5 w-full flex flex-col my-16 gap-8 overflow-x-clip">
+        <section className="px-16 w-full flex flex-col my-16 gap-8 overflow-x-clip">
 
             <h2 className="text-2xl lg:text-left lg:text-3xl font-bold">Built on Trust & Security</h2>
                 <p className="text-center w-full text-xs md:text-sm lg:text-left">We prioritize your safety with verified listings, secure payments, and transparent processes.</p>
@@ -39,7 +39,7 @@ export default function BuiltSecurity() {
                             transition: { type: "spring", stiffness: 400, damping: 17 }
                         }}
                     >
-                        <p className="p-3 bg-[#D0FAE5] text-tertiary-green rounded-md text-base z-10">{feat.icon}</p>
+                        <p className="p-3 bg-[#D0FAE5] text-primary-green rounded-md text-base z-10">{feat.icon}</p>
                         <div className="z-10">
                             <h3 className="font-semibold text-base">{feat.title}</h3>
                             <p className="md:text-sm text-gray-600 text-xs">{feat.desc}</p>
