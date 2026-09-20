@@ -22,7 +22,7 @@ export default function HowItWorks() {
                 {datas.map((data) => (
                     <div key={data.id} className="flex flex-col items-center gap-3">
                         <p className="w-9 lg:w-15 h-9 lg:h-15 flex items-center 
-                        justify-center rounded-full bg-tertiary-green text-white 
+                        justify-center rounded-full bg-primary-green text-white 
                         font-800 text-2xl">
                             {data.id}
                         </p>
@@ -40,7 +40,7 @@ export default function HowItWorks() {
                  {datas.map((data) => (
                     <CarouselItem  key={data.id} className="flex flex-col items-center gap-3">
                         <p className="w-9 lg:w-15 h-9 lg:h-15 flex items-center 
-                        justify-center rounded-full bg-tertiary-green text-white 
+                        justify-center rounded-full bg-primary-green text-white 
                         font-800 text-2xl">
                             {data.id}
                         </p>
