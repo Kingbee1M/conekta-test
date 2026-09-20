@@ -5,6 +5,7 @@ import Landinghero2 from "./components/landinghero2";
 import EverythingLanding from "./components/EverythingLanding";
 import LandingStats from "./components/LandingStats";
 import MeetTheTeam from "./components/MeetTheTeam";
+import LandingNavbar from './components/ui/landingNav';
 
 export const metadata: Metadata = {
   title: 'Propti | Modern Real Estate & Property Management Platform',
@@ -95,7 +96,7 @@ export default function Home() {
           }),
         }}
       />
-
+      <LandingNavbar/>
       <Landinghero2 />
       <EverythingLanding />
       <LandingStats />

@@ -8,6 +8,7 @@ import { motion, useAnimation, PanInfo } from 'framer-motion';
 import { IoChatbubble } from 'react-icons/io5';
 import { RoleEnum } from '@/shared/enums/roles.enum';
 import HelpPortal from './helpPortal';
+import Navbar from './navbar';
 
 interface CustomerClientLayoutProps {
   children: ReactNode;
@@ -75,6 +76,7 @@ export default function CustomerClientLayout({ children }: CustomerClientLayoutP
 
   return (
     <div className="min-h-screen bg-app-background text-stone-900 flex flex-col items-center">
+      <Navbar/>
       {/* Main Content Area */}
       <main className="w-full max-w-520 flex-1 flex-col items-center justify-center relative">
         {children}

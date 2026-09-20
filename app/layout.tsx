@@ -13,7 +13,6 @@ import AuthWatcher from "@/lib/authProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { KycModalProvider } from "@/lib/KycModalContext";
 import { NotificationProvider } from "@/lib/NotificationProvider";
-import LandingNavbar from "./components/ui/landingNav";
 
 const hanken = Hanken_Grotesk({
   variable: "--font-hanken",
@@ -55,7 +54,6 @@ export default function RootLayout({
               <Suspense fallback={null}>
                 <NextProgress />
               </Suspense>
-              <LandingNavbar/>
               <TooltipProvider>
                 <NotificationProvider>
                 <KycModalProvider>
