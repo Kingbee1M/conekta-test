@@ -58,7 +58,7 @@ export default function LandingNavbar() {
             className="w-8 h-8 object-contain brightness-0"
           />
           <span className="text-lg sm:text-xl font-extrabold tracking-wider text-slate-900 uppercase">
-            PROPTI
+            CONEKTA
           </span>
         </Link>
 

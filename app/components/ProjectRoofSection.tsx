@@ -1,0 +1,136 @@
+'use client';
+
+import React from 'react';
+import Link from 'next/link';
+import { motion, Variants } from 'framer-motion';
+import { Heart, Home, ArrowRight, ShieldCheck } from 'lucide-react';
+
+const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 25 },
+  visible: (i: number = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      delay: i * 0.12,
+      ease: [0.25, 0.4, 0.25, 1] as const,
+    },
+  }),
+};
+
+export default function ProjectRoofSection() {
+  return (
+    <section className="relative py-20 lg:py-28 bg-white text-slate-900 overflow-hidden border-t border-slate-100">
+      {/* Background Soft Emerald Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-162.5 h-162.5 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <motion.div
+          custom={0}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-50px' }}
+          variants={fadeInUp}
+          className="p-8 sm:p-14 lg:p-16 rounded-[36px] bg-slate-900 text-white shadow-2xl relative overflow-hidden text-center border border-slate-800"
+        >
+          {/* Subtle Inner Decorative Elements */}
+          <div className="absolute -top-24 -right-24 w-72 h-72 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none" />
+          <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-emerald-600/15 rounded-full blur-2xl pointer-events-none" />
+
+          <div className="relative z-10 max-w-3xl mx-auto space-y-6">
+            
+            {/* Pill Badge */}
+            <motion.div
+              custom={1}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-50px' }}
+              variants={fadeInUp}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 backdrop-blur-md"
+            >
+              <Heart className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400/20" />
+              <span className="text-[11px] font-bold tracking-widest text-emerald-300 uppercase">
+                PROJECT ROOF
+              </span>
+            </motion.div>
+
+            {/* Impact Headline */}
+            <motion.h2
+              custom={2}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-50px' }}
+              variants={fadeInUp}
+              className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight"
+            >
+              <span className="text-emerald-400">10% of every naira</span> <br />
+              <span className="font-serif italic font-normal">builds real homes.</span>
+            </motion.h2>
+
+            {/* Subheading / Description */}
+            <motion.p
+              custom={3}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-50px' }}
+              variants={fadeInUp}
+              className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal max-w-2xl mx-auto"
+            >
+              Every transaction on Conekta funds permanent housing for Lagosians sleeping on the streets. 
+              <span className="block mt-1 font-semibold text-white">
+                This is not charity. It is who we are.
+              </span>
+            </motion.p>
+
+            {/* Highlighted Impact Metrics Grid */}
+            <motion.div
+              custom={4}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-50px' }}
+              variants={fadeInUp}
+              className="grid grid-cols-2 gap-4 max-w-lg mx-auto py-4"
+            >
+              <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md text-left">
+                <div className="flex items-center gap-2 text-emerald-400 mb-1">
+                  <Home className="w-4 h-4" />
+                  <span className="text-xs font-semibold">Impact Pledge</span>
+                </div>
+                <p className="text-xl sm:text-2xl font-black text-white">10% Allocated</p>
+                <p className="text-[11px] text-slate-400">Directly funds shelters</p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md text-left">
+                <div className="flex items-center gap-2 text-emerald-400 mb-1">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span className="text-xs font-semibold">Transparency</span>
+                </div>
+                <p className="text-xl sm:text-2xl font-black text-white">100% Tracked</p>
+                <p className="text-[11px] text-slate-400">Public impact audits</p>
+              </div>
+            </motion.div>
+
+            {/* CTA Button */}
+            <motion.div
+              custom={5}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-50px' }}
+              variants={fadeInUp}
+              className="pt-2"
+            >
+              <Link
+                href="/blog/project-roof-building-homes-for-those-who-have-none"
+                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-lg shadow-emerald-500/20 active:scale-95 group"
+              >
+                <span>Learn about Project Roof</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </Link>
+            </motion.div>
+
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}

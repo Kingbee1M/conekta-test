@@ -4,9 +4,21 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
-import { Search, ArrowUpRight, ArrowRight, Sparkles, ChevronDown, Info } from 'lucide-react';
+import { 
+  Search, 
+  ArrowUpRight, 
+  ArrowRight, 
+  Sparkles, 
+  ChevronDown, 
+  Info, 
+  Mail, 
+  Phone, 
+  Copy, 
+  Check, 
+  Headphones 
+} from 'lucide-react';
 
-// Animation Variants with explicit Framer Motion types
+// Animation Variants
 const fadeInUp: Variants = {
   hidden: { opacity: 0, y: 30 },
   visible: (i: number = 0) => ({
@@ -56,6 +68,8 @@ export default function Landinghero2() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showAiInfo, setShowAiInfo] = useState(false);
   const [showSearchInfo, setShowSearchInfo] = useState(false);
+  const [showSupportWidget, setShowSupportWidget] = useState(false);
+  const [copiedType, setCopiedType] = useState<'email' | 'phone' | null>(null);
 
   const aiDescription =
     "🤖 Conekta AI Engine: Describe your dream home in natural language (e.g., '3-bed apartment in Lekki Phase 1 with 24/7 power under ₦5M/yr'). Our AI analyzes real-time verified market listings to match your exact lifestyle requirements!";
@@ -66,6 +80,13 @@ export default function Landinghero2() {
   const handleSearchClick = (e: React.FormEvent) => {
     e.preventDefault();
     setShowSearchInfo(true);
+  };
+
+  const handleCopy = (text: string, type: 'email' | 'phone', e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(text);
+    setCopiedType(type);
+    setTimeout(() => setCopiedType(null), 2000);
   };
 
   return (
@@ -104,7 +125,7 @@ export default function Landinghero2() {
             >
               <span className="w-2 h-2 rounded-full bg-primary-green animate-pulse" />
               <p className="text-xs font-semibold text-green-200 tracking-wide">
-                Building Connected Communities
+                No more agent stories. No more stress!
               </p>
             </motion.div>
 
@@ -114,7 +135,10 @@ export default function Landinghero2() {
               variants={fadeInUp}
               className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] text-white"
             >
-              Your Complete Housing Ecosystem in Nigeria
+              Nigeria, <br />
+              <span className="text-green-400 italic font-serif font-normal">
+                Your housing just got easier!
+              </span>
             </motion.h1>
 
             {/* Subtitle */}
@@ -123,7 +147,7 @@ export default function Landinghero2() {
               variants={fadeInUp}
               className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal max-w-2xl"
             >
-              Discover, rent, buy, invest, and manage properties with flexible payment options. From virtual tours to trusted artisans, everything you need for your housing journey.
+              Find verified homes, pay your way, manage seamlessly, and invest — all in one place. This is how Nigerians find home now!
             </motion.p>
 
             {/* AI Search CTA & Interactive Dropdown */}
@@ -209,14 +233,14 @@ export default function Landinghero2() {
         </div>
       </div>
 
-      {/* Floating Bottom Search & Quick Agent Bar */}
+      {/* Floating Bottom Search & Support Widget Bar */}
       <motion.div
         initial="hidden"
         animate="visible"
         variants={fadeIn}
         className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 w-full pb-8 sm:pb-12"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
           
           {/* Property Search Input */}
           <div className="lg:col-span-8 p-2.5 sm:p-3 rounded-2xl sm:rounded-3xl bg-white/[0.07] border border-white/15 backdrop-blur-xl shadow-2xl space-y-2">
@@ -256,29 +280,104 @@ export default function Landinghero2() {
             </AnimatePresence>
           </div>
 
-          {/* Talk to Agent Widget */}
-          <div className="lg:col-span-4 p-2.5 sm:p-3 rounded-2xl sm:rounded-3xl bg-white/[0.07] border border-white/15 backdrop-blur-xl shadow-2xl flex items-center justify-between">
-            <div className="flex items-center gap-3 pl-2">
-              <div className="relative w-9 h-9 sm:w-10 sm:h-10 rounded-full overflow-hidden border border-primary-green/50">
-                <Image
-                  src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=256&auto=format&fit=crop"
-                  alt="Agent Headshot"
-                  fill
-                  className="object-cover"
-                />
+          {/* Talk to Support Dropdown Widget */}
+          <div className="lg:col-span-4 p-2.5 sm:p-3 rounded-2xl sm:rounded-3xl bg-white/[0.07] border border-white/15 backdrop-blur-xl shadow-2xl space-y-3">
+            <div 
+              onClick={() => setShowSupportWidget((prev) => !prev)}
+              className="flex items-center justify-between cursor-pointer group"
+            >
+              <div className="flex items-center gap-3 pl-2">
+                <div className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-primary-green/20 border border-primary-green/50 text-primary-green">
+                  <Headphones className="w-5 h-5" />
+                </div>
+                <div className="text-left">
+                  <p className="text-xs sm:text-sm font-bold text-white">Talk to Support</p>
+                  <p className="text-[10px] text-green-400">Online now • 24/7 Assistance</p>
+                </div>
               </div>
-              <div className="text-left">
-                <p className="text-xs sm:text-sm font-bold text-white">Talk to an Agent</p>
-                <p className="text-[10px] text-green-400">Online now • Quick Response</p>
-              </div>
+
+              <button
+                type="button"
+                className="p-2.5 rounded-xl sm:rounded-2xl bg-white/10 group-hover:bg-white/20 text-white border border-white/15 transition-all cursor-pointer active:scale-95"
+              >
+                <ChevronDown className={`w-4 h-4 text-green-400 transition-transform duration-300 ${showSupportWidget ? 'rotate-180' : ''}`} />
+              </button>
             </div>
 
-            <Link
-              href="/agent-chat"
-              className="p-2.5 rounded-xl sm:rounded-2xl bg-white/10 hover:bg-white/20 text-white border border-white/15 transition-all cursor-pointer active:scale-95"
-            >
-              <ArrowUpRight className="w-4 h-4 text-green-400" />
-            </Link>
+            {/* Expandable Support Information Dropdown */}
+            <AnimatePresence>
+              {showSupportWidget && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden space-y-2 pt-1 border-t border-white/10"
+                >
+                  {/* Email Support */}
+                  <a
+                    href="mailto:support@useconekta.com"
+                    className="group relative flex items-start gap-3 p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-200"
+                  >
+                    <div className="p-2 rounded-lg bg-primary-green text-white shrink-0">
+                      <Mail className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 min-w-0 pr-6">
+                      <h4 className="font-bold text-white text-xs">Email Support</h4>
+                      <p className="text-[11px] text-slate-300 truncate font-medium mt-0.5">
+                        support@useconekta.com
+                      </p>
+                      <p className="text-[10px] text-slate-400 mt-0.5">
+                        Responses within 24 hours
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => handleCopy('support@useconekta.com', 'email', e)}
+                      className="absolute right-2.5 top-2.5 p-1 text-slate-400 hover:text-white rounded-md transition-all"
+                      title="Copy Email"
+                    >
+                      {copiedType === 'email' ? (
+                        <Check className="w-3.5 h-3.5 text-green-400" />
+                      ) : (
+                        <Copy className="w-3.5 h-3.5" />
+                      )}
+                    </button>
+                  </a>
+
+                  {/* Phone Support */}
+                  <a
+                    href="tel:08072383942"
+                    className="group relative flex items-start gap-3 p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-200"
+                  >
+                    <div className="p-2 rounded-lg bg-slate-800 text-white shrink-0 border border-white/10">
+                      <Phone className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 min-w-0 pr-6">
+                      <h4 className="font-bold text-white text-xs">Customer Support Line</h4>
+                      <p className="text-[11px] text-slate-300 font-medium mt-0.5">
+                        0807 238 3942
+                      </p>
+                      <p className="text-[10px] text-slate-400 mt-0.5">
+                        Speak directly with an agent
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={(e) => handleCopy('08072383942', 'phone', e)}
+                      className="absolute right-2.5 top-2.5 p-1 text-slate-400 hover:text-white rounded-md transition-all"
+                      title="Copy Phone Number"
+                    >
+                      {copiedType === 'phone' ? (
+                        <Check className="w-3.5 h-3.5 text-green-400" />
+                      ) : (
+                        <Copy className="w-3.5 h-3.5" />
+                      )}
+                    </button>
+                  </a>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
         </div>

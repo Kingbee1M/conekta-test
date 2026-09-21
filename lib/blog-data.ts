@@ -20,6 +20,63 @@ export interface BlogPost {
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    slug: 'project-roof-building-homes-for-those-who-have-none',
+    title: 'Project Roof: How 10% of Conekta Profits Build Real Homes in Lagos',
+    excerpt: 'Every transaction on Conekta funds permanent housing for Lagosians sleeping on the streets. This is not charity—it is our core identity.',
+    category: 'Impact & Social Good',
+    readTime: '4 min read',
+    publishedAt: 'September 21, 2026',
+    author: {
+      name: 'Adeola Bakare',
+      role: 'Head of Product',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
+    },
+    coverImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&q=80&w=1200',
+    content: [
+      {
+        type: 'paragraph',
+        text: 'Housing is a fundamental human right, yet thousands of individuals across urban Lagos sleep without a roof over their heads every night. At Conekta, we believe tech platforms shouldn’t just solve convenience for paying users—they must actively reshape the social fabric of the cities they operate in.'
+      },
+      {
+        type: 'heading',
+        text: 'The 10% Commitment: Built Into Our Economics'
+      },
+      {
+        type: 'paragraph',
+        text: 'Project Roof is our permanent commitment to urban restoration: exactly 10% of every naira in Conekta profit goes directly toward funding and constructing permanent shelter for unhoused Lagosians.'
+      },
+      {
+        type: 'quote',
+        text: 'This is not corporate charity or a seasonal CSR campaign. It is who we are. Every housing decision you make on Conekta builds someone else’s home.'
+      },
+      {
+        type: 'heading',
+        text: 'Roadmap and Public Accountability'
+      },
+      {
+        type: 'paragraph',
+        text: 'Transparency is non-negotiable. We maintain public, quarterly reports tracking capital allocation, ongoing development sites, and family placements.'
+      },
+      {
+        type: 'list',
+        items: [
+          '10% of profits dedicated to construction — always and unconditionally.',
+          'Year 3 Goal: 100 fully functional housing units completed in Lagos State.',
+          'Year 5 Goal: 1,000 unhoused families transitioned into permanent homes.',
+          'Live quarterly impact reports accessible directly on the Conekta platform.'
+        ]
+      },
+      {
+        type: 'heading',
+        text: 'An Uncopyable Moat Built on Purpose'
+      },
+      {
+        type: 'paragraph',
+        text: 'Competitors can copy software features, user interfaces, or pricing models. What they cannot replicate is a multi-year track record of building homes for the homeless. Every transaction on Conekta compounds brand equity and tangible social impact across our communities.'
+      }
+    ]
+  },
+  {
     slug: 'democratizing-real-estate-investing-africa',
     title: 'Democratizing Real Estate Ownership Across African Urban Hubs',
     excerpt: 'How fractional property tokens and escrow technology are lowering entry barriers for first-time retail investors.',

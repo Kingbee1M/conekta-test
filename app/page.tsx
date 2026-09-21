@@ -6,6 +6,9 @@ import EverythingLanding from "./components/EverythingLanding";
 import LandingStats from "./components/LandingStats";
 import MeetTheTeam from "./components/MeetTheTeam";
 import LandingNavbar from './components/ui/landingNav';
+import BrokenRealitySection from './components/BrokenRealitySection';
+import EcosystemSection from './components/EcosystemSection';
+import ProjectRoofSection from './components/ProjectRoofSection';
 
 export const metadata: Metadata = {
   title: 'Propti | Modern Real Estate & Property Management Platform',
@@ -100,8 +103,10 @@ export default function Home() {
       <Landinghero2 />
       <EverythingLanding />
       <LandingStats />
-      <MeetTheTeam />
+      <BrokenRealitySection/>
+      <EcosystemSection/>
       <BuiltSecurity />
+      <ProjectRoofSection/>
       <LandigBot />
     </>
   );

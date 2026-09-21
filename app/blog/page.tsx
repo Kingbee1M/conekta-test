@@ -5,10 +5,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Clock, Calendar, ArrowUpRight, Search, Sparkles } from 'lucide-react';
 import { BLOG_POSTS } from '@/lib/blog-data';
+import { useRouter } from 'next/navigation';
 
 export default function BlogListingPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
+  const router = useRouter()
 
   const categories = ['All', 'Product & Vision', 'Security & Trust', 'Market Insights'];
 
@@ -27,13 +29,13 @@ export default function BlogListingPage() {
       {/* HEADER NAV */}
       <div className="border-b border-gray-100 bg-white/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <Link 
-            href="/impact" 
+          <button 
+            onClick={()=> router.back()}
             className="inline-flex items-center gap-2 text-xs font-bold text-gray-600 hover:text-primary-green transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-            <span>Back to Impact Hub</span>
-          </Link>
+            <span>Back</span>
+          </button>
           <div className="flex items-center gap-1.5 text-xs font-bold text-primary-green">
             <Sparkles className="h-4 w-4" />
             <span>Conekta Insights</span>
