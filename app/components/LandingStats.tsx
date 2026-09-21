@@ -17,7 +17,7 @@ export default function LandingStats() {
         {/* Section Header */}
         <div className="text-center space-y-3 max-w-2xl mx-auto">
           <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Meet Propti
+            Meet CONEKTA
           </h2>
           <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
             A platform engineered to handle all your housing and real estate needs seamlessly while offering continuous, reliable support.
