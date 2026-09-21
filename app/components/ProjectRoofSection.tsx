@@ -20,9 +20,12 @@ const fadeInUp: Variants = {
 
 export default function ProjectRoofSection() {
   return (
-    <section className="relative py-20 lg:py-28 bg-white text-slate-900 overflow-hidden border-t border-slate-100">
-      {/* Background Soft Emerald Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-162.5 h-162.5 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+    <section className="relative py-20 lg:py-28 bg-white text-text-primary overflow-hidden border-t border-slate-100">
+      {/* Background Soft Glow */}
+      <div 
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-162.5 h-162.5 rounded-full blur-3xl pointer-events-none opacity-10"
+        style={{ backgroundColor: 'var(--color-primary-green)' }}
+      />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
@@ -34,8 +37,14 @@ export default function ProjectRoofSection() {
           className="p-8 sm:p-14 lg:p-16 rounded-[36px] bg-slate-900 text-white shadow-2xl relative overflow-hidden text-center border border-slate-800"
         >
           {/* Subtle Inner Decorative Elements */}
-          <div className="absolute -top-24 -right-24 w-72 h-72 bg-emerald-500/20 rounded-full blur-2xl pointer-events-none" />
-          <div className="absolute -bottom-24 -left-24 w-72 h-72 bg-emerald-600/15 rounded-full blur-2xl pointer-events-none" />
+          <div 
+            className="absolute -top-24 -right-24 w-72 h-72 rounded-full blur-2xl pointer-events-none opacity-20"
+            style={{ backgroundColor: 'var(--color-primary-green)' }}
+          />
+          <div 
+            className="absolute -bottom-24 -left-24 w-72 h-72 rounded-full blur-2xl pointer-events-none opacity-15"
+            style={{ backgroundColor: 'var(--color-secondary-green)' }}
+          />
 
           <div className="relative z-10 max-w-3xl mx-auto space-y-6">
             
@@ -46,10 +55,10 @@ export default function ProjectRoofSection() {
               whileInView="visible"
               viewport={{ once: true, margin: '-50px' }}
               variants={fadeInUp}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 backdrop-blur-md"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-green/15 border border-primary-green/30 backdrop-blur-md"
             >
-              <Heart className="w-3.5 h-3.5 text-emerald-400 fill-emerald-400/20" />
-              <span className="text-[11px] font-bold tracking-widest text-emerald-300 uppercase">
+              <Heart className="w-3.5 h-3.5 text-primary-green fill-primary-green/20" />
+              <span className="text-[11px] font-bold tracking-widest text-tertiary-green uppercase">
                 PROJECT ROOF
               </span>
             </motion.div>
@@ -63,7 +72,7 @@ export default function ProjectRoofSection() {
               variants={fadeInUp}
               className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight"
             >
-              <span className="text-emerald-400">10% of every naira</span> <br />
+              <span className="text-primary-green">10% of every naira</span> <br />
               <span className="font-serif italic font-normal">builds real homes.</span>
             </motion.h2>
 
@@ -92,7 +101,7 @@ export default function ProjectRoofSection() {
               className="grid grid-cols-2 gap-4 max-w-lg mx-auto py-4"
             >
               <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md text-left">
-                <div className="flex items-center gap-2 text-emerald-400 mb-1">
+                <div className="flex items-center gap-2 text-primary-green mb-1">
                   <Home className="w-4 h-4" />
                   <span className="text-xs font-semibold">Impact Pledge</span>
                 </div>
@@ -101,7 +110,7 @@ export default function ProjectRoofSection() {
               </div>
 
               <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md text-left">
-                <div className="flex items-center gap-2 text-emerald-400 mb-1">
+                <div className="flex items-center gap-2 text-primary-green mb-1">
                   <ShieldCheck className="w-4 h-4" />
                   <span className="text-xs font-semibold">Transparency</span>
                 </div>
@@ -121,7 +130,7 @@ export default function ProjectRoofSection() {
             >
               <Link
                 href="/blog/project-roof-building-homes-for-those-who-have-none"
-                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-lg shadow-emerald-500/20 active:scale-95 group"
+                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-primary-green hover:bg-primary-green-hover text-white font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-lg active:scale-95 group"
               >
                 <span>Learn about Project Roof</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
