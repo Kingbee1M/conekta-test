@@ -90,9 +90,12 @@ export default function EcosystemSection() {
   const selectedLayer = ecosystemLayers.find((layer) => layer.id === activeTab) || ecosystemLayers[0];
 
   return (
-    <section className="relative py-20 lg:py-28 bg-white text-slate-900 overflow-hidden border-t border-slate-100">
-      {/* Background Radial Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+    <section className="relative py-20 lg:py-28 bg-white text-text-primary overflow-hidden border-t border-slate-100">
+      {/* Background Radial Glow - Low opacity matches old subtle glow */}
+      <div 
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full blur-3xl pointer-events-none opacity-[0.05]"
+        style={{ backgroundColor: 'var(--color-primary-green)' }}
+      />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
@@ -104,10 +107,10 @@ export default function EcosystemSection() {
             whileInView="visible"
             viewport={{ once: true, margin: '-50px' }}
             variants={fadeInUp}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-tertiary-green border border-primary-green/20"
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
-            <span className="text-[11px] font-bold tracking-widest text-emerald-800 uppercase">
+            <span className="w-2 h-2 rounded-full bg-primary-green animate-pulse" />
+            <span className="text-[11px] font-bold tracking-widest text-secondary-green uppercase">
               WHAT WE&apos;RE BUILDING
             </span>
           </motion.div>
@@ -121,7 +124,7 @@ export default function EcosystemSection() {
             className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight text-slate-900"
           >
             Five layers. <br />
-            <span className="text-emerald-600 font-serif italic font-normal">
+            <span className="text-primary-green font-serif italic font-normal">
               One complete ecosystem.
             </span>
           </motion.h2>
@@ -136,13 +139,13 @@ export default function EcosystemSection() {
             className="text-xs sm:text-sm text-slate-500 font-medium tracking-wide flex flex-wrap items-center justify-center gap-1.5 pt-1"
           >
             <span>Discover</span>
-            <ChevronRight className="w-3.5 h-3.5 text-emerald-500" />
+            <ChevronRight className="w-3.5 h-3.5 text-primary-green" />
             <span>Finance</span>
-            <ChevronRight className="w-3.5 h-3.5 text-emerald-500" />
+            <ChevronRight className="w-3.5 h-3.5 text-primary-green" />
             <span>Transact</span>
-            <ChevronRight className="w-3.5 h-3.5 text-emerald-500" />
+            <ChevronRight className="w-3.5 h-3.5 text-primary-green" />
             <span>Manage</span>
-            <ChevronRight className="w-3.5 h-3.5 text-emerald-500" />
+            <ChevronRight className="w-3.5 h-3.5 text-primary-green" />
             <span>Invest</span>
           </motion.p>
           
@@ -181,12 +184,13 @@ export default function EcosystemSection() {
                     : 'bg-slate-100/80 hover:bg-slate-200/80 text-slate-600 border border-slate-200/60'
                 }`}
               >
-                <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-400' : 'text-slate-500'}`} />
+                {/* Fixed: Active icon uses primary-green for proper contrast against dark background */}
+                <Icon className={`w-4 h-4 ${isActive ? 'text-primary-green' : 'text-slate-500'}`} />
                 <span>{layer.name}</span>
                 {isActive && (
                   <motion.div
                     layoutId="activeTabBadge"
-                    className="absolute inset-0 rounded-full border-2 border-emerald-500 pointer-events-none"
+                    className="absolute inset-0 rounded-full border-2 border-primary-green/60 pointer-events-none"
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}
@@ -215,7 +219,7 @@ export default function EcosystemSection() {
             >
               {/* Left Details */}
               <div className="space-y-4 max-w-xl text-left">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-100/80 text-emerald-800 text-[11px] font-bold tracking-wide uppercase">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-tertiary-green text-secondary-green text-[11px] font-bold tracking-wide uppercase">
                   <span>{selectedLayer.highlight}</span>
                 </div>
 
@@ -232,7 +236,7 @@ export default function EcosystemSection() {
               <div className="shrink-0 w-full md:w-auto flex flex-col items-center">
                 <Link
                   href={selectedLayer.href}
-                  className="w-full md:w-auto inline-flex items-center justify-center gap-3 px-7 py-4 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold uppercase tracking-wider transition-all shadow-md active:scale-95 group"
+                  className="w-full md:w-auto inline-flex items-center justify-center gap-3 px-7 py-4 rounded-full bg-primary-green hover:opacity-90 text-white text-xs sm:text-sm font-bold uppercase tracking-wider transition-all shadow-md active:scale-95 group"
                 >
                   <span>Explore {selectedLayer.name}</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -256,7 +260,8 @@ export default function EcosystemSection() {
             className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold uppercase tracking-wider transition-all shadow-lg active:scale-95 group"
           >
             <span>Explore the full product</span>
-            <ArrowRight className="w-4 h-4 text-emerald-400 group-hover:translate-x-1 transition-transform" />
+            {/* Fixed: Icon uses primary-green for bright pop on black background */}
+            <ArrowRight className="w-4 h-4 text-primary-green group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>
 
