@@ -4,14 +4,15 @@ import LandigBot from "./components/landingbot";
 import Landinghero2 from "./components/landinghero2";
 import EverythingLanding from "./components/EverythingLanding";
 import LandingStats from "./components/LandingStats";
-import MeetTheTeam from "./components/MeetTheTeam";
 import LandingNavbar from './components/ui/landingNav';
 import BrokenRealitySection from './components/BrokenRealitySection';
 import EcosystemSection from './components/EcosystemSection';
 import ProjectRoofSection from './components/ProjectRoofSection';
+import MarqueeBanner from './components/customer/MarqueeBanner';
+import ScrollProgressIndicator from './components/ui/ScrollProgressIndicator';
 
 export const metadata: Metadata = {
-  title: 'Propti | Modern Real Estate & Property Management Platform',
+  title: "Conekta - Affordable Homes | Investment | Rent | Africa's Housing Ecosystem",
   description:
     'Discover, rent, buy, and manage properties with ease. Propti connects you with verified listers, artisans, and seamless flexible payment options.',
   keywords: [
@@ -27,9 +28,8 @@ export const metadata: Metadata = {
   authors: [{ name: 'Propti Team' }],
   creator: 'Propti',
   publisher: 'Propti Real Estate',
-  metadataBase: new URL('https://propti.com'), // Replace with your production domain
+  metadataBase: new URL('https://propti.com'),
 
-  // Open Graph (For Facebook, LinkedIn, WhatsApp link previews)
   openGraph: {
     title: 'Propti | Modern Real Estate & Property Management Platform',
     description:
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     siteName: 'Propti',
     images: [
       {
-        url: '/og-image.jpg', // Place a 1200x630 image in public/og-image.jpg
+        url: '/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'Propti - Modern Real Estate Platform',
@@ -48,7 +48,6 @@ export const metadata: Metadata = {
     type: 'website',
   },
 
-  // Twitter Card metadata
   twitter: {
     card: 'summary_large_image',
     title: 'Propti | Modern Real Estate Platform',
@@ -58,7 +57,6 @@ export const metadata: Metadata = {
     creator: '@propti',
   },
 
-  // Search Engine Indexing rules
   robots: {
     index: true,
     follow: true,
@@ -71,16 +69,25 @@ export const metadata: Metadata = {
     },
   },
 
-  // Favicons & Canonical URL
   alternates: {
     canonical: 'https://propti.com',
   },
 };
 
+const pageSections = [
+  { id: 'hero', label: 'Overview' },
+  { id: 'features', label: 'Features' },
+  { id: 'stats', label: 'Market Stats' },
+  { id: 'broken-reality', label: 'The Problem' },
+  { id: 'ecosystem', label: 'Ecosystem' },
+  { id: 'security', label: 'Security' },
+  { id: 'project-roof', label: 'Project Roof' },
+];
+
 export default function Home() {
   return (
     <>
-      {/* Structured Data (JSON-LD) for Search Engines */}
+      {/* Structured Data (JSON-LD) */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -99,14 +106,41 @@ export default function Home() {
           }),
         }}
       />
-      <LandingNavbar/>
-      <Landinghero2 />
-      <EverythingLanding />
-      <LandingStats />
-      <BrokenRealitySection/>
-      <EcosystemSection/>
-      <BuiltSecurity />
-      <ProjectRoofSection/>
+      <LandingNavbar />
+
+      {/* Floating Right Scroll Progress Indicator Bar */}
+      <ScrollProgressIndicator sections={pageSections} />
+
+      <section id="hero">
+        <Landinghero2 />
+      </section>
+
+      <MarqueeBanner />
+
+      <section id="features">
+        <EverythingLanding />
+      </section>
+
+      <section id="stats">
+        <LandingStats />
+      </section>
+
+      <section id="broken-reality">
+        <BrokenRealitySection />
+      </section>
+
+      <section id="ecosystem">
+        <EcosystemSection />
+      </section>
+
+      <section id="security">
+        <BuiltSecurity />
+      </section>
+
+      <section id="project-roof">
+        <ProjectRoofSection />
+      </section>
+
       <LandigBot />
     </>
   );
