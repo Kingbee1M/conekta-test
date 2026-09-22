@@ -67,10 +67,10 @@ export default function Landinghero2() {
   const [copiedType, setCopiedType] = useState<'email' | 'phone' | null>(null);
 
   const aiDescription =
-    "🤖 Conekta AI Engine: Describe your dream home in natural language (e.g., '3-bed apartment in Lekki Phase 1 with 24/7 power under ₦5M/yr'). Our AI analyzes real-time verified market listings to match your exact lifestyle requirements!";
+    "Conekta AI Engine: Describe your dream home in natural language (e.g., '3-bed apartment in Lekki Phase 1 with 24/7 power under ₦5M/yr'). Our AI analyzes real-time verified market listings to match your exact lifestyle requirements!";
 
   const searchDescription =
-    "ℹ️ Search Feature Preview: When logged in, this allows you to filter and explore thousands of verified apartments, commercial spaces, and lands across Lagos, Abuja, and Port Harcourt. Sign in or create an account to start searching real listings!";
+    "Search Feature Preview: When logged in, this allows you to filter and explore thousands of verified apartments, commercial spaces, and lands across Lagos, Abuja, and Port Harcourt. Sign in or create an account to start searching real listings!";
 
   const handleSearchClick = (e: React.FormEvent) => {
     e.preventDefault();
@@ -157,7 +157,7 @@ export default function Landinghero2() {
                   className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-primary-green hover:bg-primary-green-hover text-white text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-black/50 active:scale-95 group"
                 >
                   <Sparkles className="w-4 h-4 text-green-200" />
-                  <span>AI-powered Search</span>
+                  <span className='text-xs'>AI-powered Search</span>
                   <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAiInfo ? 'rotate-180' : ''}`} />
                 </button>
 
@@ -189,7 +189,7 @@ export default function Landinghero2() {
                   href="/sign-up"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white hover:bg-slate-100 text-slate-900 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-md active:scale-95"
                 >
-                  <span>Get Started</span>
+                  <span className='text-xs'>Get Started</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
 
@@ -197,7 +197,7 @@ export default function Landinghero2() {
                   href="/discover"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold uppercase tracking-wider backdrop-blur-md transition-all cursor-pointer active:scale-95"
                 >
-                  <span>Browse Properties</span>
+                  <span className='text-xs'>Browse Properties</span>
                   <ArrowUpRight className="w-3.5 h-3.5 text-slate-300" />
                 </Link>
               </div>
