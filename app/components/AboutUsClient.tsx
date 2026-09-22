@@ -845,7 +845,7 @@ export default function AboutUsClient() {
       </section>
 
       {/* ORGANIZATIONAL TREE SECTION */}
-      <section className="py-16 sm:py-24 bg-white overflow-hidden">
+      <section className="py-16 sm:py-24 bg-white overflow-hidden" id='team'>
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
