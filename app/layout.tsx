@@ -5,7 +5,7 @@ import CookieBanner from "./components/ui/cookieBanner";
 import DevStorageTool from "./components/ui/DevStorageTool";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastProvider } from "./components/ui/ToastProvider";
-import { Hanken_Grotesk, JetBrains_Mono, Poppins } from "next/font/google";
+import { Hanken_Grotesk, JetBrains_Mono, Poppins, Instrument_Serif, Sora } from "next/font/google";
 import NextProgress from "./components/ui/NextProgress";
 import { Suspense } from "react";
 import FooterWrapper from "./components/ui/clientFooter";
@@ -32,6 +32,19 @@ const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700", "800"],
 });
 
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  subsets: ["latin"],
+  weight: ["400"],
+  style: ["normal", "italic"],
+});
+
+const sora = Sora({
+  variable: "--font-sora",
+  subsets: ["latin"],
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800"],
+});
+
 export const metadata: Metadata = {
   title: "Conekta",
   description: "Conekta is a platform that connects landlords and tenants...",
@@ -44,7 +57,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${hanken.variable} ${jetbrains.variable} ${poppins.variable} font-sans w-full max-w-screen min-h-screen flex flex-col items-center justify-between overflow-x-hidden selection:bg-tertiary-green selection:text-primary-green`}>
+      <body className={`${hanken.variable} ${jetbrains.variable} ${poppins.variable} ${instrumentSerif.variable} ${sora.variable} font-sans w-full max-w-screen min-h-screen flex flex-col items-center justify-between overflow-x-hidden selection:bg-tertiary-green selection:text-primary-green`}>
         <StoreProvider>
           <AuthWatcher>
             <ToastProvider>
@@ -56,11 +69,11 @@ export default function RootLayout({
               </Suspense>
               <TooltipProvider>
                 <NotificationProvider>
-                <KycModalProvider>
-                <main className="w-full max-w-520 flex-1 flex-col items-center justify-center">
-                  {children}
-                </main>
-                </KycModalProvider>
+                  <KycModalProvider>
+                    <main className="w-full max-w-520 flex-1 flex-col items-center justify-center">
+                      {children}
+                    </main>
+                  </KycModalProvider>
                 </NotificationProvider>
               </TooltipProvider>
               <FooterWrapper />
