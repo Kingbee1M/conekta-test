@@ -83,7 +83,7 @@ export default function EcosystemSection() {
     <section className="relative py-20 lg:py-28 bg-white text-text-primary overflow-hidden border-t border-slate-100">
       {/* Background Radial Glow */}
       <div 
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full blur-3xl pointer-events-none opacity-[0.05]"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-175 h-175 rounded-full blur-3xl pointer-events-none opacity-[0.05]"
         style={{ backgroundColor: 'var(--color-primary-green)' }}
       />
 
@@ -245,7 +245,7 @@ export default function EcosystemSection() {
         >
           <Link
             href="/home"
-            className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold uppercase tracking-wider transition-all shadow-lg active:scale-95 group"
+            className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full border-primary-green border text-primary-green text-xs sm:text-sm font-bold uppercase tracking-wider transition-all shadow-lg active:scale-95 group"
           >
             <span>Explore the full product</span>
             <ArrowRight className="w-4 h-4 text-primary-green group-hover:translate-x-1 transition-transform" />

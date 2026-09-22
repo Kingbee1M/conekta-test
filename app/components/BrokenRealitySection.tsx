@@ -25,7 +25,7 @@ const headlineMask: Variants = {
     transition: {
       duration: 0.8,
       delay: delay,
-      ease: [0.16, 1, 0.3, 1] as const, // easeOutExpo
+      ease: [0.16, 1, 0.3, 1] as const,
     },
   }),
 };
@@ -100,13 +100,10 @@ function FlipCard({ item, className = '' }: FlipCardProps) {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleMouseEnter = () => {
-    // Immediate trigger on hover enter
     setIsFlipped(true);
 
-    // Clear existing timer if any
     if (timerRef.current) clearTimeout(timerRef.current);
 
-    // Remain flipped for 2.5 seconds, then auto-flip back
     timerRef.current = setTimeout(() => {
       setIsFlipped(false);
     }, 2500);
@@ -121,12 +118,12 @@ function FlipCard({ item, className = '' }: FlipCardProps) {
   return (
     <div
       onMouseEnter={handleMouseEnter}
-      className={`group relative h-[320px] rounded-3xl [transform-style:preserve-3d] transition-transform duration-700 ease-[0.4,0,0.2,1] cursor-pointer ${
-        isFlipped ? '[transform:rotateY(180deg)]' : ''
+      className={`group relative h-80 rounded-3xl transform-3d transition-transform duration-700 ease-[0.4,0,0.2,1] cursor-pointer ${
+        isFlipped ? 'transform-[rotateY(180deg)]' : ''
       } ${className}`}
     >
       {/* --- FRONT: OLD STATUS QUO --- */}
-      <div className="absolute inset-0 p-8 rounded-3xl bg-white border border-slate-200 shadow-sm [backface-visibility:hidden] flex flex-col justify-between overflow-hidden">
+      <div className="absolute inset-0 p-8 rounded-3xl bg-white border border-slate-200 shadow-sm backface-hidden flex flex-col justify-between overflow-hidden">
         <div className="absolute -top-12 -left-12 w-28 h-28 rounded-full bg-slate-100 blur-xl opacity-0 scale-50 group-hover:opacity-100 group-hover:scale-[6] transition-all duration-700 ease-out pointer-events-none" />
 
         <div className="relative z-10 space-y-3">
@@ -150,26 +147,26 @@ function FlipCard({ item, className = '' }: FlipCardProps) {
       </div>
 
       {/* --- BACK: NEW STATUS QUO --- */}
-      <div className="absolute inset-0 p-8 rounded-3xl bg-slate-900 text-white [transform:rotateY(180deg)] [backface-visibility:hidden] flex flex-col justify-between overflow-hidden border border-slate-800">
-        <div className="absolute -bottom-12 -right-12 w-28 h-28 rounded-full bg-primary-green blur-2xl opacity-40 pointer-events-none" />
+      <div className="absolute inset-0 p-8 rounded-3xl bg-primary-green text-white transform-[rotateY(180deg)] backface-hidden flex flex-col justify-between overflow-hidden border border-primary-green/20">
+        <div className="absolute -bottom-12 -right-12 w-28 h-28 rounded-full bg-white blur-2xl opacity-20 pointer-events-none" />
 
         <div className="relative z-10 space-y-3">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-bold tracking-tight text-white">
               The Conekta Way
             </h3>
-            <span className="text-xl font-bold text-primary-green/30">
+            <span className="text-xl font-bold text-white/40">
               {item.number}
             </span>
           </div>
-          <p className="text-sm text-slate-200 leading-relaxed font-normal">
+          <p className="text-sm text-white/90 leading-relaxed font-normal">
             {item.solution}
           </p>
         </div>
 
-        <div className="relative z-10 mt-6 pt-4 border-t border-slate-700 flex items-center justify-between text-[11px] text-primary-green/60 font-medium">
+        <div className="relative z-10 mt-6 pt-4 border-t border-white/20 flex items-center justify-between text-[11px] text-white/80 font-medium">
           <span className="uppercase tracking-wider">New Standard</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-primary-green animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
         </div>
       </div>
     </div>
@@ -179,14 +176,12 @@ function FlipCard({ item, className = '' }: FlipCardProps) {
 export default function BrokenRealitySection() {
   return (
     <section className="relative py-20 lg:py-28 lg:px-16 bg-slate-50/50 text-text-primary overflow-hidden border-t border-slate-100 selection:bg-tertiary-green selection:text-primary-green">
-      {/* Background Decorator Gradients */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 rounded-full blur-3xl pointer-events-none opacity-5"
         style={{ backgroundColor: 'var(--color-primary-green)' }}
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
         <div className="text-left max-w-4xl space-y-5 mb-16 sm:mb-24">
           <motion.div
             custom={0}
@@ -194,14 +189,12 @@ export default function BrokenRealitySection() {
             whileInView="visible"
             viewport={{ once: true, margin: '-50px' }}
             variants={fadeInUp}
-            className=""
           >
             <span className="text-[11px] font-bold tracking-widest text-secondary-green uppercase">
               THE BROKEN REALITY
             </span>
           </motion.div>
 
-          {/* Masked Headline Animation */}
           <h2 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight text-slate-900">
             <span className="block overflow-hidden relative">
               <motion.span
@@ -229,9 +222,7 @@ export default function BrokenRealitySection() {
             </span>
           </h2>
 
-          {/* Subheading content "falling out" */}
           <div className="relative pt-4">
-            {/* --- TRANSPARENT TRACK WITH STRETCHING/EXPANDING LINE --- */}
             <div className="relative w-full h-1 bg-transparent overflow-hidden rounded-full mb-6">
               <motion.div
                 className="absolute top-0 bottom-0 bg-primary-green rounded-full"
@@ -263,8 +254,7 @@ export default function BrokenRealitySection() {
           </div>
         </div>
 
-        {/* Flipping Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 [perspective:1500px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 perspective-[1500px]">
           {painPoints.map((item, index) => (
             <FlipCard
               key={item.id}

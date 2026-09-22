@@ -32,11 +32,6 @@ const fadeInUp: Variants = {
   }),
 };
 
-const fadeIn: Variants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.8 } },
-};
-
 // Typewriter Effect Component
 function TypewriterText({ text, speed = 25 }: { text: string; speed?: number }) {
   const [displayedText, setDisplayedText] = useState('');
@@ -107,7 +102,7 @@ export default function Landinghero2() {
 
       {/* Hero Content Body */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 w-full my-auto py-12 lg:py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
           {/* Main Hero Card Content */}
           <motion.div
@@ -115,40 +110,42 @@ export default function Landinghero2() {
             initial="hidden"
             animate="visible"
             variants={fadeInUp}
-            className="lg:col-span-8 p-6 sm:p-10 rounded-3xl sm:rounded-[36px] bg-white/6 border border-white/15 backdrop-blur-2xl shadow-2xl space-y-6"
+            className="lg:col-span-8 p-6 sm:p-10 rounded-3xl sm:rounded-[36px] bg-white/6 border border-white/15 backdrop-blur-2xl shadow-2xl flex flex-col justify-between space-y-6"
           >
-            {/* Pill Badge */}
-            <motion.div
-              custom={1}
-              variants={fadeInUp}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary-green/40 border border-primary-green/40 backdrop-blur-md"
-            >
-              <span className="w-2 h-2 rounded-full bg-primary-green animate-pulse" />
-              <p className="text-xs font-semibold text-green-200 tracking-wide">
-                No more agent stories. No more stress!
-              </p>
-            </motion.div>
+            <div className="space-y-6">
+              {/* Pill Badge */}
+              <motion.div
+                custom={1}
+                variants={fadeInUp}
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary-green/40 border border-primary-green/40 backdrop-blur-md"
+              >
+                <span className="w-2 h-2 rounded-full bg-primary-green animate-pulse" />
+                <p className="text-xs font-semibold text-green-200 tracking-wide">
+                  No more agent stories. No more stress!
+                </p>
+              </motion.div>
 
-            {/* Headline */}
-            <motion.h1
-              custom={2}
-              variants={fadeInUp}
-              className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] text-white"
-            >
-              Nigeria, <br />
-              <span className="text-green-400 italic font-serif font-normal">
-                Your housing just got easier!
-              </span>
-            </motion.h1>
+              {/* Headline */}
+              <motion.h1
+                custom={2}
+                variants={fadeInUp}
+                className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] text-white"
+              >
+                Nigeria, <br />
+                <span className="text-green-400 italic font-serif font-normal">
+                  Your housing just got easier!
+                </span>
+              </motion.h1>
 
-            {/* Subtitle */}
-            <motion.p
-              custom={3}
-              variants={fadeInUp}
-              className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal max-w-2xl"
-            >
-              Find verified homes, pay your way, manage seamlessly, and invest — all in one place. This is how Nigerians find home now!
-            </motion.p>
+              {/* Subtitle */}
+              <motion.p
+                custom={3}
+                variants={fadeInUp}
+                className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal max-w-2xl"
+              >
+                Find verified homes, pay your way, manage seamlessly, and invest — all in one place. This is how Nigerians find home now!
+              </motion.p>
+            </div>
 
             {/* AI Search CTA & Interactive Dropdown */}
             <motion.div custom={4} variants={fadeInUp} className="space-y-4 pt-2">
@@ -207,181 +204,165 @@ export default function Landinghero2() {
             </motion.div>
           </motion.div>
 
-          {/* Floating Stats Side Cards */}
-          <div className="lg:col-span-4 flex flex-row lg:flex-col gap-4">
+          {/* Side Column: Support Widget & Manual Property Search */}
+          <div className="lg:col-span-4 flex flex-col gap-4 ">
+            
+            {/* Talk to Support Dropdown Widget */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, delay: 0.4 }}
-              className="flex-1 p-6 rounded-3xl bg-white/6 border border-white/15 backdrop-blur-2xl shadow-xl space-y-1"
+              transition={{ duration: 0.7, delay: 0.3 }}
+              className="p-5 sm:p-6 rounded-3xl bg-white/6 border border-white/15 backdrop-blur-2xl shadow-xl space-y-3"
             >
-              <p className="text-3xl sm:text-4xl font-extrabold text-primary-green">20,000+</p>
-              <p className="text-xs text-slate-300 font-medium">Happy Users</p>
+              <div 
+                onClick={() => setShowSupportWidget((prev) => !prev)}
+                className="flex items-center justify-between cursor-pointer group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary-green/20 border border-primary-green/50 text-primary-green">
+                    <Headphones className="w-5 h-5" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-xs sm:text-sm font-bold text-white">Speak with Support</p>
+                    <p className="text-[10px] text-green-400">Online now • 24/7 Assistance</p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  className="p-2.5 rounded-2xl bg-white/10 group-hover:bg-white/20 text-white border border-white/15 transition-all cursor-pointer active:scale-95"
+                >
+                  <ChevronDown className={`w-4 h-4 text-green-400 transition-transform duration-300 ${showSupportWidget ? 'rotate-180' : ''}`} />
+                </button>
+              </div>
+
+              {/* Expandable Support Information Dropdown */}
+              <AnimatePresence>
+                {showSupportWidget && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden space-y-2 pt-2 border-t border-white/10"
+                  >
+                    {/* Email Support */}
+                    <a
+                      href="mailto:support@useconekta.com"
+                      className="group relative flex items-start gap-3 p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-200"
+                    >
+                      <div className="p-2 rounded-lg bg-primary-green text-white shrink-0">
+                        <Mail className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1 min-w-0 pr-6">
+                        <h4 className="font-bold text-white text-xs">Email Support</h4>
+                        <p className="text-[11px] text-slate-300 truncate font-medium mt-0.5">
+                          support@useconekta.com
+                        </p>
+                        <p className="text-[10px] text-slate-400 mt-0.5">
+                          Responses within 24 hours
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(e) => handleCopy('support@useconekta.com', 'email', e)}
+                        className="absolute right-2.5 top-2.5 p-1 text-slate-400 hover:text-white rounded-md transition-all"
+                        title="Copy Email"
+                      >
+                        {copiedType === 'email' ? (
+                          <Check className="w-3.5 h-3.5 text-green-400" />
+                        ) : (
+                          <Copy className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    </a>
+
+                    {/* Phone Support */}
+                    <a
+                      href="tel:08072383942"
+                      className="group relative flex items-start gap-3 p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-200"
+                    >
+                      <div className="p-2 rounded-lg bg-slate-800 text-white shrink-0 border border-white/10">
+                        <Phone className="w-4 h-4" />
+                      </div>
+                      <div className="flex-1 min-w-0 pr-6">
+                        <h4 className="font-bold text-white text-xs">Customer Support Line</h4>
+                        <p className="text-[11px] text-slate-300 font-medium mt-0.5">
+                          0807 238 3942
+                        </p>
+                        <p className="text-[10px] text-slate-400 mt-0.5">
+                          Speak directly with an agent
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={(e) => handleCopy('08072383942', 'phone', e)}
+                        className="absolute right-2.5 top-2.5 p-1 text-slate-400 hover:text-white rounded-md transition-all"
+                        title="Copy Phone Number"
+                      >
+                        {copiedType === 'phone' ? (
+                          <Check className="w-3.5 h-3.5 text-green-400" />
+                        ) : (
+                          <Copy className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    </a>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
 
+            {/* Property Search Input */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, delay: 0.55 }}
-              className="flex-1 p-6 rounded-3xl bg-white/6 border border-white/15 backdrop-blur-2xl shadow-xl space-y-1"
+              transition={{ duration: 0.7, delay: 0.45 }}
+              className="p-5 sm:p-6 rounded-3xl bg-white/6 border border-white/15 backdrop-blur-2xl shadow-xl space-y-3"
             >
-              <p className="text-3xl sm:text-4xl font-extrabold text-primary-green">5,000+</p>
-              <p className="text-xs text-slate-300 font-medium">Properties Listed</p>
+              <p className="text-xs font-bold uppercase tracking-wider text-green-400">
+                Manual Search
+              </p>
+
+              <form onSubmit={handleSearchClick} className="flex items-center gap-2 bg-white/10 rounded-2xl px-3.5 py-1.5 border border-white/10 focus-within:border-primary-green transition-all">
+                <Search className="w-4 h-4 text-green-400 shrink-0" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Location, City, or Area..."
+                  className="w-full bg-transparent py-2 text-xs text-white placeholder-slate-400 focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  title="Click to search or view discovery details"
+                  className="px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-900 text-xs font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer shadow-md active:scale-95"
+                >
+                  Search
+                </button>
+              </form>
+
+              {/* Search Dropdown Typewriter Animation */}
+              <AnimatePresence>
+                {showSearchInfo && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="p-3 rounded-xl bg-slate-900/80 border border-white/10"
+                  >
+                    <div className="flex items-start gap-2">
+                      <Info className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
+                      <TypewriterText text={searchDescription} />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </motion.div>
+
           </div>
 
         </div>
       </div>
-
-      {/* Floating Bottom Search & Support Widget Bar */}
-      <motion.div
-        initial="hidden"
-        animate="visible"
-        variants={fadeIn}
-        className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 w-full pb-8 sm:pb-12"
-      >
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
-          
-          {/* Property Search Input */}
-          <div className="lg:col-span-8 p-2.5 sm:p-3 rounded-2xl sm:rounded-3xl bg-white/[0.07] border border-white/15 backdrop-blur-xl shadow-2xl space-y-2">
-            <form onSubmit={handleSearchClick} className="flex items-center gap-2 bg-white/10 rounded-xl sm:rounded-2xl px-4 py-1.5 border border-white/10 focus-within:border-primary-green transition-all">
-              <Search className="w-4 h-4 text-green-400 shrink-0" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by Location, City, or Neighborhood..."
-                className="w-full bg-transparent py-2 text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none"
-              />
-              <button
-                type="submit"
-                title="Click to search or view discovery details"
-                className="px-5 py-2.5 rounded-xl bg-white hover:bg-slate-100 text-slate-900 text-xs font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer shadow-md active:scale-95"
-              >
-                Search
-              </button>
-            </form>
-
-            {/* Search Dropdown Typewriter Animation */}
-            <AnimatePresence>
-              {showSearchInfo && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="p-3 rounded-xl bg-slate-900/80 border border-white/10"
-                >
-                  <div className="flex items-start gap-2">
-                    <Info className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
-                    <TypewriterText text={searchDescription} />
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Talk to Support Dropdown Widget */}
-          <div className="lg:col-span-4 p-2.5 sm:p-3 rounded-2xl sm:rounded-3xl bg-white/[0.07] border border-white/15 backdrop-blur-xl shadow-2xl space-y-3">
-            <div 
-              onClick={() => setShowSupportWidget((prev) => !prev)}
-              className="flex items-center justify-between cursor-pointer group"
-            >
-              <div className="flex items-center gap-3 pl-2">
-                <div className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-primary-green/20 border border-primary-green/50 text-primary-green">
-                  <Headphones className="w-5 h-5" />
-                </div>
-                <div className="text-left">
-                  <p className="text-xs sm:text-sm font-bold text-white">Talk to Support</p>
-                  <p className="text-[10px] text-green-400">Online now • 24/7 Assistance</p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                className="p-2.5 rounded-xl sm:rounded-2xl bg-white/10 group-hover:bg-white/20 text-white border border-white/15 transition-all cursor-pointer active:scale-95"
-              >
-                <ChevronDown className={`w-4 h-4 text-green-400 transition-transform duration-300 ${showSupportWidget ? 'rotate-180' : ''}`} />
-              </button>
-            </div>
-
-            {/* Expandable Support Information Dropdown */}
-            <AnimatePresence>
-              {showSupportWidget && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="overflow-hidden space-y-2 pt-1 border-t border-white/10"
-                >
-                  {/* Email Support */}
-                  <a
-                    href="mailto:support@useconekta.com"
-                    className="group relative flex items-start gap-3 p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-200"
-                  >
-                    <div className="p-2 rounded-lg bg-primary-green text-white shrink-0">
-                      <Mail className="w-4 h-4" />
-                    </div>
-                    <div className="flex-1 min-w-0 pr-6">
-                      <h4 className="font-bold text-white text-xs">Email Support</h4>
-                      <p className="text-[11px] text-slate-300 truncate font-medium mt-0.5">
-                        support@useconekta.com
-                      </p>
-                      <p className="text-[10px] text-slate-400 mt-0.5">
-                        Responses within 24 hours
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={(e) => handleCopy('support@useconekta.com', 'email', e)}
-                      className="absolute right-2.5 top-2.5 p-1 text-slate-400 hover:text-white rounded-md transition-all"
-                      title="Copy Email"
-                    >
-                      {copiedType === 'email' ? (
-                        <Check className="w-3.5 h-3.5 text-green-400" />
-                      ) : (
-                        <Copy className="w-3.5 h-3.5" />
-                      )}
-                    </button>
-                  </a>
-
-                  {/* Phone Support */}
-                  <a
-                    href="tel:08072383942"
-                    className="group relative flex items-start gap-3 p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all duration-200"
-                  >
-                    <div className="p-2 rounded-lg bg-slate-800 text-white shrink-0 border border-white/10">
-                      <Phone className="w-4 h-4" />
-                    </div>
-                    <div className="flex-1 min-w-0 pr-6">
-                      <h4 className="font-bold text-white text-xs">Customer Support Line</h4>
-                      <p className="text-[11px] text-slate-300 font-medium mt-0.5">
-                        0807 238 3942
-                      </p>
-                      <p className="text-[10px] text-slate-400 mt-0.5">
-                        Speak directly with an agent
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={(e) => handleCopy('08072383942', 'phone', e)}
-                      className="absolute right-2.5 top-2.5 p-1 text-slate-400 hover:text-white rounded-md transition-all"
-                      title="Copy Phone Number"
-                    >
-                      {copiedType === 'phone' ? (
-                        <Check className="w-3.5 h-3.5 text-green-400" />
-                      ) : (
-                        <Copy className="w-3.5 h-3.5" />
-                      )}
-                    </button>
-                  </a>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-        </div>
-      </motion.div>
     </section>
   );
 }
