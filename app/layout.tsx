@@ -44,7 +44,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${hanken.variable} ${jetbrains.variable} ${poppins.variable} font-sans w-full max-w-screen min-h-screen flex flex-col items-center justify-between overflow-x-hidden`}>
+      <body className={`${hanken.variable} ${jetbrains.variable} ${poppins.variable} font-sans w-full max-w-screen min-h-screen flex flex-col items-center justify-between overflow-x-hidden selection:bg-tertiary-green selection:text-primary-green`}>
         <StoreProvider>
           <AuthWatcher>
             <ToastProvider>

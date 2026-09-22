@@ -34,7 +34,7 @@ export default function ProjectRoofSection() {
           whileInView="visible"
           viewport={{ once: true, margin: '-50px' }}
           variants={fadeInUp}
-          className="p-8 sm:p-14 lg:p-16 rounded-[36px] bg-slate-900 text-white shadow-2xl relative overflow-hidden text-center border border-slate-800"
+          className="p-8 sm:p-12 lg:p-16 rounded-[36px] bg-slate-900 text-white shadow-2xl relative overflow-hidden border border-slate-800"
         >
           {/* Subtle Inner Decorative Elements */}
           <div 
@@ -46,7 +46,7 @@ export default function ProjectRoofSection() {
             style={{ backgroundColor: 'var(--color-secondary-green)' }}
           />
 
-          <div className="relative z-10 max-w-3xl mx-auto space-y-6">
+          <div className="relative z-10 max-w-2xl space-y-6 text-left">
             
             {/* Pill Badge */}
             <motion.div
@@ -55,9 +55,8 @@ export default function ProjectRoofSection() {
               whileInView="visible"
               viewport={{ once: true, margin: '-50px' }}
               variants={fadeInUp}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary-green/15 border border-primary-green/30 backdrop-blur-md"
+              className=""
             >
-              <Heart className="w-3.5 h-3.5 text-primary-green fill-primary-green/20" />
               <span className="text-[11px] font-bold tracking-widest text-tertiary-green uppercase">
                 PROJECT ROOF
               </span>
@@ -70,10 +69,10 @@ export default function ProjectRoofSection() {
               whileInView="visible"
               viewport={{ once: true, margin: '-50px' }}
               variants={fadeInUp}
-              className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight"
+              className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-none space-x-2"
             >
-              <span className="text-primary-green">10% of every naira</span> <br />
-              <span className="font-serif italic font-normal">builds real homes.</span>
+              <span className="text-primary-green">10% of every naira</span>
+              <span className="font-normal text-white">builds real homes.</span>
             </motion.h2>
 
             {/* Subheading / Description */}
@@ -83,10 +82,10 @@ export default function ProjectRoofSection() {
               whileInView="visible"
               viewport={{ once: true, margin: '-50px' }}
               variants={fadeInUp}
-              className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal max-w-2xl mx-auto"
+              className="text-base sm:text-lg text-slate-300 leading-relaxed font-normal"
             >
-              Every transaction on Conekta funds permanent housing for Lagosians sleeping on the streets. 
-              <span className="block mt-1 font-semibold text-white">
+              Every transaction on Conekta funds permanent housing for Lagosians sleeping on the streets.{' '}
+              <span className="font-semibold text-white">
                 This is not charity. It is who we are.
               </span>
             </motion.p>
@@ -98,24 +97,24 @@ export default function ProjectRoofSection() {
               whileInView="visible"
               viewport={{ once: true, margin: '-50px' }}
               variants={fadeInUp}
-              className="grid grid-cols-2 gap-4 max-w-lg mx-auto py-4"
+              className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 pb-2"
             >
-              <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md text-left">
-                <div className="flex items-center gap-2 text-primary-green mb-1">
+              <div className="p-4 sm:p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                <div className="flex items-center gap-2 text-primary-green mb-1.5">
                   <Home className="w-4 h-4" />
-                  <span className="text-xs font-semibold">Impact Pledge</span>
+                  <span className="text-xs font-semibold uppercase tracking-wide">Impact Pledge</span>
                 </div>
-                <p className="text-xl sm:text-2xl font-black text-white">10% Allocated</p>
-                <p className="text-[11px] text-slate-400">Directly funds shelters</p>
+                <p className="text-2xl font-black text-white">10% Allocated</p>
+                <p className="text-xs text-slate-400 mt-0.5">Directly funds shelters</p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md text-left">
-                <div className="flex items-center gap-2 text-primary-green mb-1">
+              <div className="p-4 sm:p-5 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+                <div className="flex items-center gap-2 text-primary-green mb-1.5">
                   <ShieldCheck className="w-4 h-4" />
-                  <span className="text-xs font-semibold">Transparency</span>
+                  <span className="text-xs font-semibold uppercase tracking-wide">Transparency</span>
                 </div>
-                <p className="text-xl sm:text-2xl font-black text-white">100% Tracked</p>
-                <p className="text-[11px] text-slate-400">Public impact audits</p>
+                <p className="text-2xl font-black text-white">100% Tracked</p>
+                <p className="text-xs text-slate-400 mt-0.5">Public impact audits</p>
               </div>
             </motion.div>
 
@@ -130,7 +129,7 @@ export default function ProjectRoofSection() {
             >
               <Link
                 href="/blog/project-roof-building-homes-for-those-who-have-none"
-                className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-primary-green hover:bg-primary-green-hover text-white font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-lg active:scale-95 group"
+                className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-primary-green hover:bg-primary-green-hover text-white font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-lg active:scale-95 group"
               >
                 <span>Learn about Project Roof</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

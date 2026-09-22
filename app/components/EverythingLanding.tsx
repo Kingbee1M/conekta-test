@@ -79,15 +79,7 @@ export default function EverythingLanding() {
             ))}
           </div>
 
-          {/* Action Button */}
-          <div className="pt-2">
-            <Link
-              href="/about-us"
-              className="inline-flex items-center px-8 py-3.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 shadow-md bg-slate-900 text-white hover:bg-slate-800"
-            >
-              Meet The Team
-            </Link>
-          </div>
+          
         </div>
 
         {/* Right Column: Asymmetric Image Layout */}
