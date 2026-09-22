@@ -226,7 +226,7 @@ export default function EcosystemSection() {
                   href={selectedLayer.href}
                   className="w-full md:w-auto inline-flex items-center justify-center gap-3 px-7 py-3.5 rounded-xl bg-primary-green hover:opacity-90 text-white text-xs sm:text-sm font-bold uppercase tracking-wider transition-all shadow-md active:scale-95 group"
                 >
-                  <span>Explore The Page</span>
+                  <span className='text-xs'>Explore The Page</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
               </div>
@@ -247,7 +247,7 @@ export default function EcosystemSection() {
             href="/home"
             className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full border-primary-green border text-primary-green text-xs sm:text-sm font-bold uppercase tracking-wider transition-all shadow-lg active:scale-95 group"
           >
-            <span>Explore the full product</span>
+            <span className='text-xs'>Explore the full product</span>
             <ArrowRight className="w-4 h-4 text-primary-green group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>

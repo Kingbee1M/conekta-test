@@ -129,7 +129,7 @@ export default function ProjectRoofSection() {
                 href="/blog/project-roof-building-homes-for-those-who-have-none"
                 className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs sm:text-sm uppercase tracking-wider transition-all shadow-lg active:scale-95 group"
               >
-                <span>Learn about Project Roof</span>
+                <span className='text-xs'>Learn about Project Roof</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
             </motion.div>
