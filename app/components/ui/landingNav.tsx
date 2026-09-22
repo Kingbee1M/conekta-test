@@ -55,7 +55,7 @@ export default function LandingNavbar() {
             alt="Logo"
             width={32}
             height={32}
-            className="w-8 h-8 object-contain brightness-0"
+            className="w-8 h-8 object-contain"
           />
           <span className="text-lg sm:text-xl font-extrabold tracking-wider text-slate-900 uppercase">
             CONEKTA
