@@ -11,11 +11,11 @@
   --font-poppins: var(--font-poppins), poppins;
   --font-hanken: var(--font-hanken), sans-serif;
   --font-jetbrains: var(--font-jetbrains), monospace;
+  --font-instrumentSerif: var(--font-instrument-serif), serif;
+  --font-sora: var(--font-sora), sans-serif;
 
   /* -------- COLORS -------- */
-  --color-primary-green: #2a8545;
-
-  /* Refined Complementary Variables */
+  --color-primary-green: #1F8C3B;
   --color-primary-green-hover: #216d37;    
   --color-secondary-green: #1b5e32;        
   --color-secondary-green-hover: #134624;
@@ -25,14 +25,12 @@
   --color-active-link: #DBFCE7CC;
   --color-artisan-orange: #ff5500;
   --color-lister-blue: #2476FF;
-  /* --color-app-background: #F5F2EB; */
   --color-app-background: #fff;
   --color-lister-background: #EEF1EC;
   --color-secondary-color: #5f5e5e;
   --color-secondary-hover: #5f5e5e;
   --color-primary-fixed: #9bf7aa;
   --color-primary-fixed-dim: #80da90;
-  /* bg-linear-to-br from-[#EDFDF5] via-[#EDFDF5] to-white */
 }
 
 @theme inline {
@@ -159,9 +157,8 @@
   }
 
   /* --- DISPLAY & HEADLINES --- */
-  /* headline-lg-mobile (default) -> display-lg (desktop) */
   h1 {
-    font-family: var(--font-hanken), sans-serif;
+    font-family: var(--font-sora);
     font-size: 28px;
     font-weight: 700;
     line-height: 36px;
@@ -178,7 +175,7 @@
 
   /* headline-lg */
   h2 {
-    font-family: var(--font-hanken), sans-serif;
+    font-family: var(--font-sora);
     font-size: 32px;
     font-weight: 700;
     line-height: 40px;
@@ -187,25 +184,23 @@
 
   /* headline-md */
   h3, h4, h5, h6 {
-    font-family: var(--font-hanken), sans-serif;
+    font-family: var(--font-sora);
     font-size: 24px;
     font-weight: 600;
     line-height: 32px;
   }
 
   /* --- BODY TYPOGRAPHY --- */
-  /* body-md */
   p, span {
-    font-family: var(--font-hanken), sans-serif;
+    font-family: var(--font-sora);
     font-size: 16px;
     font-weight: 400;
     line-height: 24px;
   }
 
   /* --- LABELS --- */
-  /* label-sm */
   label {
-    font-family: var(--font-hanken);
+    font-family: var(--font-sora);
     font-size: 12px;
     font-weight: 500;
     line-height: 16px;
@@ -213,9 +208,8 @@
   }
 
   /* --- BUTTONS & INPUTS --- */
-  /* button */
   button, a.btn {
-    font-family: var(--font-hanken);
+    font-family: var(--font-sora);
     font-size: 14px;
     font-weight: 600;
     line-height: 20px;
@@ -223,7 +217,7 @@
   }
 
   select, input, textarea {
-    font-family: var(--font-hanken);
+    font-family: var(--font-sora);
   }
 
   input {
@@ -237,7 +231,6 @@
     outline: none;
   }
 
-  /* --- CUSTOM SCROLLBAR UTILITY --- */
   .custom-scrollbar {
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
@@ -267,7 +260,6 @@
   }
 }
 
-/* Custom Component Layouts */
 .inputDiv {
   width: 100%;
   display: flex;
@@ -302,7 +294,6 @@
   color: #F3F3F5;
 }
 
-/* Shaking animation */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20%, 60% { transform: translateX(-5px); }
@@ -310,15 +301,15 @@
 }
 
 .input-error {
-  border: 1px solid #e11d48 !important; /* Rose-600 to match Tailwind red-500 */
+  border: 1px solid #e11d48 !important;
   animation: shake 0.3s ease-in-out;
 }
 
-/* Optional: Keep the red glow when focused to maintain accessibility */
 .input-error:focus {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(254, 226, 226, 1); /* Tailwind red-200 */
+  box-shadow: 0 0 0 2px rgba(254, 226, 226, 1);
 }
+
 .chat-bubble-tail {
   position: relative;
 }
@@ -354,14 +345,12 @@
 }
 
 @layer utilities {
-  /* Hide scrollbar for Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
-  /* Hide scrollbar for IE, Edge and Firefox */
   .no-scrollbar {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 

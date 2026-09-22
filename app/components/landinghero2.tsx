@@ -70,7 +70,7 @@ export default function Landinghero2() {
     "🤖 Conekta AI Engine: Describe your dream home in natural language (e.g., '3-bed apartment in Lekki Phase 1 with 24/7 power under ₦5M/yr'). Our AI analyzes real-time verified market listings to match your exact lifestyle requirements!";
 
   const searchDescription =
-    "🔍 Property Discovery: Filter and explore thousands of verified apartments, commercial spaces, and lands across Lagos, Abuja, and Port Harcourt. Sign in or create an account to view full pricing details and book physical tours.";
+    "ℹ️ Search Feature Preview: When logged in, this allows you to filter and explore thousands of verified apartments, commercial spaces, and lands across Lagos, Abuja, and Port Harcourt. Sign in or create an account to start searching real listings!";
 
   const handleSearchClick = (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,10 +129,10 @@ export default function Landinghero2() {
               <motion.h1
                 custom={2}
                 variants={fadeInUp}
-                className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] text-white"
+                className="text-[clamp(42px,7vw,88px)] italic font-extrabold tracking-tight leading-[1.15] text-white font-[--font-instrument-serif]"
               >
                 Nigeria, <br />
-                <span className="text-green-400 italic font-serif font-normal">
+                <span className="text-primary-green italic font-normal text-[clamp(42px,7vw,88px)] font-instrumentSerif">
                   Your housing just got easier!
                 </span>
               </motion.h1>
@@ -143,7 +143,7 @@ export default function Landinghero2() {
                 variants={fadeInUp}
                 className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal max-w-2xl"
               >
-                Find verified homes, pay your way, manage seamlessly, and invest — all in one place. This is how Nigerians find home now!
+                Find verified homes, pay your way, manage seamlessly, and invest all in one place. This is how Nigerians find home now!
               </motion.p>
             </div>
 
@@ -205,7 +205,7 @@ export default function Landinghero2() {
           </motion.div>
 
           {/* Side Column: Support Widget & Manual Property Search */}
-          <div className="lg:col-span-4 flex flex-col gap-4 ">
+          <div className="lg:col-span-4 flex flex-col gap-4">
             
             {/* Talk to Support Dropdown Widget */}
             <motion.div
@@ -319,9 +319,14 @@ export default function Landinghero2() {
               transition={{ duration: 0.7, delay: 0.45 }}
               className="p-5 sm:p-6 rounded-3xl bg-white/6 border border-white/15 backdrop-blur-2xl shadow-xl space-y-3"
             >
-              <p className="text-xs font-bold uppercase tracking-wider text-green-400">
-                Manual Search
-              </p>
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-bold uppercase tracking-wider text-green-400">
+                  Manual Search
+                </p>
+                <span className="text-[10px] font-medium text-slate-400 bg-white/10 px-2 py-0.5 rounded-full border border-white/10">
+                  Interactive Preview
+                </span>
+              </div>
 
               <form onSubmit={handleSearchClick} className="flex items-center gap-2 bg-white/10 rounded-2xl px-3.5 py-1.5 border border-white/10 focus-within:border-primary-green transition-all">
                 <Search className="w-4 h-4 text-green-400 shrink-0" />
@@ -329,17 +334,21 @@ export default function Landinghero2() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Location, City, or Area..."
+                  placeholder="e.g. Lekki, Ikeja, Victoria Island..."
                   className="w-full bg-transparent py-2 text-xs text-white placeholder-slate-400 focus:outline-none"
                 />
                 <button
                   type="submit"
-                  title="Click to search or view discovery details"
-                  className="px-4 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-900 text-xs font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer shadow-md active:scale-95"
+                  title="Click to view search feature info"
+                  className="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-100 text-slate-900 text-xs font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer shadow-md active:scale-95 whitespace-nowrap"
                 >
-                  Search
+                  How Search Works
                 </button>
               </form>
+
+              <p className="text-[11px] text-slate-400 italic">
+                * Click &quot;How Search Works&ldquo; to preview how property discovery operates.
+              </p>
 
               {/* Search Dropdown Typewriter Animation */}
               <AnimatePresence>
