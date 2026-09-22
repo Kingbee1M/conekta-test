@@ -34,10 +34,10 @@ export default function LandingNavbar() {
 
   const navLinks = [
     { name: 'Home', href: '/home' },
-    { name: 'Properties', href: '/discover' },
-    { name: 'How It Works', href: '/how-it-works' },
-    { name: 'About Us', href: '/about-us' },
-    { name: 'Contact', href: '#' },
+    { name: 'Product', href: '/discover' },
+    { name: 'Impact', href: '/impact' },
+    { name: 'Team', href: '/about-us#team' },
+    { name: 'Login', href: '/log-in' },
   ];
 
   return (

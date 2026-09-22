@@ -24,7 +24,8 @@ export function proxy(request: NextRequest) {
     'terms-and-policy',
     '/payment-system',
     '/blog',
-    '/terms-and-policy'
+    '/terms-and-policy',
+    '/impact'
   ];
 
   // Inside your middleware logic
