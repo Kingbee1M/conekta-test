@@ -297,7 +297,7 @@ function DesktopTreeNodeCard({
     >
       <motion.div
         variants={nodeVariants}
-        className="group relative z-10 w-44 sm:w-48 rounded-xl border border-gray-200/90 bg-white p-2.5 shadow-xs transition-all hover:border-primary-green hover:shadow-md"
+        className="group relative z-10 w-44 sm:w-48 rounded-xl border border-gray-200/90 bg-white p-2.5 shadow-xs transition-all hover:border-primary-green hover:shadow-md cursor-pointer"
       >
         <div className="flex items-center gap-2">
           <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-lg bg-tertiary-green shadow-xs">
@@ -308,14 +308,21 @@ function DesktopTreeNodeCard({
               className="object-cover transition-transform duration-300 group-hover:scale-105"
             />
           </div>
-          <div className="min-w-0 flex-1">
-            <span className="inline-block rounded bg-tertiary-green px-1 py-0.2 text-[8px] font-bold uppercase tracking-wide text-primary-green">
-              {node.department}
-            </span>
-            <h4 className="truncate text-[11px] font-bold text-text-primary">
+          <div className="min-w-0 flex-1 flex flex-col justify-center">
+            {/* Department Badge */}
+            <div>
+              <span className="inline-block rounded bg-tertiary-green px-1 py-[1px] text-[8px] font-bold uppercase tracking-wide text-primary-green leading-none">
+                {node.department}
+              </span>
+            </div>
+
+            {/* Name: Converted to <p> with leading-tight to kill the 32px h4 height */}
+            <p className="truncate text-[11px] font-bold text-text-primary leading-tight mt-0.5">
               {node.name}
-            </h4>
-            <p className="truncate text-[10px] font-medium text-secondary-color">
+            </p>
+
+            {/* Role */}
+            <p className="truncate text-[10px] font-medium text-secondary-color leading-tight">
               {node.role}
             </p>
           </div>
@@ -332,7 +339,7 @@ function DesktopTreeNodeCard({
             className="flex w-full items-center justify-center gap-1 rounded-md bg-primary-green/10 py-1 text-[10px] font-bold text-primary-green transition-colors hover:bg-primary-green hover:text-white"
           >
             <UserCheck size={11} />
-            <span>Portfolio</span>
+            <span className='text-xs'>Portfolio</span>
           </button>
 
           {hasReports && (
@@ -341,7 +348,7 @@ function DesktopTreeNodeCard({
               onClick={() => setIsExpanded(!isExpanded)}
               className="flex w-full items-center justify-center gap-1 rounded-md bg-gray-50 py-0.5 text-[9px] font-semibold text-secondary-color transition-colors hover:bg-gray-100"
             >
-              <span>{isExpanded ? 'Hide Direct Reports' : 'Show Direct Reports'}</span>
+              <span className='text-xs!'>{isExpanded ? 'Hide Direct Reports' : 'Show Direct Reports'}</span>
               <ChevronDown
                 size={10}
                 className={`transition-transform duration-200 ${
@@ -409,7 +416,7 @@ function MobileTreeNodeCard({
               />
             </div>
             <div className="min-w-0 flex-1">
-              <span className="inline-block rounded bg-tertiary-green px-1.5 py-0.5 text-[9px] font-bold uppercase text-primary-green">
+              <span className="inline-block rounded bg-tertiary-green px-1.5 py-0.5 text-[9px] font-bold uppercase text-primary-green text-sx">
                 {node.department}
               </span>
               <h4 className="truncate text-xs font-bold text-text-primary">

@@ -110,41 +110,41 @@ export default function Landinghero2() {
             initial="hidden"
             animate="visible"
             variants={fadeInUp}
-            className="lg:col-span-8 p-6 sm:p-10 rounded-3xl sm:rounded-[36px] bg-white/6 border border-white/15 backdrop-blur-2xl shadow-2xl flex flex-col justify-between space-y-6"
+            className="lg:col-span-8 p-6 sm:p-10 rounded-3xl sm:rounded-[36px] bg-slate-900/40 border border-white/10 backdrop-blur-2xl shadow-2xl flex flex-col justify-between space-y-8"
           >
             <div className="space-y-6">
-              {/* Pill Badge */}
+              {/* Headline block with explicit line-height control */}
               <motion.div
                 custom={1}
                 variants={fadeInUp}
-                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-secondary-green/40 border border-primary-green/40 backdrop-blur-md"
+                className="space-y-1 sm:space-y-2"
               >
-                <span className="w-2 h-2 rounded-full bg-primary-green animate-pulse" />
-                <p className="text-xs font-semibold text-green-200 tracking-wide">
-                  No more agent stories. No more stress!
+                <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-none font-sans">
+                  Nigeria,
+                </h1>
+                <p className="text-4xl sm:text-6xl lg:text-7xl font-instrumentSerif italic text-white leading-none">
+                  Your housing just got
+                </p>
+                <p className="text-4xl sm:text-6xl lg:text-7xl font-instrumentSerif italic text-white leading-none">
+                  easier!
                 </p>
               </motion.div>
 
-              {/* Headline */}
-              <motion.h1
-                custom={2}
-                variants={fadeInUp}
-                className="text-[clamp(42px,7vw,88px)] italic font-extrabold tracking-tight leading-[1.15] text-white font-[--font-instrument-serif]"
-              >
-                Nigeria, <br />
-                <span className="text-primary-green italic font-normal text-[clamp(42px,7vw,88px)] font-instrumentSerif">
-                  Your housing just got easier!
-                </span>
-              </motion.h1>
-
               {/* Subtitle */}
               <motion.p
-                custom={3}
+                custom={2}
                 variants={fadeInUp}
-                className="text-xs sm:text-sm text-slate-300 leading-relaxed font-normal max-w-2xl"
+                className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal max-w-xl"
               >
-                Find verified homes, pay your way, manage seamlessly, and invest all in one place. This is how Nigerians find home now!
+                Find verified homes, pay your way, manage seamlessly, and invest — all in one place. This is how Nigerians find home now!
               </motion.p>
+
+              {/* Underlined Tag */}
+              <motion.div custom={3} variants={fadeInUp} className="pt-1">
+                <span className="inline-block border-b-2 border-primary-green pb-1 text-xs sm:text-sm font-semibold text-slate-200 tracking-wide">
+                  No more agent stories. No more stress!
+                </span>
+              </motion.div>
             </div>
 
             {/* AI Search CTA & Interactive Dropdown */}
@@ -154,10 +154,10 @@ export default function Landinghero2() {
                   type="button"
                   onClick={() => setShowAiInfo((prev) => !prev)}
                   title="Click to see how AI Search works"
-                  className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-primary-green hover:bg-primary-green-hover text-white text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-black/50 active:scale-95 group"
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-primary-green hover:bg-primary-green-hover text-white text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-lg shadow-black/30 active:scale-95 group"
                 >
                   <Sparkles className="w-4 h-4 text-green-200" />
-                  <span className='text-xs'>AI-powered Search</span>
+                  <span className="text-xs">AI-powered Search</span>
                   <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${showAiInfo ? 'rotate-180' : ''}`} />
                 </button>
 
@@ -173,7 +173,7 @@ export default function Landinghero2() {
                     initial={{ opacity: 0, height: 0, y: -10 }}
                     animate={{ opacity: 1, height: 'auto', y: 0 }}
                     exit={{ opacity: 0, height: 0, y: -10 }}
-                    className="overflow-hidden p-4 rounded-2xl bg-secondary-green/60 border border-primary-green/40 backdrop-blur-md"
+                    className="overflow-hidden p-4 rounded-2xl bg-slate-800/80 border border-slate-700 text-white backdrop-blur-md"
                   >
                     <div className="flex items-start gap-3">
                       <Sparkles className="w-4 h-4 text-green-400 shrink-0 mt-0.5" />
@@ -189,7 +189,7 @@ export default function Landinghero2() {
                   href="/sign-up"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white hover:bg-slate-100 text-slate-900 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer shadow-md active:scale-95"
                 >
-                  <span className='text-xs'>Get Started</span>
+                  <span className="text-xs">Get Started</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
 
@@ -197,7 +197,7 @@ export default function Landinghero2() {
                   href="/discover"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-bold uppercase tracking-wider backdrop-blur-md transition-all cursor-pointer active:scale-95"
                 >
-                  <span className='text-xs'>Browse Properties</span>
+                  <span className="text-xs">Browse Properties</span>
                   <ArrowUpRight className="w-3.5 h-3.5 text-slate-300" />
                 </Link>
               </div>
