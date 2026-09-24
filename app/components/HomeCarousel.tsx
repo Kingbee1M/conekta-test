@@ -66,7 +66,7 @@ export default function HomeCarousel() {
         {/* Main Heading */}
         <h1 className="text-white text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight max-w-4xl leading-tight">
           Nigeria,&nbsp;
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 block sm:inline mt-1 sm:mt-0">
+          <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-200 block sm:inline mt-1 sm:mt-0">
             Your housing just got easier!
           </span>
         </h1>
@@ -78,7 +78,7 @@ export default function HomeCarousel() {
 
         {/* Supporting Copy */}
         <p className="text-gray-200 text-sm sm:text-base md:text-lg mt-2 max-w-3xl font-normal leading-relaxed">
-          Find verified homes, pay your way, manage seamlessly, and invest — all in one place. This is how Nigerians find home now!
+          Find verified homes, pay your way, manage seamlessly all in one place. This is how Nigerians find home now!
         </p>
 
         {/* Punchline Tagline */}
