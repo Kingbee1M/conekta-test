@@ -1,14 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { 
-  ArrowUpRight, 
-  ArrowDownLeft, 
-  Search, 
-  Clock,
-  CheckCircle2
-} from 'lucide-react';
+import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Transaction {
   id: string;
@@ -74,155 +68,193 @@ const mockTransactions: Transaction[] = [
   },
 ];
 
+type TabType = 'all' | 'completed' | 'pending';
+
 export default function ArtisanTransactionsPage() {
-  const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'all' | 'pending'>('all');
+  const [activeTab, setActiveTab] = useState<TabType>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredTransactions = mockTransactions.filter((txn) => {
-    const matchesTab = activeTab === 'all' || txn.status === 'pending';
     const matchesSearch =
       txn.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       txn.reference.toLowerCase().includes(searchQuery.toLowerCase()) ||
       txn.property.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesTab && matchesSearch;
+
+    if (activeTab === 'all') return matchesSearch;
+    return matchesSearch && txn.status === activeTab;
   });
 
-  const handleRowClick = (id: string) => {
-    router.push(`/artisan/transactions/receipt/${id}`);
+  const counts = {
+    all: mockTransactions.length,
+    completed: mockTransactions.filter((t) => t.status === 'completed').length,
+    pending: mockTransactions.filter((t) => t.status === 'pending').length,
   };
 
+  const getStatusBadge = (status: Transaction['status']) => {
+    switch (status) {
+      case 'completed':
+        return (
+          <span className="px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 text-[11px] font-semibold border border-emerald-200 tracking-wide">
+            Completed
+          </span>
+        );
+      case 'pending':
+        return (
+          <span className="px-2 py-0.5 rounded bg-amber-50 text-amber-700 text-[11px] font-semibold border border-amber-200 tracking-wide">
+            Pending
+          </span>
+        );
+      default:
+        return (
+          <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[11px] font-semibold border border-slate-200 tracking-wide">
+            {status}
+          </span>
+        );
+    }
+  };
+
+  const tabs: { id: TabType; label: string }[] = [
+    { id: 'all', label: 'All Transactions' },
+    { id: 'completed', label: 'Completed' },
+    { id: 'pending', label: 'Pending Escrow' },
+  ];
+
   return (
-    <div className="max-w-7xl mx-auto space-y-6 pb-12">
-      {/* HEADER & TOP CONTROLS */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="max-w-7xl mx-auto space-y-5 pb-12">
+      {/* HEADER & SEARCH */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Transactions</h1>
-          <p className="text-xs text-slate-500 mt-0.5">View payout logs, pending escrow funds, and download official receipts.</p>
+          <h1 className="text-xl font-bold text-slate-900 tracking-tight">Transactions Workspace</h1>
+          <p className="text-xs text-slate-500 mt-0.5">
+            View payout logs, pending escrow funds, and download official receipts.
+          </p>
         </div>
 
-        {/* SEARCH BAR */}
-        <div className="relative w-full sm:w-72">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+        {/* Text-based Search Field */}
+        <div className="w-full sm:w-72">
           <input
             type="text"
-            placeholder="Search by reference or title..."
+            placeholder="Search by reference, title, or location..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-2xl text-xs outline-none focus:border-primary-green focus:ring-1 focus:ring-primary-green transition-all"
+            className="w-full px-3 py-1.5 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 placeholder-slate-400 outline-none focus:border-slate-500 focus:ring-1 focus:ring-slate-500 transition-all"
           />
         </div>
       </div>
 
-      {/* PILL SHAPED SELECTORS */}
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => setActiveTab('all')}
-          className={`px-5 py-2 rounded-full text-xs font-bold transition-all cursor-pointer ${
-            activeTab === 'all'
-              ? 'bg-slate-900 text-white shadow-xs'
-              : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
-          }`}
-        >
-          All Transactions ({mockTransactions.length})
-        </button>
-        <button
-          type="button"
-          onClick={() => setActiveTab('pending')}
-          className={`px-5 py-2 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
-            activeTab === 'pending'
-              ? 'bg-amber-500 text-white shadow-xs'
-              : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
-          }`}
-        >
-          <Clock className="w-3.5 h-3.5" />
-          <span>Pending Escrow ({mockTransactions.filter((t) => t.status === 'pending').length})</span>
-        </button>
+      {/* ANIMATED TOP TAB NAVIGATION BAR WITH HOVER & ACTIVE INDICATORS */}
+      <div className="border-b border-slate-200 flex gap-1 overflow-x-auto scrollbar-none relative">
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`group relative px-3 pb-3 text-xs font-semibold transition-colors duration-150 flex items-center gap-2 whitespace-nowrap outline-none ${
+                isActive ? 'text-slate-900 font-bold' : 'text-slate-500 hover:text-slate-800'
+              }`}
+            >
+              <span className="relative z-10">{tab.label}</span>
+              <span
+                className={`relative z-10 px-1.5 py-0.5 rounded text-[10px] font-semibold transition-colors duration-200 ${
+                  isActive ? 'bg-primary-green text-white' : 'bg-slate-100 text-slate-600 group-hover:bg-slate-200'
+                }`}
+              >
+                {counts[tab.id]}
+              </span>
+
+              {/* Hover Pill Background */}
+              <div className="absolute inset-0 bottom-2 rounded-md bg-slate-100/60 opacity-0 group-hover:opacity-100 transition-opacity duration-150 pointer-events-none" />
+
+              {/* Animated Underline for Active Tab */}
+              {isActive && (
+                <motion.div
+                  layoutId="activeTabUnderlineTransactions"
+                  className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-green rounded-full z-10"
+                  transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                />
+              )}
+            </button>
+          );
+        })}
       </div>
 
-      {/* TRANSACTIONS TABLE LIST */}
-      <div className="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
-        {filteredTransactions.length === 0 ? (
-          <div className="p-12 text-center text-xs text-slate-400 font-medium">
-            No transactions found matching your criteria.
-          </div>
-        ) : (
-          <div className="divide-y divide-slate-100">
-            {/* Table Header */}
-            <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50/60 text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">
-              <div className="col-span-5">Description & Reference</div>
-              <div className="col-span-3">Date & Category</div>
-              <div className="col-span-2">Status</div>
-              <div className="col-span-2 text-right">Amount</div>
-            </div>
-
-            {/* List Rows */}
-            {filteredTransactions.map((txn) => (
-              <div
-                key={txn.id}
-                onClick={() => handleRowClick(txn.id)}
-                className="grid grid-cols-1 md:grid-cols-12 gap-3 md:gap-4 px-6 py-4 items-center hover:bg-slate-50/80 transition-colors cursor-pointer group"
-              >
-                {/* Description & Reference */}
-                <div className="col-span-5 flex items-start gap-3">
-                  <div
-                    className={`p-2.5 rounded-2xl shrink-0 mt-0.5 ${
-                      txn.type === 'payout'
-                        ? 'bg-emerald-50 text-emerald-600'
-                        : 'bg-blue-50 text-blue-600'
-                    }`}
-                  >
-                    {txn.type === 'payout' ? (
-                      <ArrowDownLeft className="w-4 h-4" />
-                    ) : (
-                      <ArrowUpRight className="w-4 h-4" />
-                    )}
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-extrabold text-slate-800 group-hover:text-primary-green transition-colors">
-                      {txn.title}
-                    </h3>
-                    <p className="text-[11px] font-mono text-slate-400 font-semibold mt-0.5">
-                      {txn.reference}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Date & Category */}
-                <div className="hidden md:block col-span-3">
-                  <p className="text-xs font-bold text-slate-700">{txn.date}</p>
-                  <p className="text-[11px] font-medium text-slate-400">{txn.category}</p>
-                </div>
-
-                {/* Status Badge */}
-                <div className="col-span-2 flex items-center">
-                  {txn.status === 'completed' ? (
-                    <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-[11px] font-bold border border-emerald-100/80 flex items-center gap-1">
-                      <CheckCircle2 className="w-3 h-3 text-emerald-500" />
-                      <span>Completed</span>
-                    </span>
-                  ) : (
-                    <span className="px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 text-[11px] font-bold border border-amber-100/80 flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-amber-500" />
-                      <span>Pending</span>
-                    </span>
-                  )}
-                </div>
-
-                {/* Amount */}
-                <div className="col-span-2 flex md:flex-col items-center md:items-end justify-between md:justify-center border-t md:border-t-0 pt-2 md:pt-0 border-slate-100">
-                  <span className="text-sm font-black text-slate-900">
-                    ₦{txn.amount.toLocaleString('en-NG')}
-                  </span>
-                  <span className="text-[10px] font-bold text-primary-green opacity-0 group-hover:opacity-100 transition-opacity">
-                    View Receipt →
-                  </span>
-                </div>
+      {/* COMPACT PROFESSIONAL DATA TABLE WITH FADE ANIMATION */}
+      <div className="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+        <AnimatePresence mode="wait">
+          {filteredTransactions.length === 0 ? (
+            <motion.div
+              key="empty"
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.15 }}
+              className="p-10 text-center text-xs text-slate-500 font-medium"
+            >
+              No transaction records match the current filter criteria.
+            </motion.div>
+          ) : (
+            <motion.div
+              key={activeTab + searchQuery}
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -4 }}
+              transition={{ duration: 0.15 }}
+              className="divide-y divide-slate-200"
+            >
+              {/* Table Column Headers */}
+              <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-2.5 bg-slate-50/80 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                <div className="col-span-4">Transaction Details</div>
+                <div className="col-span-4">Category & Location</div>
+                <div className="col-span-2">Date</div>
+                <div className="col-span-2 text-right">Status & Amount</div>
               </div>
-            ))}
-          </div>
-        )}
+
+              {/* Table Rows */}
+              {filteredTransactions.map((txn) => (
+                <Link
+                  key={txn.id}
+                  href={`/artisan/transactions/receipt/${txn.id}`}
+                  className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 px-6 py-3.5 items-center hover:bg-slate-50/90 transition-colors duration-150 group cursor-pointer"
+                >
+                  {/* Title & Reference */}
+                  <div className="col-span-4 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-semibold text-slate-900 group-hover:text-primary-green transition-colors duration-150 truncate">
+                        {txn.title}
+                      </span>
+                      <span className="text-[10px] text-slate-400 shrink-0">
+                        {txn.reference}
+                      </span>
+                    </div>
+                    <span className="md:hidden text-xs text-slate-500 font-normal block mt-1">
+                      {txn.category} • {txn.property}
+                    </span>
+                  </div>
+
+                  {/* Category & Location */}
+                  <div className="hidden md:block col-span-4 min-w-0">
+                    <p className="text-xs font-medium text-slate-800 truncate">{txn.category}</p>
+                    <p className="text-xs text-slate-500 truncate">{txn.property}</p>
+                  </div>
+
+                  {/* Date */}
+                  <div className="hidden md:block col-span-2 text-xs font-medium text-slate-600">
+                    {txn.date}
+                  </div>
+
+                  {/* Status & Amount */}
+                  <div className="col-span-2 flex md:flex-col items-center md:items-end justify-between md:justify-center border-t md:border-t-0 pt-2 md:pt-0 border-slate-100 gap-1">
+                    <span className="text-xs font-bold text-slate-900">
+                      ₦{txn.amount.toLocaleString('en-NG')}
+                    </span>
+                    <div>{getStatusBadge(txn.status)}</div>
+                  </div>
+                </Link>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
