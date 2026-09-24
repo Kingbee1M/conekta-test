@@ -138,7 +138,7 @@ export default function LoadingDashboard() {
       } else if (activeRole === RoleEnum.CUSTOMER) {
         router.replace('/home');
       } else if (activeRole === RoleEnum.ARTISAN) {
-        router.replace('/artisan/profile');
+        router.replace('/artisan/overview');
       } else {
         console.warn(`⚠️ Unknown role "${activeRole}", routing to fallback.`);
         router.replace('/unauthorized');

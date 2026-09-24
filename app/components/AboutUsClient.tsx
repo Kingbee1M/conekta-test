@@ -311,7 +311,7 @@ function DesktopTreeNodeCard({
           <div className="min-w-0 flex-1 flex flex-col justify-center">
             {/* Department Badge */}
             <div>
-              <span className="inline-block rounded bg-tertiary-green px-1 py-[1px] text-[8px] font-bold uppercase tracking-wide text-primary-green leading-none">
+              <span className="inline-block rounded bg-tertiary-green px-1 py-px text-[8px] font-bold uppercase tracking-wide text-primary-green leading-none">
                 {node.department}
               </span>
             </div>
