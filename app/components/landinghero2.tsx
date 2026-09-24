@@ -136,7 +136,7 @@ export default function Landinghero2() {
                 variants={fadeInUp}
                 className="text-sm sm:text-base text-slate-300 leading-relaxed font-normal max-w-xl"
               >
-                Find verified homes, pay your way, manage seamlessly, and invest — all in one place. This is how Nigerians find home now!
+                Find verified homes, pay your way, manage seamlessly all in one place. This is how Nigerians find home now!
               </motion.p>
 
               {/* Underlined Tag */}
