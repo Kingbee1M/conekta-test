@@ -383,7 +383,7 @@ export default function ArtisanOverviewPage() {
 
           <Link
             href="/artisan/profile"
-            className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-xs active:scale-95"
+            className="w-full inline-flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-primary-green hover:bg-primary-green-hover text-white text-xs font-bold transition-all shadow-xs active:scale-95"
           >
             <span>Complete Setup</span>
             <ChevronRight className="w-4 h-4" />

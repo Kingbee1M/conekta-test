@@ -47,7 +47,7 @@ export default function BuiltSecurity() {
 
                         {/* the Animated Bar */}
                         <motion.div
-                            className="absolute bottom-0 left-0 h-1 bg-green-500"
+                            className="absolute bottom-0 left-0 h-1 bg-primary-green"
                             initial={{ width: 0 }}
                             animate={isImageHovered ? { width: "100%" } : { width: 0 }}
                             transition={{ 
