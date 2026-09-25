@@ -57,7 +57,7 @@ export default function VerifiedPropertySummaryCard() {
             <span style={{ color: 'var(--color-secondary-color, #5f5e5e)' }}>
               Price vs area
             </span>
-            <span className="inline-flex items-center gap-0.5 font-bold" style={{ color: 'var(--color-tertiary-green, #00B075)' }}>
+            <span className="inline-flex items-center gap-0.5 font-bold text-secondary-green">
               Fair price <Check className="h-3.5 w-3.5 stroke-[2.5]" />
             </span>
           </div>

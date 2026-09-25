@@ -116,7 +116,7 @@ export default function ArtisanTransactionsPage() {
   const tabs: { id: TabType; label: string }[] = [
     { id: 'all', label: 'All Transactions' },
     { id: 'completed', label: 'Completed' },
-    { id: 'pending', label: 'Pending Escrow' },
+    { id: 'pending', label: 'Pending Payment' },
   ];
 
   return (
@@ -126,7 +126,7 @@ export default function ArtisanTransactionsPage() {
         <div>
           <h1 className="text-xl font-bold text-slate-900 tracking-tight">Transactions Workspace</h1>
           <p className="text-xs text-slate-500 mt-0.5">
-            View payout logs, pending escrow funds, and download official receipts.
+            View payout logs, pending payments funds, and download official receipts.
           </p>
         </div>
 

@@ -29,9 +29,10 @@ import {
   Share2,
   Copy,
   Check,
+  Download,
+  Save,
 } from 'lucide-react';
 import MapDisplay, { LocationCoordinates } from '@/app/components/googleMap/MapDisplay';
-import { BsLinkedin } from 'react-icons/bs';
 
 const workshopLocation: LocationCoordinates = { lat: 6.4281, lng: 3.4219 };
 
@@ -55,19 +56,26 @@ export default function ArtisanProfilePage() {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
+  // State for Contact Preferences Editing
+  const [isEditingContact, setIsEditingContact] = useState(false);
+  const [contactInfo, setContactInfo] = useState({
+    phone: '+2348012345678',
+    email: 'contact@apexpipeworks.com',
+    hours: 'Mon - Sat, 8:00 AM - 6:00 PM',
+    portfolioPdfUrl: '/docs/apex-pipeworks-portfolio.pdf',
+    allowPhone: true,
+    allowEmail: true,
+  });
+
   const profileData = {
     title: 'Apex Pipeworks & Drainage',
     shareUrl: 'https://conekta-test.vercel.app/artisans/apex-pipeworks-drainage',
-    phone: '+2348012345678',
-    email: 'contact@apexpipeworks.com',
-    linkedin: 'https://linkedin.com/company/apexpipeworks',
   };
 
   const getShareableUrl = () => {
     if (typeof window !== 'undefined') {
       return window.location.href;
     }
-
     return profileData.shareUrl;
   };
 
@@ -82,7 +90,6 @@ export default function ArtisanProfilePage() {
   };
 
   const handleShare = async () => {
-    console.log("starting share")
     const shareData = {
       title: profileData.title,
       text: `Check out ${profileData.title} on Conekta`,
@@ -453,41 +460,125 @@ export default function ArtisanProfilePage() {
           <div className="mt-3 flex items-center gap-2 text-xs font-semibold text-slate-600"><MapPin className="w-3.5 h-3.5 text-primary-green" /> Victoria Island, Lagos</div>
         </div>
 
+        {/* UPDATED CONTACT PREFERENCES SECTION */}
         <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs transition-all duration-300 hover:shadow-md">
-          <h3 className="text-sm font-extrabold text-text-primary">Contact preferences</h3>
-          <div className="mt-4 space-y-3 text-xs text-slate-600">
-            <a
-              href={`tel:${profileData.phone}`}
-              className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-primary-green transition-all duration-200 group/item"
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-extrabold text-text-primary">Contact preferences</h3>
+            <button
+              type="button"
+              onClick={() => setIsEditingContact(!isEditingContact)}
+              className="inline-flex items-center gap-1 text-xs text-primary-green font-bold hover:underline transition-all cursor-pointer"
             >
-              <Phone className="w-4 h-4 text-primary-green transition-transform duration-200 group-hover/item:scale-110" />
-              <span className="font-semibold">Phone and WhatsApp</span>
-              <CheckCircle2 className="ml-auto w-4 h-4 text-primary-green" />
-            </a>
+              {isEditingContact ? (
+                <>
+                  <Save className="w-3.5 h-3.5" />
+                  <span>Save</span>
+                </>
+              ) : (
+                <>
+                  <Pencil className="w-3.5 h-3.5" />
+                  <span>Edit</span>
+                </>
+              )}
+            </button>
+          </div>
 
-            <a
-              href={`mailto:${profileData.email}`}
-              className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-primary-green transition-all duration-200 group/item"
-            >
-              <Mail className="w-4 h-4 text-primary-green transition-transform duration-200 group-hover/item:scale-110" />
-              <span className="font-semibold">Email</span>
-              <CheckCircle2 className="ml-auto w-4 h-4 text-primary-green" />
-            </a>
+          <div className="space-y-3 text-xs text-slate-600">
+            {/* Phone & WhatsApp */}
+            <div className="p-2 rounded-xl border border-transparent hover:border-slate-100 hover:bg-slate-50 transition-all duration-200">
+              <div className="flex items-center gap-3">
+                <Phone className="w-4 h-4 text-primary-green shrink-0" />
+                {isEditingContact ? (
+                  <input
+                    type="text"
+                    value={contactInfo.phone}
+                    onChange={(e) => setContactInfo({ ...contactInfo, phone: e.target.value })}
+                    className="w-full px-2 py-1 border border-slate-200 text-base rounded-lg outline-primary-green font-semibold"
+                  />
+                ) : (
+                  <a href={`tel:${contactInfo.phone}`} className="font-semibold text-base hover:text-primary-green truncate">
+                    {contactInfo.phone}
+                  </a>
+                )}
+                <button
+                  type="button"
+                  onClick={() => isEditingContact && setContactInfo({ ...contactInfo, allowPhone: !contactInfo.allowPhone })}
+                  className="ml-auto shrink-0 cursor-pointer"
+                  disabled={!isEditingContact}
+                  title="Toggle Phone Contact Availability"
+                >
+                  <CheckCircle2 className={`w-4 h-4 ${contactInfo.allowPhone ? 'text-primary-green' : 'text-slate-300'}`} />
+                </button>
+              </div>
+            </div>
 
-            <a
-              href={profileData.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 p-2 rounded-xl hover:bg-slate-50 text-slate-700 hover:text-primary-green transition-all duration-200 group/item"
-            >
-              <BsLinkedin className="w-4 h-4 text-primary-green transition-transform duration-200 group-hover/item:scale-110" />
-              <span className="font-semibold">LinkedIn Profile</span>
-              <CheckCircle2 className="ml-auto w-4 h-4 text-primary-green" />
-            </a>
+            {/* Email */}
+            <div className="p-2 rounded-xl border border-transparent hover:border-slate-100 hover:bg-slate-50 transition-all duration-200">
+              <div className="flex items-center gap-3">
+                <Mail className="w-4 h-4 text-primary-green shrink-0" />
+                {isEditingContact ? (
+                  <input
+                    type="email"
+                    value={contactInfo.email}
+                    onChange={(e) => setContactInfo({ ...contactInfo, email: e.target.value })}
+                    className="w-full px-2 py-1 border border-slate-200 rounded-lg text-base outline-primary-green font-semibold"
+                  />
+                ) : (
+                  <a href={`mailto:${contactInfo.email}`} className="font-semibold text-base hover:text-primary-green truncate">
+                    {contactInfo.email}
+                  </a>
+                )}
+                <button
+                  type="button"
+                  onClick={() => isEditingContact && setContactInfo({ ...contactInfo, allowEmail: !contactInfo.allowEmail })}
+                  className="ml-auto shrink-0 cursor-pointer"
+                  disabled={!isEditingContact}
+                  title="Toggle Email Contact Availability"
+                >
+                  <CheckCircle2 className={`w-4 h-4 ${contactInfo.allowEmail ? 'text-primary-green' : 'text-slate-300'}`} />
+                </button>
+              </div>
+            </div>
 
-            <div className="flex items-center gap-3 p-2 text-slate-600">
-              <Clock className="w-4 h-4 text-primary-green" />
-              <span className="font-medium">Mon - Sat, 8:00 AM - 6:00 PM</span>
+            {/* Download Portfolio (Replaced LinkedIn option) */}
+            <div className="p-2 rounded-xl border border-transparent hover:border-slate-100 hover:bg-slate-50 transition-all duration-200">
+              {isEditingContact ? (
+                <div className="flex items-center gap-3 w-full">
+                  <Download className="w-4 h-4 text-primary-green shrink-0" />
+                  <input
+                    type="text"
+                    value={contactInfo.portfolioPdfUrl}
+                    placeholder="Document Link / File URL"
+                    onChange={(e) => setContactInfo({ ...contactInfo, portfolioPdfUrl: e.target.value })}
+                    className="w-full px-2 py-1 text-base border border-slate-200 rounded-lg outline-primary-green font-semibold"
+                  />
+                </div>
+              ) : (
+                <a
+                  href={contactInfo.portfolioPdfUrl}
+                  download
+                  className="flex items-center gap-3 group/item hover:text-primary-green transition-all duration-200"
+                >
+                  <Download className="w-4 h-4 text-primary-green shrink-0 transition-transform duration-200 group-hover/item:scale-110" />
+                  <span className="font-semibold">Download Portfolio PDF</span>
+                  <ExternalLink className="ml-auto w-3.5 h-3.5 text-slate-400 group-hover/item:text-primary-green" />
+                </a>
+              )}
+            </div>
+
+            {/* Business Hours */}
+            <div className="p-2 rounded-xl border border-transparent hover:border-slate-100 hover:bg-slate-50 transition-all duration-200 flex items-center gap-3 text-slate-600">
+              <Clock className="w-4 h-4 text-primary-green shrink-0" />
+              {isEditingContact ? (
+                <input
+                  type="text"
+                  value={contactInfo.hours}
+                  onChange={(e) => setContactInfo({ ...contactInfo, hours: e.target.value })}
+                  className="w-full px-2 py-1 text-xs border border-slate-200 rounded-lg outline-primary-green font-medium"
+                />
+              ) : (
+                <span className="font-medium">{contactInfo.hours}</span>
+              )}
             </div>
           </div>
         </div>
@@ -496,7 +587,7 @@ export default function ArtisanProfilePage() {
         <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs flex flex-col gap-4 transition-all duration-300 hover:shadow-md">
           <h3 className="text-sm font-extrabold text-text-primary">Public Profile & URL</h3>
           <div className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs text-slate-600">
-            <span className="truncate font-mono">{profileData.shareUrl}</span>
+            <span className="truncate">{profileData.shareUrl}</span>
             <button
               type="button"
               onClick={() => setIsShareModalOpen(true)}
@@ -554,7 +645,7 @@ export default function ArtisanProfilePage() {
                   type="text"
                   readOnly
                   value={profileData.shareUrl}
-                  className="w-full bg-transparent px-3 text-xs font-mono text-slate-700 outline-none truncate"
+                  className="w-full bg-transparent px-3 text-xs text-slate-700 outline-none truncate"
                 />
                 <button
                   type="button"

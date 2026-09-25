@@ -191,7 +191,7 @@
   }
 
   /* --- BODY TYPOGRAPHY --- */
-  p, span {
+  p, span, a, input {
     font-family: var(--font-sora);
     font-size: 16px;
     font-weight: 400;
@@ -216,7 +216,7 @@
     cursor: pointer;
   }
 
-  select, input, textarea {
+  select, textarea {
     font-family: var(--font-sora);
   }
 
