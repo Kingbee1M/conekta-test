@@ -97,7 +97,6 @@ export default function PropertyCard2({ listing }: PropertyCard2Props) {
               <strong className="text-slate-800 font-semibold">
                 {listing.property_info?.bedrooms ?? 0}
               </strong>{' '}
-              Beds
             </span>
           </div>
 
@@ -108,7 +107,6 @@ export default function PropertyCard2({ listing }: PropertyCard2Props) {
               <strong className="text-slate-800 font-semibold">
                 {listing.property_info?.bathrooms ?? 0}
               </strong>{' '}
-              Bathroom
             </span>
           </div>
 

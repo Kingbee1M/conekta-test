@@ -10,6 +10,7 @@ import EcosystemSection from './components/EcosystemSection';
 import ProjectRoofSection from './components/ProjectRoofSection';
 import MarqueeBanner from './components/customer/MarqueeBanner';
 import ScrollProgressIndicator from './components/ui/ScrollProgressIndicator';
+import LandingHero3 from './components/landinghero3';
 
 export const metadata: Metadata = {
   title: "Conekta - Affordable Homes | Investment | Rent | Africa's Housing Ecosystem",
@@ -112,7 +113,7 @@ export default function Home() {
       <ScrollProgressIndicator sections={pageSections} />
 
       <section id="hero">
-        <Landinghero2 />
+        <LandingHero3 />
       </section>
 
       <MarqueeBanner />
