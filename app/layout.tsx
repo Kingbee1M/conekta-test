@@ -13,6 +13,7 @@ import AuthWatcher from "@/lib/authProvider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { KycModalProvider } from "@/lib/KycModalContext";
 import { NotificationProvider } from "@/lib/NotificationProvider";
+import TopProgressBar from "./components/ui/TopProgressBar";
 
 const hanken = Hanken_Grotesk({
   variable: "--font-hanken",
@@ -66,6 +67,7 @@ export default function RootLayout({
 
               <Suspense fallback={null}>
                 <NextProgress />
+                <TopProgressBar/>
               </Suspense>
               <TooltipProvider>
                 <NotificationProvider>

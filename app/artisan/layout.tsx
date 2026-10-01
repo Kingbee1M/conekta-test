@@ -1,17 +1,21 @@
-import React from 'react';
-import ArtisanNavbar from '../components/ui/artisanNavbar';
+import { ReactNode } from 'react';
+import ArtisanClientLayout from '../components/ui/ArtisanClientLayout';
+import NoSSR from '../components/noSSR';
 
-export default function ArtisanLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+interface LayoutProps {
+  children: ReactNode;
+}
+
+export const metadata = {
+  title: 'Artisan Dashboard | Conketa',
+  description: "Manage your profile as a Artisan on conekta's platphom",
+};
+
+
+export default function Layout({ children }: LayoutProps) {
   return (
-    <div className="min-h-screen bg-slate-50/60 font-sans text-text-primary">
-      <ArtisanNavbar />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {children}
-      </main>
-    </div>
+    <NoSSR>
+      <ArtisanClientLayout>{children}</ArtisanClientLayout>
+    </NoSSR>
   );
 }

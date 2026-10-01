@@ -61,10 +61,14 @@ export const listingApi = apiSlice.injectEndpoints({
       }),
       providesTags: [{ type: 'Listing', id: 'LIST' }],
       
-      async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          if (data?.data?.results && data.data.results.length > 0) {
+          
+          // ONLY update the global Redux slice if there is NO search query active
+          const isSearchQuery = Boolean(arg && 'search' in arg && arg.search?.trim());
+
+          if (!isSearchQuery && data?.data?.results && data.data.results.length > 0) {
             dispatch(setProperties(data.data.results));
           }
         } catch (error) {

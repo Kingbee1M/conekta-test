@@ -1,7 +1,5 @@
 'use client';
 
-import logo from '@/public/png/logofinal.png';
-import Image from 'next/image';
 import { createContext, useContext, useState, useEffect, useRef, useCallback, useSyncExternalStore, ReactNode } from 'react';
 import { LuInfo, LuX } from 'react-icons/lu';
 import { MdCheckCircleOutline, MdOutlineCancel } from "react-icons/md";
@@ -136,24 +134,28 @@ const variantStyles = {
   success: {
     border: 'border-emerald-200',
     accent: 'bg-[#00AC72]',
+    ringColor: 'border-[#00AC72]',
     icon: <MdCheckCircleOutline className="w-5 h-5 text-[#00AC72] shrink-0" />,
     titleColor: 'text-gray-900',
   },
   error: {
     border: 'border-red-200',
     accent: 'bg-red-500',
+    ringColor: 'border-red-500',
     icon: <MdOutlineCancel className="w-5 h-5 text-red-500 shrink-0" />,
     titleColor: 'text-gray-900',
   },
   warning: {
     border: 'border-amber-200',
     accent: 'bg-amber-500',
+    ringColor: 'border-amber-500',
     icon: <FiAlertTriangle className="w-5 h-5 text-amber-500 shrink-0" />,
     titleColor: 'text-gray-900',
   },
   default: {
     border: 'border-gray-200',
     accent: 'bg-gray-800',
+    ringColor: 'border-gray-400',
     icon: <LuInfo className="w-5 h-5 text-gray-700 shrink-0" />,
     titleColor: 'text-gray-900',
   },
@@ -173,7 +175,7 @@ function AnimatedToastItem({
   const startTimeRef = useRef<number>(0);
   const config = variantStyles[toast.variant || 'default'];
 
-  // Handle sequential animation stages with reduced duration for faster entry
+  // Handle sequential animation stages
   useEffect(() => {
     // Stage 1: Spin counter-clockwise & extend width (0 -> 250ms)
     const extendTimer = setTimeout(() => {
@@ -248,15 +250,15 @@ function AnimatedToastItem({
       />
 
       <div className="flex items-start gap-3 p-3.5 pl-3">
-        {/* Clockwork Logo Container (Left Side) */}
+        {/* Variant Icon Container carrying matching border ring and animation */}
         <button
           type="button"
           onClick={triggerExit}
           title="Dismiss notification"
-          className="relative shrink-0 flex items-center justify-center p-0.5 rounded-full border-2 border-primary-green focus:outline-none cursor-pointer group"
+          className={`relative shrink-0 flex items-center justify-center p-1 rounded-full border-2 ${config.ringColor} focus:outline-none cursor-pointer group`}
         >
           <div
-            className={`w-6 h-6 relative transition-transform ease-out duration-300 ${
+            className={`flex items-center justify-center transition-transform ease-out duration-300 ${
               stage === 'spin-extend'
                 ? '-rotate-360 scale-110'
                 : stage === 'exiting'
@@ -264,39 +266,28 @@ function AnimatedToastItem({
                 : 'rotate-0 scale-100'
             }`}
           >
-            <Image
-              src={logo}
-              alt="Logo"
-              fill
-              className="object-contain rounded-full"
-            />
+            {config.icon}
           </div>
         </button>
 
-        {/* Content & Status Icons */}
+        {/* Text Info */}
         <div
-          className={`flex-1 min-w-0 transition-all duration-200 flex items-start gap-3 ${
+          className={`flex-1 min-w-0 transition-all duration-200 pr-1 ${
             stage === 'complete'
               ? 'opacity-100 translate-x-0'
               : 'opacity-0 -translate-x-2 pointer-events-none'
           }`}
         >
-          {/* Status Icon */}
-          <div className="mt-0.5">{config.icon}</div>
-
-          {/* Text Info */}
-          <div className="flex-1 min-w-0 pr-1">
-            {toast.title && (
-              <h4 className={`text-xs font-bold ${config.titleColor} leading-snug tracking-tight`}>
-                {toast.title}
-              </h4>
-            )}
-            {toast.description && (
-              <p className="text-[11px] text-gray-500 font-medium leading-relaxed mt-0.5">
-                {toast.description}
-              </p>
-            )}
-          </div>
+          {toast.title && (
+            <h4 className={`text-xs font-bold ${config.titleColor} leading-snug tracking-tight`}>
+              {toast.title}
+            </h4>
+          )}
+          {toast.description && (
+            <p className="text-[11px] text-gray-500 font-medium leading-relaxed mt-0.5">
+              {toast.description}
+            </p>
+          )}
         </div>
 
         {/* Close Button (Right Side) */}
