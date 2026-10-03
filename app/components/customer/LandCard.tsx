@@ -81,7 +81,7 @@ export default function LandCard({ property, priority = false }: LandCardProps) 
         {/* Card Body */}
         <div className="p-6 flex flex-col gap-3">
           <div>
-            <h3 className="text-2xl font-serif font-bold text-[#0D291E] tracking-tight line-clamp-1">
+            <h3 className="text-2xl  font-bold text-[#0D291E] tracking-tight line-clamp-1">
               {title}
             </h3>
             

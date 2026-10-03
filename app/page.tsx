@@ -9,8 +9,10 @@ import BrokenRealitySection from './components/BrokenRealitySection';
 import EcosystemSection from './components/EcosystemSection';
 import ProjectRoofSection from './components/ProjectRoofSection';
 import MarqueeBanner from './components/customer/MarqueeBanner';
+import TrustOrganizations from './components/customer/TrustOrganizations';
 import ScrollProgressIndicator from './components/ui/ScrollProgressIndicator';
 import LandingHero3 from './components/landinghero3';
+import FaqChatSection from './components/FaqChatSection';
 
 export const metadata: Metadata = {
   title: "Conekta - Affordable Homes | Investment | Rent | Africa's Housing Ecosystem",
@@ -117,6 +119,7 @@ export default function Home() {
       </section>
 
       <MarqueeBanner />
+      <TrustOrganizations />
 
       <section id="features">
         <EverythingLanding />
@@ -135,7 +138,8 @@ export default function Home() {
       </section>
 
       <section id="security">
-        <BuiltSecurity />
+        <FaqChatSection/>
+        {/* <BuiltSecurity /> */}
       </section>
 
       <section id="project-roof">

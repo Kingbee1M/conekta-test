@@ -64,7 +64,7 @@ export default function HomeCarousel() {
         </div>
 
         {/* Main Heading */}
-        <h1 className="text-white text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight max-w-4xl leading-tight">
+        <h1 className="text-white text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight max-w-4xl leading-tight">
           Nigeria,&nbsp;
           <span className="text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-200 block sm:inline mt-1 sm:mt-0">
             Your housing just got easier!

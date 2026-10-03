@@ -7,7 +7,7 @@ import { useToast } from '../components/ui/ToastProvider';
 import { useFormik } from 'formik';
 import { z } from 'zod';
 import Image from 'next/image';
-import logo from '../../public/svg/logo-enhanced.svg';
+import logo from '@/public/png/logofinal.png';
 import { CiMail, CiLock } from 'react-icons/ci';
 import Link from 'next/link';
 import { FaGoogle, FaFacebook } from 'react-icons/fa';
@@ -16,6 +16,29 @@ import { FiEyeOff, FiEye } from 'react-icons/fi';
 import { RoleEnum } from '@/shared/enums/roles.enum';
 import { Loader } from 'lucide-react';
 import { PortalDial } from '../components/ui/PortalDial';
+import { AnimatePresence, motion } from 'framer-motion';
+import type { CSSProperties } from 'react';
+
+const PORTAL_VISUALS = {
+  [RoleEnum.CUSTOMER]: {
+    image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?q=80&w=1200&auto=format&fit=crop',
+    title: 'Find a place\nthat feels like home.',
+    description: 'Your next chapter starts with the right space.',
+    color: '#00AC72',
+  },
+  [RoleEnum.LISTER]: {
+    image: 'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?q=80&w=1200&auto=format&fit=crop',
+    title: 'A better way\nto manage property.',
+    description: 'Bring your listings, tenants, and property tools together.',
+    color: '#2563EB',
+  },
+  [RoleEnum.ARTISAN]: {
+    image: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?q=80&w=1200&auto=format&fit=crop',
+    title: 'Your skills can\ntake you further.',
+    description: 'Connect your craft with people who need your expertise.',
+    color: '#D97706',
+  },
+};
 
 const loginSchema = z.object({
   email: z.string().min(1, 'Email is required').email('Invalid email format'),
@@ -92,28 +115,51 @@ export default function Login() {
     },
   });
 
+  const portalVisual = PORTAL_VISUALS[formik.values.portal as keyof typeof PORTAL_VISUALS] ?? PORTAL_VISUALS[RoleEnum.CUSTOMER];
+
   return (
-    <section className="flex py-16 flex-col justify-center min-h-screen items-center gap-7 bg-linear-to-br from-[#EDFDF5] via-[#EDFDF5] to-white">
+    <section className="login-layout" style={{ '--active-portal-color': portalVisual.color } as CSSProperties}>
+      <aside className="login-visual" aria-label="Conekta portal introduction">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={formik.values.portal}
+            className="login-visual-scene"
+            initial={{ opacity: 0, scale: 1.035, x: 16 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            exit={{ opacity: 0, scale: 0.99, x: -12 }}
+            transition={{ duration: 0.42, ease: 'easeOut' }}
+          >
+            <Image src={portalVisual.image} alt="" fill priority sizes="(max-width: 900px) 100vw, 48vw" className="login-visual-image" />
+            <div className="login-visual-shade" />
+            <div className="login-visual-copy">
+              <Image src={logo} width={120} height={60} alt="Conekta" className="mb-8 w-32 brightness-0 invert" />
+              <h2>{portalVisual.title}</h2>
+              <p>{portalVisual.description}</p>
+              <span className="login-visual-tag">{formik.values.portal} portal</span>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </aside>
+
+      <main className="login-main">
+        <div className="login-portal-column">
+          <PortalDial
+            value={formik.values.portal}
+            onChange={(role) => formik.setFieldValue('portal', role)}
+          />
+          {formik.touched.portal && formik.errors.portal && (
+            <span className="mt-2 block text-center text-xs text-red-500">{formik.errors.portal}</span>
+          )}
+        </div>
       <form
         onSubmit={formik.handleSubmit}
-        className="py-5 px-7 w-full max-w-95 items-center border-gray-300 rounded-lg border-2 border-solid bg-white flex flex-col gap-1"
+        className="login-form"
       >
         <Image src={logo} width={100} height={100} alt="logo" className="w-30" />
-        <h1 className="font-bold text-xl mt-2">Welcome Back</h1>
+        <h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900">Welcome Back</h1>
         <p className="mb-2 text-gray-500 text-sm text-center">
           Sign in to your Conekta account
         </p>
-
-        {/* Rotatable Portal Dial UI */}
-        <PortalDial
-          value={formik.values.portal}
-          onChange={(role) => formik.setFieldValue('portal', role)}
-        />
-        {formik.touched.portal && formik.errors.portal && (
-          <span className="text-[10px] text-red-500 -mt-2 mb-2 block">
-            {formik.errors.portal}
-          </span>
-        )}
 
         {/* Email Field */}
         <div className="outerDiv mb-4 w-full">
@@ -230,6 +276,7 @@ export default function Login() {
           </Link>
         </p>
       </form>
+      </main>
     </section>
   );
 }

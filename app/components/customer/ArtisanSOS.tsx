@@ -66,7 +66,7 @@ export default function ArtisanSosCarousel() {
       />
 
       {/* Black to Transparent Gradient Overlay across the entire card */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/30 z-0" />
+      <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/60 to-black/30 z-0" />
 
       {/* Header & Status Indicator */}
       <div className="flex justify-between items-center relative z-10">
@@ -79,7 +79,7 @@ export default function ArtisanSosCarousel() {
         </div>
       </div>
 
-      <h3 className="text-xl font-extrabold tracking-tight text-white relative z-10 font-serif">
+      <h3 className="text-xl font-extrabold tracking-tight text-white relative z-10 ">
         Conekta Instant Artisan SOS
       </h3>
 

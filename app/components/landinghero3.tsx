@@ -4,36 +4,37 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence, Variants } from 'framer-motion';
 import { 
-  Search, 
   ArrowUpRight, 
   ArrowRight, 
   Sparkles, 
   ChevronDown, 
-  Info, 
+  ClipboardList,
   Mail, 
   Phone, 
   Copy, 
   Check, 
-  Headphones 
+  Headphones,
+  X
 } from 'lucide-react';
 
 interface PolaroidPhoto {
   id: number;
   url: string;
   caption: string;
+  description: string;
 }
 
 const PHOTOS: PolaroidPhoto[] = [
-  { id: 1, url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&q=80', caption: 'Luxury Villa' },
-  { id: 2, url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=400&q=80', caption: 'Modern Interior' },
-  { id: 3, url: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400&q=80', caption: 'Apartment' },
-  { id: 4, url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&q=80', caption: 'Lagos Duplex' },
-  { id: 5, url: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=400&q=80', caption: 'Architecture' },
-  { id: 6, url: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400&q=80', caption: 'Smart Home' },
-  { id: 7, url: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400&q=80', caption: 'Verified Penthouse' },
-  { id: 8, url: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&q=80', caption: 'Commercial Space' },
-  { id: 9, url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400&q=80', caption: 'Cozy Studio' },
-  { id: 10, url: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400&q=80', caption: 'Lekki Residence' },
+  { id: 1, url: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&q=80', caption: 'Luxury Villa', description: 'A generous villa with a calm, private feel. Explore a home designed for slow mornings, easy entertaining, and room to make your own.' },
+  { id: 2, url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=400&q=80', caption: 'Modern Interior', description: 'Thoughtful finishes and an open, welcoming layout bring this modern interior together. It is the little details that make a space feel like home.' },
+  { id: 3, url: 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400&q=80', caption: 'Apartment', description: 'A bright apartment can make everyday living feel effortless. Picture a comfortable place to recharge, work, and enjoy your own corner of the city.' },
+  { id: 4, url: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&q=80', caption: 'Lagos Duplex', description: 'Make space for every part of your day in a Lagos duplex. Its multi-level layout offers a natural balance of shared living and quiet retreat.' },
+  { id: 5, url: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=400&q=80', caption: 'Architecture', description: 'Striking lines and considered proportions show how good architecture can shape the way a home feels, from the first impression to the details inside.' },
+  { id: 6, url: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400&q=80', caption: 'Smart Home', description: 'A smart home brings useful technology into everyday routines. Imagine lighting, comfort, and simple controls working together around you.' },
+  { id: 7, url: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=400&q=80', caption: 'Verified Penthouse', description: 'Elevated living starts with a home that feels like a retreat above the city. Find a penthouse that gives your next chapter room to grow.' },
+  { id: 8, url: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=400&q=80', caption: 'Commercial Space', description: 'The right commercial space gives an ambitious idea somewhere to take shape. Explore a setting ready to support your next move.' },
+  { id: 9, url: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=400&q=80', caption: 'Cozy Studio', description: 'A cozy studio makes clever use of every corner, with a comfortable, low-fuss feel that is all your own.' },
+  { id: 10, url: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400&q=80', caption: 'Lekki Residence', description: 'Settle into a residence inspired by life in Lekki. Find a welcoming base for the pace of the city and the moments in between.' },
 ];
 
 const fadeInUp: Variants = {
@@ -68,7 +69,7 @@ function TypewriterText({ text, speed = 25 }: { text: string; speed?: number }) 
   }, [text, speed]);
 
   return (
-    <span className="font-mono text-xs text-emerald-800 leading-relaxed">
+    <span className=" text-xs text-emerald-800 leading-relaxed">
       {displayedText}
       <span className="animate-pulse inline-block w-1.5 h-3.5 bg-primary-green ml-1 align-middle" />
     </span>
@@ -76,11 +77,11 @@ function TypewriterText({ text, speed = 25 }: { text: string; speed?: number }) 
 }
 
 export default function LandingHero3() {
-  const [searchQuery, setSearchQuery] = useState('');
   const [showAiInfo, setShowAiInfo] = useState(false);
-  const [showSearchInfo, setShowSearchInfo] = useState(false);
+  const [, setShowSearchInfo] = useState(false);
   const [showSupportWidget, setShowSupportWidget] = useState(false);
   const [copiedType, setCopiedType] = useState<'email' | 'phone' | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<PolaroidPhoto | null>(null);
 
   const totalItems = PHOTOS.length;
   const radius = 270; // Radius for perimeter photos
@@ -88,13 +89,6 @@ export default function LandingHero3() {
   const aiDescription =
     "Conekta AI Engine: Describe your dream home in natural language (e.g., '3-bed apartment in Lekki Phase 1 with 24/7 power under ₦5M/yr'). Our AI analyzes real-time verified market listings to match your exact lifestyle requirements!";
 
-  const searchDescription =
-    "Search Feature Preview: When logged in, this allows you to filter and explore thousands of verified apartments, commercial spaces, and lands across Lagos, Abuja, and Port Harcourt. Sign in or create an account to start searching real listings!";
-
-  const handleSearchClick = (e: React.FormEvent) => {
-    e.preventDefault();
-    setShowSearchInfo(true);
-  };
 
   const handleCopy = (text: string, type: 'email' | 'phone', e: React.MouseEvent) => {
     e.stopPropagation();
@@ -107,7 +101,7 @@ export default function LandingHero3() {
     <header className="relative w-full mt-16 sm:mt-20 pt-6 pb-16 px-4 sm:px-8 lg:px-16 overflow-hidden flex items-center min-h-[calc(100vh-80px)]">
       <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
         
-        {/* LEFT COLUMN: HERO CONTENT (CARD EFFECT REMOVED) */}
+        {/* LEFT COLUMN: HERO CONTENT */}
         <div className="lg:col-span-6 flex flex-col gap-8 z-10">
           
           <motion.div
@@ -118,13 +112,13 @@ export default function LandingHero3() {
             className="flex flex-col space-y-6"
           >
             <motion.div custom={1} variants={fadeInUp} className="space-y-1 sm:space-y-2">
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-gray-900 tracking-tight leading-none font-sans">
+              <h1 className="text-4xl sm:text-6xl lg:text-6xl font-semibold! text-gray-900 tracking-tight leading-none">
                 Nigeria,
               </h1>
-              <p className="text-4xl sm:text-6xl lg:text-7xl font-instrumentSerif italic text-gray-900 leading-none">
+              <p className="text-4xl sm:text-4xl! lg:text-7xl  italic text-gray-900 leading-none">
                 Your housing just got
               </p>
-              <p className="text-4xl sm:text-6xl lg:text-7xl font-instrumentSerif italic text-gray-900 leading-none">
+              <p className="text-4xl sm:text-4xl! lg:text-7xl  italic text-gray-900 leading-none">
                 easier!
               </p>
             </motion.div>
@@ -296,113 +290,153 @@ export default function LandingHero3() {
               </AnimatePresence>
             </motion.div>
 
-            {/* Manual Property Search Widget */}
-            {/* <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="p-4 sm:p-5 rounded-2xl bg-white border border-gray-200 shadow-sm space-y-3"
-            >
-              <div className="flex items-center justify-between">
-                <p className="text-xs font-bold uppercase tracking-wider text-primary-green">
-                  Manual Search
-                </p>
-                <span className="text-[10px] font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full border border-gray-200">
-                  Preview
-                </span>
-              </div>
-
-              <form onSubmit={handleSearchClick} className="flex items-center gap-2 bg-gray-50 rounded-xl px-3 py-1.5 border border-gray-200 focus-within:border-primary-green transition-all">
-                <Search className="w-4 h-4 text-primary-green shrink-0" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Lekki, Ikeja..."
-                  className="w-full bg-transparent py-1 text-xs text-gray-900 placeholder-gray-400 focus:outline-none"
-                />
-                <button
-                  type="submit"
-                  className="px-2.5 py-1 rounded-lg bg-gray-900 hover:bg-gray-800 text-white text-[10px] font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer active:scale-95"
-                >
-                  Info
-                </button>
-              </form>
-
-              <AnimatePresence>
-                {showSearchInfo && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200"
-                  >
-                    <div className="flex items-start gap-2">
-                      <Info className="w-4 h-4 text-primary-green shrink-0 mt-0.5" />
-                      <TypewriterText text={searchDescription} />
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div> */}
-
           </div>
         </div>
 
-        {/* RIGHT COLUMN: UNLIMITED EDGE ROTATING POLAROID WHEEL */}
-        <div className="lg:col-span-6 relative w-full h-[600px] lg:h-[680px] flex items-center justify-center overflow-visible">
-          
-          {/* Central Accent Dash Ring */}
-          <div className="absolute w-72 h-72 border-2 border-dashed border-primary-green/30 rounded-full animate-pulse pointer-events-none" />
+        {/* RIGHT COLUMN: PHOTO GALLERY AND FEATURED PHOTO */}
+        <div className="lg:col-span-6 relative w-full h-150 lg:h-170 flex items-center justify-center overflow-visible">
+          <AnimatePresence mode="wait" initial={true}>
+            {selectedPhoto ? (
+              <motion.article
+                key="photo-clipboard"
+                initial={{ opacity: 0, y: 36, rotate: 5, scale: 0.94 }}
+                animate={{ opacity: 1, y: 0, rotate: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 28, rotate: -5, scale: 0.94 }}
+                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                aria-labelledby="featured-photo-title"
+                className="relative z-20 w-full max-w-xl rounded-2xl border border-emerald-900/10 bg-[#f8f7ef] p-5 shadow-2xl shadow-gray-900/15 sm:p-8"
+              >
+                <div className="absolute left-1/2 top-0 h-5 w-16 -translate-x-1/2 -translate-y-1/2 rounded-b-lg border-x border-b border-gray-300 bg-gray-200 shadow-sm" />
+                <div className="flex items-start justify-between gap-4 border-b border-dashed border-gray-300 pb-4">
+                  <div className="flex items-center gap-2 text-primary-green">
+                    <ClipboardList className="h-5 w-5" aria-hidden="true" />
+                    <p className="text-xs font-bold uppercase tracking-[0.18em]">Home spotlight</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedPhoto(null)}
+                    aria-label="Close photo details and return to the gallery"
+                    className="rounded-full border border-gray-300 bg-white p-2 text-gray-600 transition hover:border-primary-green hover:text-primary-green focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-green"
+                  >
+                    <X className="h-4 w-4" aria-hidden="true" />
+                  </button>
+                </div>
 
-          {/* Central Logo Badge */}
-          <div className="absolute z-20 w-36 h-36 rounded-full bg-white shadow-xl border-2 border-primary-green flex flex-col items-center justify-center p-2 text-center">
-            <span className="text-3xl font-extrabold text-primary-green">100%</span>
-            <span className="text-xs font-semibold text-gray-700">Verified Homes</span>
-          </div>
+                <div className="mt-6 grid grid-cols-1 items-center gap-8 sm:grid-cols-[minmax(0,1fr)_minmax(150px,0.8fr)]">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
+                      Featured space
+                    </p>
+                    <h2 id="featured-photo-title" className="mt-2 text-3xl font-extrabold tracking-tight text-gray-900">
+                      {selectedPhoto.caption}
+                    </h2>
+                    <p className="mt-4 text-sm leading-7 text-gray-600">
+                      {selectedPhoto.description}
+                    </p>
+                    <div className="mt-6 h-1 w-16 rounded-full bg-primary-green/70" />
+                  </div>
 
-          {/* Rotating Wheel Container */}
-          <motion.div
-            className="relative w-full h-full flex items-center justify-center"
-            animate={{ rotate: 360 }}
-            transition={{
-              repeat: Infinity,
-              duration: 45,
-              ease: 'linear',
-            }}
-          >
-            {PHOTOS.map((photo, index) => {
-              const angle = (index / totalItems) * (2 * Math.PI);
-              const x = Math.cos(angle) * radius;
-              const y = Math.sin(angle) * radius;
-              const rotationDeg = (index / totalItems) * 360 + 90;
-
-              return (
-                <div
-                  key={photo.id}
-                  className="absolute flex items-center justify-center"
-                  style={{
-                    transform: `translate(${x}px, ${y}px) rotate(${rotationDeg}deg)`,
-                  }}
-                >
-                  {/* Polaroid Print Frame */}
-                  <div className="w-28 bg-white p-2 pb-4 rounded-xs shadow-lg border border-gray-200 hover:scale-105 transition-transform duration-200">
-                    <div className="w-full h-20 overflow-hidden bg-gray-100 rounded-2xs">
+                  <div className="relative mx-auto w-full max-w-55 rotate-2 rounded-sm bg-white p-2 pb-4 shadow-xl ring-1 ring-black/5">
+                    <div className="absolute -top-3 left-1/2 z-10 h-5 w-5 -translate-x-1/2 rounded-full border-4 border-white bg-primary-green shadow-md" />
+                    <div className="aspect-4/5 overflow-hidden bg-gray-100">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={photo.url}
-                        alt={photo.caption}
-                        className="w-full h-full object-cover"
+                        src={selectedPhoto.url}
+                        alt={selectedPhoto.caption}
+                        className="h-full w-full object-cover"
                       />
                     </div>
-                    <p className="mt-2 text-[10px] font-bold text-gray-700 text-center truncate">
-                      {photo.caption}
+                    <p className="mt-2 truncate text-center text-[10px] font-semibold text-gray-600">
+                      {selectedPhoto.caption}
                     </p>
                   </div>
                 </div>
-              );
-            })}
-          </motion.div>
+              </motion.article>
+            ) : (
+              <motion.div
+                key="photo-wheel"
+                initial={{ opacity: 0, scale: 0.94 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.94 }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                className="relative flex h-full w-full items-center justify-center"
+              >
+                <div className="pointer-events-none absolute h-72 w-72 rounded-full border-2 border-dashed border-primary-green/30 animate-pulse" />
+
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                  className="absolute z-20 flex h-36 w-36 flex-col items-center justify-center rounded-full border-2 border-primary-green bg-white p-2 text-center shadow-xl"
+                >
+                  <span className="text-3xl font-extrabold text-primary-green">100%</span>
+                  <span className="text-xs font-semibold text-gray-700">Verified Homes</span>
+                </motion.div>
+
+                <motion.div
+                  className="relative flex h-full w-full items-center justify-center"
+                  animate={{ rotate: 360 }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 45,
+                    ease: 'linear',
+                  }}
+                >
+                  {PHOTOS.map((photo, index) => {
+                    const angle = (index / totalItems) * (2 * Math.PI);
+                    const targetX = Math.cos(angle) * radius;
+                    const targetY = Math.sin(angle) * radius;
+                    const targetRotation = (index / totalItems) * 360 + 90;
+
+                    return (
+                      <motion.div
+                        key={photo.id}
+                        className="absolute flex items-center justify-center"
+                        initial={{
+                          x: 0,
+                          y: 0,
+                          rotate: 0,
+                          opacity: 0,
+                          scale: 0.3,
+                        }}
+                        animate={{
+                          x: targetX,
+                          y: targetY,
+                          rotate: targetRotation,
+                          opacity: 1,
+                          scale: 1,
+                        }}
+                        transition={{
+                          duration: 0.8,
+                          delay: index * 0.08,
+                          ease: [0.16, 1, 0.3, 1],
+                        }}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => setSelectedPhoto(photo)}
+                          aria-label={`View details for ${photo.caption}`}
+                          className="w-28 cursor-pointer rounded-xs border border-gray-200 bg-white p-2 pb-4 text-left shadow-lg transition-transform duration-200 hover:scale-105 focus-visible:z-30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-green"
+                        >
+                          <div className="h-20 w-full overflow-hidden rounded-2xs bg-gray-100">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={photo.url}
+                              alt=""
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                          <p className="mt-2 truncate text-center text-[10px] font-bold text-gray-700">
+                            {photo.caption}
+                          </p>
+                        </button>
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
       </div>
