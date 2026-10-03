@@ -114,10 +114,10 @@ export default function VerifiedPropertySummaryCard() {
         </span>
         
         <div className="my-1.5 flex items-baseline gap-1">
-          <span className="font-serif text-3xl font-normal leading-none tracking-tight sm:text-4xl">
+          <span className=" text-3xl font-normal leading-none tracking-tight sm:text-4xl">
             ₦0
           </span>
-          <span className="font-serif text-2xl font-normal leading-none italic opacity-90 sm:text-3xl">
+          <span className=" text-2xl font-normal leading-none italic opacity-90 sm:text-3xl">
             raised
           </span>
         </div>

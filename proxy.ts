@@ -23,9 +23,10 @@ export function proxy(request: NextRequest) {
     'blog',
     'terms-and-policy',
     '/payment-system',
+    '/products',
     '/blog',
     '/terms-and-policy',
-    '/impact'
+    '/impact',
   ];
 
   // Inside your middleware logic
@@ -62,8 +63,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - svg (if your logos are in public/svg)
+     * - public/trusts (public trust organization logos)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|svg|public).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|svg|public|trusts).*)',
   ],
 };
