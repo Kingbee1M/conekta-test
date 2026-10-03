@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import img from '@/public/webp/artisan.webp'
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight, ArrowUpRight, Hammer, Paintbrush, PlugZap, Search, Star, Wrench } from 'lucide-react';
@@ -28,7 +29,7 @@ export default function ArtisanDiscoveryPage() {
 
           <div className="relative mx-auto w-full max-w-[580px]">
             <motion.div initial={{ opacity: 0, scale: 0.94, rotate: 2 }} animate={{ opacity: 1, scale: 1, rotate: 0 }} transition={{ duration: 0.65 }} className="relative h-[440px] overflow-hidden rounded-[2.5rem] shadow-[0_35px_90px_-35px_rgba(124,45,18,0.35)] sm:h-[560px]">
-              <Image src="/webp/artisan.webp" alt="Artisan at work" fill sizes="(max-width: 1024px) 90vw, 45vw" className="object-cover object-center" />
+              <Image src={img} alt="Artisan at work" fill sizes="(max-width: 1024px) 90vw, 45vw" className="object-cover object-center" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#29180f]/75 via-transparent to-transparent" />
               <div className="absolute bottom-7 left-7 right-7 text-white"><p className="text-xs font-semibold uppercase tracking-[0.15em] text-orange-200">Skilled hands. Meaningful work.</p><p className="mt-2 max-w-sm text-2xl font-bold leading-tight sm:text-3xl">Find the people who help a property feel like home.</p></div>
             </motion.div>

@@ -3,11 +3,13 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import img1 from '@/public/webp/landingimage.webp'
+import img2 from '@/public/webp/investor.webp'
 import { ArrowRight, BadgeCheck, BedDouble, MapPin, Search, SlidersHorizontal, Square, Heart } from 'lucide-react';
 
 const listings = [
-  { image: '/webp/landingimage.webp', name: 'A home that fits your next chapter', place: 'Lagos, Nigeria', detail: 'Listing details available', color: 'bg-emerald-50 text-emerald-700' },
-  { image: '/webp/white-house.webp', name: 'Room to settle in and grow', place: 'Explore your area', detail: 'Review property information', color: 'bg-blue-50 text-blue-700' },
+  { image: img1, name: 'A home that fits your next chapter', place: 'Lagos, Nigeria', detail: 'Listing details available', color: 'bg-emerald-50 text-emerald-700' },
+  { image: img2, name: 'Room to settle in and grow', place: 'Explore your area', detail: 'Review property information', color: 'bg-blue-50 text-blue-700' },
 ];
 
 export default function PropertyListingVerificationPage() {
