@@ -79,11 +79,12 @@ export const metadata: Metadata = {
 
 const pageSections = [
   { id: 'hero', label: 'Overview' },
+  { id: 'trust-organizations', label: 'Trust & Recognition' },
   { id: 'features', label: 'Features' },
   { id: 'stats', label: 'Market Stats' },
   { id: 'broken-reality', label: 'The Problem' },
   { id: 'ecosystem', label: 'Ecosystem' },
-  { id: 'security', label: 'Security' },
+  { id: 'faq-support', label: 'FAQs & Support' },
   { id: 'project-roof', label: 'Project Roof' },
 ];
 
@@ -137,9 +138,8 @@ export default function Home() {
         <EcosystemSection />
       </section>
 
-      <section id="security">
+      <section id="faq-support">
         <FaqChatSection/>
-        {/* <BuiltSecurity /> */}
       </section>
 
       <section id="project-roof">

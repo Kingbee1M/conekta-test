@@ -69,7 +69,7 @@ function TypewriterText({ text, speed = 25 }: { text: string; speed?: number }) 
   }, [text, speed]);
 
   return (
-    <span className=" text-xs text-emerald-800 leading-relaxed">
+    <span className="text-xs text-emerald-800 leading-relaxed">
       {displayedText}
       <span className="animate-pulse inline-block w-1.5 h-3.5 bg-primary-green ml-1 align-middle" />
     </span>
@@ -83,12 +83,29 @@ export default function LandingHero3() {
   const [copiedType, setCopiedType] = useState<'email' | 'phone' | null>(null);
   const [selectedPhoto, setSelectedPhoto] = useState<PolaroidPhoto | null>(null);
 
+  // Responsive radius calculation
+  const [radius, setRadius] = useState(270);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        setRadius(170); // Radius for mobile screen sizes
+      } else if (window.innerWidth < 1024) {
+        setRadius(220); // Radius for tablet screen sizes
+      } else {
+        setRadius(270); // Radius for desktop screen sizes
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const totalItems = PHOTOS.length;
-  const radius = 270; // Radius for perimeter photos
 
   const aiDescription =
     "Conekta AI Engine: Describe your dream home in natural language (e.g., '3-bed apartment in Lekki Phase 1 with 24/7 power under ₦5M/yr'). Our AI analyzes real-time verified market listings to match your exact lifestyle requirements!";
-
 
   const handleCopy = (text: string, type: 'email' | 'phone', e: React.MouseEvent) => {
     e.stopPropagation();
@@ -115,10 +132,10 @@ export default function LandingHero3() {
               <h1 className="text-4xl sm:text-6xl lg:text-6xl font-semibold! text-gray-900 tracking-tight leading-none">
                 Nigeria,
               </h1>
-              <p className="text-4xl sm:text-4xl! lg:text-7xl  italic text-gray-900 leading-none">
+              <p className="text-4xl sm:text-4xl! lg:text-7xl italic text-gray-900 leading-none">
                 Your housing just got
               </p>
-              <p className="text-4xl sm:text-4xl! lg:text-7xl  italic text-gray-900 leading-none">
+              <p className="text-4xl sm:text-4xl! lg:text-7xl italic text-gray-900 leading-none">
                 easier!
               </p>
             </motion.div>
@@ -294,7 +311,7 @@ export default function LandingHero3() {
         </div>
 
         {/* RIGHT COLUMN: PHOTO GALLERY AND FEATURED PHOTO */}
-        <div className="lg:col-span-6 relative w-full h-150 lg:h-170 flex items-center justify-center overflow-visible">
+        <div className="lg:col-span-6 relative w-full h-110 sm:h-150 lg:h-170 mt-10 lg:mt-0 flex items-center justify-center overflow-visible">
           <AnimatePresence mode="wait" initial={true}>
             {selectedPhoto ? (
               <motion.article
@@ -361,16 +378,16 @@ export default function LandingHero3() {
                 transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                 className="relative flex h-full w-full items-center justify-center"
               >
-                <div className="pointer-events-none absolute h-72 w-72 rounded-full border-2 border-dashed border-primary-green/30 animate-pulse" />
+                <div className="pointer-events-none absolute h-48 w-48 sm:h-72 sm:w-72 rounded-full border-2 border-dashed border-primary-green/30 animate-pulse" />
 
                 <motion.div
                   initial={{ scale: 0, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
-                  className="absolute z-20 flex h-36 w-36 flex-col items-center justify-center rounded-full border-2 border-primary-green bg-white p-2 text-center shadow-xl"
+                  className="absolute z-20 flex h-28 w-28 sm:h-36 sm:w-36 flex-col items-center justify-center rounded-full border-2 border-primary-green bg-white p-2 text-center shadow-xl"
                 >
-                  <span className="text-3xl font-extrabold text-primary-green">100%</span>
-                  <span className="text-xs font-semibold text-gray-700">Verified Homes</span>
+                  <span className="text-2xl sm:text-3xl font-extrabold text-primary-green">100%</span>
+                  <span className="text-[10px] sm:text-xs font-semibold text-gray-700">Verified Homes</span>
                 </motion.div>
 
                 <motion.div
@@ -416,9 +433,9 @@ export default function LandingHero3() {
                           type="button"
                           onClick={() => setSelectedPhoto(photo)}
                           aria-label={`View details for ${photo.caption}`}
-                          className="w-28 cursor-pointer rounded-xs border border-gray-200 bg-white p-2 pb-4 text-left shadow-lg transition-transform duration-200 hover:scale-105 focus-visible:z-30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-green"
+                          className="w-20 sm:w-28 cursor-pointer rounded-xs border border-gray-200 bg-white p-1.5 pb-2.5 sm:p-2 sm:pb-4 text-left shadow-lg transition-transform duration-200 hover:scale-105 focus-visible:z-30 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-green"
                         >
-                          <div className="h-20 w-full overflow-hidden rounded-2xs bg-gray-100">
+                          <div className="h-14 sm:h-20 w-full overflow-hidden rounded-2xs bg-gray-100">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
                             <img
                               src={photo.url}
@@ -426,7 +443,7 @@ export default function LandingHero3() {
                               className="h-full w-full object-cover"
                             />
                           </div>
-                          <p className="mt-2 truncate text-center text-[10px] font-bold text-gray-700">
+                          <p className="mt-1 sm:mt-2 truncate text-center text-[9px] sm:text-[10px] font-bold text-gray-700">
                             {photo.caption}
                           </p>
                         </button>
