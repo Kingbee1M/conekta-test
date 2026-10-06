@@ -18,25 +18,18 @@ export default function ScrollProgressIndicator({ sections }: ScrollProgressIndi
 
   useEffect(() => {
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
+      const activationLine = window.innerHeight / 3;
+      let currentActiveId = sections[0]?.id ?? '';
 
-      // 1. Show/Hide threshold: Hide while in Hero section, reveal when scrolled past Hero (e.g. 300px down)
-      const heroThreshold = 700; 
-      setIsVisible(currentScrollY > heroThreshold);
-
-      // 2. Section tracking
-      const scrollPosition = currentScrollY + window.innerHeight / 3;
-
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const sectionEl = document.getElementById(sections[i].id);
-        if (sectionEl) {
-          const top = sectionEl.offsetTop;
-          if (scrollPosition >= top) {
-            setActiveId(sections[i].id);
-            break;
-          }
+      for (const section of sections) {
+        const sectionEl = document.getElementById(section.id);
+        if (sectionEl && sectionEl.getBoundingClientRect().top <= activationLine) {
+          currentActiveId = section.id;
         }
       }
+
+      setActiveId(currentActiveId);
+      setIsVisible(Boolean(currentActiveId) && currentActiveId !== sections[0]?.id);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });

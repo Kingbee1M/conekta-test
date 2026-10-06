@@ -95,6 +95,7 @@ export default function TrustOrganizations() {
 
   return (
     <section
+      id="trust-organizations"
       className={styles.section}
       aria-labelledby="trust-organizations-title"
       onMouseEnter={() => setIsPaused(true)}
